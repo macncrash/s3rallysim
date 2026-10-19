@@ -4,7 +4,12 @@ A two-seat rally training simulator pod: an enclosed cockpit on a four-axis moti
 modelled in [STEVE](https://stevecad.studio) and animated in [Gravity](https://holodeck1.ai).
 
 The driver sits on the left. An instructor or co-driver sits on the right with their own door, footrest, grab handle,
-telemetry display and intercom. A formula template turns it into a single-seat, reclined cockpit.
+telemetry display and intercom.
+
+**One pod, cockpit modules.** The shell, moving floor, motion platform and screens are the same for every version.
+The formula / F1 version is a different cockpit module in the same pod: one reclined seat on the centreline, a
+formula wheel and electronics, no dog box. The pod does not get smaller. The two-person rally version comes first;
+the F1 module follows once rally is feature-complete.
 
 Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261019-190855.mp4)
 

@@ -1,12 +1,14 @@
 # S3 Rally Pod: two-seat cockpit, occupants, motion loads, intercom and telemetry
 
-Status, 2026-10-19. CAD: STEVE design "S3 Rally Pod", branch `two_seat` (main is still the one-seat pod).
+Status, 2026-10-19. CAD: STEVE design "S3 Rally Pod", main revision 4 (the two-seat pod, merged from `two_seat`).
 Local source: `cad/pod/`. Renders: `renders/`, `gravity-renders/`. Load numbers: `analysis/platform_loads.json`.
 
 ## 1. Cockpit layout
 
 - **Rally (layout 0):** LHD. Driver on the left, co-driver / instructor on the right, each with their own door.
-- **Formula (layout 1):** one reclined seat on the centreline, no co-driver.
+- **Formula (layout 1):** the same pod with a different cockpit module: one reclined seat on the centreline, formula
+  wheel and electronics, no dog box, no co-driver. Shell, floor, platform and screens never depend on `layout`.
+  Rally comes first.
 - **Steering column:** hangs from a dash crossbar on the moving floor. The crossbar sits on three uprights: outboard of each seat and on the tunnel. Nothing stands in either footwell.
 - **Displays:**
   - A 55" windscreen display on the car centreline. Render it with an off-axis frustum for the driver's eye.
