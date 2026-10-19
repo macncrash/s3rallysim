@@ -6,11 +6,16 @@ Each body's mass, centre of mass and inertia come from the export's manifest (ex
 library density). Occupants are added as lumped masses from ergo.py, so mixed crews (a 95th
 percentile driver with a 5th percentile or empty passenger seat) can be compared.
 
-For each axis it reports the moved mass and inertia, the static load at the stop, and the peak
-actuator force or torque for the cueing targets below. Targets are typical of compact rally/race
-motion rigs; change them to the cueing spec once the motion software is chosen.
+The floor (and everything on it, plus the heave sleeve and the universal joint, whose weight the
+floor carries) is lifted by four corner actuators; the centre post takes the side and fore-aft
+loads. For each crew it reports the moved mass and inertia about the universal joint, then every
+actuator's force for each combination of the cueing targets below (shared as four equal springs
+would share it), the peak crank torque, and the centre post's side load.
+Targets are typical of compact rally/race motion rigs; change them to the cueing spec once the
+motion software is chosen.
 """
 
+import itertools
 import json
 import math
 import os
@@ -22,21 +27,15 @@ TARGETS = {
     "surge_acc": 0.6 * G,  # m/s^2 peak, braking / launch onset
     "roll_alpha": math.radians(400),  # rad/s^2 peak
     "pitch_alpha": math.radians(400),  # rad/s^2 peak
-    "roll_stop": math.radians(7),
-    "pitch_stop": math.radians(7),
 }
-ROLL_AXIS_Z = 0.118  # m
-PITCH_AXIS_Z = 0.176  # m
 
-# Which instances each axis carries (outermost axis carries everything inside it).
-HEAVE = {
-    "deck", "heave_rod_l", "heave_rod_r", "seat_d", "seat_c", "mount_driver", "mount_codriver", "wheel",
-    "dash", "pedals", "footrest", "tunnel", "dogbox", "dog_cap", "lever", "knob", "handbrake", "hb_lever",
-    "button_box",
+# What the corner actuators carry, and what the surge drive moves.
+FLOOR = {
+    "deck", "heave_car", "ujoint", "seat_d", "seat_c", "mount_driver", "mount_codriver", "wheel", "dash", "pedals",
+    "footrest", "tunnel", "dogbox", "dog_cap", "lever", "knob", "handbrake", "hb_lever", "button_box",
 }
-PITCH = HEAVE | {"pitch_cradle", "heave_body_l", "heave_body_r"}
-ROLL = PITCH | {"roll_cradle"}
-SURGE = ROLL | {"sled", "surge_rod"}
+SURGE = FLOOR | {"sled", "drive_fl", "drive_fr", "drive_rl", "drive_rr", "crank_fl", "crank_fr", "crank_rl",
+                 "crank_rr", "link_fl", "link_fr", "link_rl", "link_rr"}
 OCCUPANTS = {"driver", "codriver"}
 
 
@@ -50,9 +49,8 @@ def point_masses(manifest):
         rho = item.get("density_g_cm3")
         if not rho or "volume_mm3" not in mp:
             continue
-        m = mp["volume_mm3"] * rho * 1e-6  # kg
+        m = mp["volume_mm3"] * rho * 1e-6
         com = [c * 1e-3 for c in mp["center_of_mass_mm"]]
-        # inertia_mm5 is the volume's second moment about the com (mm^5); x density -> kg m^2.
         inertia = [[v * rho * 1e-6 * 1e-6 for v in row] for row in mp["inertia_mm5"]]
         out.append((item["instance"], m, com, inertia))
     return out
@@ -77,41 +75,86 @@ def about_axis(bodies, axis, through):
         own = sum(axis[i] * inertia[i][j] * axis[j] for i in range(3) for j in range(3))
         r = [c[i] - through[i] for i in range(3)]
         along = sum(r[i] * axis[i] for i in range(3))
-        perp2 = sum(v * v for v in r) - along * along
-        i_tot += own + m * perp2
+        i_tot += own + m * (sum(v * v for v in r) - along * along)
     return m_tot, com, i_tot
 
 
-def case(rigid, ergo, crew):
+def share(points, fz, my, mx):
+    """Four vertical actuator forces giving total fz, moment my about the pivot's Y axis (from x
+    offsets) and mx about its X axis (from y offsets), shared as four equal springs would."""
+    # Minimum-norm solution of A f = b, A = [[1...], [dx...], [y...]].
+    rows = [[1.0] * 4, [p[0] for p in points], [p[1] for p in points]]
+    aat = [[sum(rows[i][k] * rows[j][k] for k in range(4)) for j in range(3)] for i in range(3)]
+    rhs = [fz, my, mx]
+    # Solve the 3x3 by Gaussian elimination.
+    m = [row[:] + [rhs[i]] for i, row in enumerate(aat)]
+    for c in range(3):
+        piv = max(range(c, 3), key=lambda r: abs(m[r][c]))
+        m[c], m[piv] = m[piv], m[c]
+        for r in range(3):
+            if r != c:
+                f = m[r][c] / m[c][c]
+                m[r] = [m[r][k] - f * m[c][k] for k in range(4)]
+    lam = [m[i][3] / m[i][i] for i in range(3)]
+    return [sum(rows[i][k] * lam[i] for i in range(3)) for k in range(4)]
+
+
+def case(rigid, ergo, motion, crew):
     occ = [occupant(ergo, pct, role) for role, pct in crew.items() if pct]
-    rows = {}
-    heave = [b for b in rigid if b[0] in HEAVE] + occ
-    m, com, _ = about_axis(heave, (0, 0, 1), (0, 0, 0))
-    rows["heave"] = {"mass_kg": m, "force_N": m * (G + TARGETS["heave_acc"]), "static_N": m * G,
-                     "com_mm": [round(c * 1000) for c in com]}
-    for name, members, axis, z, alpha, stop, lever in (
-        ("pitch", PITCH, (0, 1, 0), PITCH_AXIS_Z, TARGETS["pitch_alpha"], TARGETS["pitch_stop"], 0),
-        ("roll", ROLL, (1, 0, 0), ROLL_AXIS_Z, TARGETS["roll_alpha"], TARGETS["roll_stop"], 1),
-    ):
-        bodies = [b for b in rigid if b[0] in members] + occ
-        m, com, inertia = about_axis(bodies, axis, (0, 0, z))
-        # Gravity torque at the stop: the com's offset from the axis, turned by the stop angle.
-        horiz = com[lever] if name == "roll" else com[0]
-        height = com[2] - z
-        static = m * G * abs(horiz)
-        at_stop = m * G * (abs(horiz) * math.cos(stop) + height * math.sin(stop))
-        rows[name] = {"mass_kg": m, "inertia_kgm2": inertia, "static_Nm": static, "gravity_at_stop_Nm": at_stop,
-                      "peak_Nm": inertia * alpha + at_stop, "com_mm": [round(c * 1000) for c in com]}
-    bodies = [b for b in rigid if b[0] in SURGE] + occ
-    m, com, _ = about_axis(bodies, (1, 0, 0), (0, 0, 0))
-    rows["surge"] = {"mass_kg": m, "force_N": m * TARGETS["surge_acc"]}
-    return rows
+    pivot = (motion.pivot_x * 1e-3, 0.0, motion.pivot_z * 1e-3)
+    floor = [b for b in rigid if b[0] in FLOOR] + occ
+    m, com, i_pitch = about_axis(floor, (0, 1, 0), pivot)
+    _, _, i_roll = about_axis(floor, (1, 0, 0), pivot)
+    m_surge = sum(b[1] for b in rigid if b[0] in SURGE) + sum(o[1] for o in occ)
+    dx, dy, dz = com[0] - pivot[0], com[1], com[2] - pivot[2]
+    points = [((x - motion.pivot_x) * 1e-3, y * 1e-3) for _n, x, y in motion.ACTUATORS]
+    names = [n for n, _x, _y in motion.ACTUATORS]
+
+    peak = {n: 0.0 for n in names}
+    low = {n: 1e9 for n in names}
+    post = 0.0
+    t = TARGETS
+    for sh, ss, sp, sr in itertools.product((-1, 0, 1), repeat=4):
+        az, ax = sh * t["heave_acc"], ss * t["surge_acc"]
+        ap, ar = sp * t["pitch_alpha"], sr * t["roll_alpha"]
+        fz = m * (G + az)
+        # Moments the actuators must supply about the universal joint: weight and vertical
+        # acceleration through the com's offset, surge acceleration through its height, and the
+        # angular accelerations through the inertias.
+        my = fz * dx + m * ax * dz + i_pitch * ap
+        mx = fz * dy + i_roll * ar
+        for n, f in zip(names, share(points, fz, my, mx)):
+            peak[n] = max(peak[n], f)
+            low[n] = min(low[n], f)
+        # Side and fore-aft load on the centre post: surge, plus roll and pitch acceleration of the
+        # com about the joint.
+        post = max(post, math.hypot(m * ax + m * ap * dz, m * ar * dz))
+    static = share(points, m * G, m * G * dx, m * G * dy)
+    r = motion.crank_r * 1e-3
+    return {
+        "floor_mass_kg": round(m, 1),
+        "floor_com_mm": [round(c * 1000) for c in com],
+        "com_from_pivot_mm": [round(dx * 1000), round(dy * 1000), round(dz * 1000)],
+        "inertia_pitch_kgm2": round(i_pitch, 1),
+        "inertia_roll_kgm2": round(i_roll, 1),
+        "surge_mass_kg": round(m_surge, 1),
+        "surge_force_N": round(m_surge * t["surge_acc"]),
+        "actuator_static_N": {n: round(f) for n, f in zip(names, static)},
+        "actuator_peak_N": {n: round(peak[n]) for n in names},
+        "actuator_min_N": {n: round(low[n]) for n in names},
+        "crank_peak_Nm": round(max(max(peak.values()), -min(low.values())) * r),
+        "crank_static_Nm": round(max(abs(f) for f in static) * r),
+        "post_side_load_N": round(post),
+    }
 
 
 def main():
     mesh_dir, src = sys.argv[1], sys.argv[2]
     sys.path.insert(0, src)
-    import ergo  # noqa: E402  (needs the CAD source on the path)
+    import ergo  # noqa: E402  (the CAD source must be on the path)
+    import motion  # noqa: E402
+    import params  # noqa: E402
+    motion.pivot_x, motion.pivot_z = params.pivot_x, params.pivot_z
     with open(os.path.join(mesh_dir, "manifest.json")) as fh:
         rigid = point_masses(json.load(fh))
     crews = {
@@ -120,8 +163,9 @@ def main():
         "95 alone": {"driver": 95, "codriver": None},
         "5 alone": {"driver": 5, "codriver": None},
     }
-    out = {label: case(rigid, ergo, crew) for label, crew in crews.items()}
-    print(json.dumps(out, indent=1, default=lambda v: round(v, 1)))
+    out = {"targets": {k: round(v, 3) for k, v in TARGETS.items()},
+           "crews": {label: case(rigid, ergo, motion, crew) for label, crew in crews.items()}}
+    print(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

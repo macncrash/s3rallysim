@@ -11,7 +11,7 @@ The formula / F1 version is a different cockpit module in the same pod: one recl
 formula wheel and electronics, no dog box. The pod does not get smaller. The two-person rally version comes first;
 the F1 module follows once rally is feature-complete.
 
-Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261019-190855.mp4)
+Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261019-213037.mp4)
 
 ## What's here
 
@@ -20,7 +20,9 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `cad/pod/` | The STEVE design source: `main.py` places and joints everything, `params.py` holds the numbers, `components/` one part each |
 | `cad/pod/ergo.py` | Occupant model: 5th and 95th percentile body sizes, seated posture, and the seat travel, cushion lift, column reach and pedal position they set |
 | `cad/pod/mannequin.py` | Builds a seated occupant in race gear (helmet with intercom mic, HANS, suit, boots, harness) from a posture |
-| `analysis/platform_loads.py` | Motion-platform loads from the CAD masses plus the occupants, for full, mixed and driver-only crews |
+| `cad/pod/motion.py` | Motion-platform geometry: actuator points, crank reach, exact crank and link solution |
+| `analysis/platform_loads.py` | Actuator, crank and centre-post loads from the CAD masses plus the occupants, for full, mixed and driver-only crews |
+| `analysis/platform_clearance.py` | Exact reachable workspace and link and crank clearances |
 | `render/` | Blender walkaround driven by the CAD's own `rally_stage` animation |
 | `tools/mesh_to_sim.py` | Samples the CAD meshes into the Gravity motion-cue sim |
 | `sims/rally-pod-motion.js` | The Gravity sim (paste into Gravity → ✎ new sim) |
@@ -37,8 +39,10 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 - **Fit check:** STEVE checks both occupants against the shell, doors, screens, wheel, dash and pedals. It runs at
   rest, through every axis, and at the envelope corners where every axis is at its stop at once. The crew passes as
   two 95th percentile and as two 5th percentile occupants.
-- **Open problem: the motion platform.** The stack under the floor is still the original one-seat mechanism and is
-  not sized for about 510 kg of moving load. See `docs/two-seat-pod.md` §4.
+- **Motion platform:** four crank actuators lift the floor's corners, and a passive centre post with a universal
+  joint under the loaded floor's centre of mass takes the side loads. Each crank and link is solved exactly in the
+  renders. See `docs/two-seat-pod.md` §4 for the workspace, clearances and loads (about 640 Nm peak per crank with two
+  large occupants).
 
 ## Rebuilding the outputs
 
@@ -64,10 +68,11 @@ You need Python 3, Blender 4.5 and ffmpeg.
    python3 tools/mesh_to_sim.py render/build/scene.json sims/rally-pod-motion.template.js sims/rally-pod-motion.js 16000
    ```
 
-5. Recompute the platform loads:
+5. Recompute the platform loads and check the workspace:
 
    ```sh
    python3 analysis/platform_loads.py render/build/mesh cad/pod
+   python3 analysis/platform_clearance.py cad/pod
    ```
 
 ## Working on the CAD

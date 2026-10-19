@@ -25,14 +25,18 @@ shell_half_w = 880  # mm side posts from the centreline
 screen_x = 800  # mm windscreen display plane
 screen_z = 1330  # mm windscreen display centre
 
-sled_top = 78  # mm surge carriage top
-roll_z = 118  # mm roll shaft axis
-pitch_z = 176  # mm pitch shaft axis
-post_z0 = 190  # mm heave guide start
-post_h = 190  # mm heave guide length, stops under the floor
-deck_z = 430  # mm moving floor centre
+# Motion platform: four crank actuators lift the floor's corners; a passive centre post with a
+# universal joint under the floor's centre of mass takes the side loads and sets the pivot.
+pivot_x = -300  # mm universal joint under the loaded floor's centre of mass
+pivot_z = 380  # mm universal joint centre: roll and pitch turn about it
+act_xf = 170  # mm front actuator line
+act_xr = -770  # mm rear actuator line
+act_y = 520  # mm actuators from the centreline
+crank_r = 125  # mm crank radius: +-113 mm at the floor (crank at +-65 deg)
+link_len = 245  # mm connecting link, pin to pin
+deck_z = 455  # mm moving floor centre: cranks clear the ground by 25 mm at full swing
 deck_t = 12  # mm moving floor thickness
-deck_top = 436  # mm moving floor top
+deck_top = 461  # mm moving floor top
 
 seat_y = 330  # mm seat centreline from the car centreline
 seat_rake = 18  # deg seat back from vertical
@@ -44,7 +48,7 @@ elbow_deg = 100  # deg target elbow angle, hands at quarter to three
 seat_travel = 200  # mm seat rail travel forward of the 95th percentile position
 seat_lift_max = 80  # mm cushion lift for small drivers to see over the rim
 column_travel = 60  # mm steering column reach adjustment
-wheel_z = 1080  # mm wheel centre height
+wheel_z = 1105  # mm wheel centre height (645 above the floor top)
 wheel_tilt = 25  # deg wheel face from vertical, top toward the screens
 wheel_r = 175  # mm rim radius (350 mm rally wheel)
 column_len = 280  # mm wheel centre to the dash crossbar along the column

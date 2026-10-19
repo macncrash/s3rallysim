@@ -67,11 +67,11 @@ for side, s in (("l", 1), ("r", -1)):
     shell.box("step_high_" + side, 460, 200, 150, at=(70, s * (W + 180), 255), op="new")
 
 shell.box("floor", LENGTH - 60, 2 * W - 40, 12, at=(MID_X, 0, 6), op="new")
-shell.box("pit", 1460, 1360, 28, at=(70, 0, 10), op="cut", body="floor")
+# Pit for the motion base, cranks and the moving floor's travel.
+shell.box("pit", 1980, 1400, 28, at=(-125, 0, 10), op="cut", body="floor")
 shell.box("wall_b", 6, 2 * W - 80, shell_h - 120, at=(shell_rear + 27, 0, shell_h / 2), op="new")
 shell.box("roof", LENGTH - 80, 2 * W - 80, 6, at=(MID_X, 0, shell_h - 48), op="new")
 shell.box("valance", 50, 2 * W - 140, 70, at=(shell_front - 80, 0, shell_h - 125), op="new")
-shell.box("shelf", 200, 400, 8, at=(shell_rear + 140, 0, 300), op="new")
 
 # Display mount: two beams between the front posts and brackets to the display's back.
 for name, z in (("beam_lo", screen_z - 300), ("beam_hi", screen_z + 300)):
@@ -89,4 +89,4 @@ panels = ["floor", "wall_b", "roof"] + [
 shell.material("aluminum-6061-t6", finish="powder-coated", color="#1c1f24")
 shell.material("abs", bodies=panels, color="#141414")
 shell.material("abs", bodies=["estop_base", "estop_cap"], color="#d00000")
-shell.material("aluminum-6061-t6", bodies=["shelf", "valance"], color="#2a2e33")
+shell.material("aluminum-6061-t6", bodies=["valance"], color="#2a2e33")

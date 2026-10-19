@@ -11,9 +11,11 @@ seat on the centreline, no co-driver.
 The occupants are 5th or 95th percentile mannequins in race gear (driver_pct, codriver_pct);
 ergo.py places the seats, column and pedals for them. Their mass is a lumped mass at the torso.
 
-Actuator rods are an open chain slaved to the axis they drive. The real rod end is pinned to
-the moving stage. STEVE does not solve that closed loop. The motion stack under the floor is the
-one-seat stack and is not yet sized for two occupants.
+The motion platform (motion.py): four rotary crank actuators lift the floor's corners through
+upright links; a passive heave column with a universal joint under the floor's centre of mass takes
+the side loads and is the roll and pitch pivot; the lot rides a surge carriage. STEVE doesn't solve
+closed loops, so each crank and link is geared to the floor's axes (small-angle ratios); the build
+checks every pose of the motion cue against the exact crank geometry and refuses one out of reach.
 """
 
 from steve import Design
@@ -22,6 +24,7 @@ from params import (
     seat_y, driver_pct, codriver_pct,
 )
 import ergo
+import motion
 from components.shell import shell, DOOR_X0
 from components.door import door
 from components.door_r import door_r
@@ -31,12 +34,14 @@ from components.monitor_mirror import monitor_mirror
 from components.bezel import bezel
 from components.base import base
 from components.sled import sled
-from components.roll_cradle import roll_cradle
-from components.pitch_cradle import pitch_cradle
+from components.heave_car import heave_car
+from components.ujoint import ujoint
 from components.deck import deck
-from components.body_z import body_z
-from components.body_x import body_x
-from components.rod_z import rod_z
+from components.drive_a import drive_a
+from components.drive_b import drive_b
+from components.crank_l import crank_l
+from components.crank_r import crank_r
+from components.link import link
 from components.seat import seat
 from components.mount_driver import mount_driver
 from components.mount_codriver import mount_codriver
@@ -87,15 +92,18 @@ design.add(monitor_mirror, name="mirror", at=((screen_x - 40, 0, screen_z + 430)
 # Motion stack.
 design.add(base)
 design.add(sled)
-design.add(roll_cradle)
-design.add(pitch_cradle)
+design.add(heave_car)
+design.add(ujoint)
 design.add(deck)
-design.add(body_z, name="heave_body_l", at=(70, 36, 210))
-design.add(body_z, name="heave_body_r", at=(70, -36, 210))
-design.add(rod_z, name="heave_rod_l", at=(70, 36, 271))
-design.add(rod_z, name="heave_rod_r", at=(70, -36, 271))
-design.add(body_x, name="surge_body", at=(-360, -310, 58))
-design.add(rod_z, name="surge_rod", at=((-270, -310, 58), ("Y", 90)))
+DRIVES = {"fl": (drive_a, 0), "rr": (drive_a, 180), "rl": (drive_b, 0), "fr": (drive_b, 180)}
+for name, x, y in motion.ACTUATORS:
+    side = 1 if y > 0 else -1
+    ax = motion.crank_axis(x, y)
+    plane = (ax[0], y - side * 30, ax[2])
+    comp, turn = DRIVES[name]
+    design.add(comp, name="drive_" + name, at=(plane, ("Z", turn)))
+    design.add(crank_l if side > 0 else crank_r, name="crank_" + name, at=plane)
+    design.add(link, name="link_" + name, at=motion.crank_tip(x, y))
 
 # Cockpit on the moving floor.
 d_seat = (ergo.seat_x(driver_pct), ergo.DRIVER_Y, ergo.seat_z(driver_pct))
@@ -108,26 +116,16 @@ design.add(pedals)
 
 design.revolute("door_hinge", "shell", "door", axis=door.face("pin.side"), limits=(0, 105))
 design.revolute("door_r_hinge", "shell", "door_r", axis=door_r.face("pin.side"), limits=(-105, 0))
-design.slider("surge", "base", "sled", axis=base.face("rail_l.side"), limits=(-surge_mm, surge_mm))
-design.revolute("roll", "sled", "roll_cradle", axis=roll_cradle.face("shaft.side"), limits=(-roll_deg, roll_deg))
-design.revolute(
-    "pitch", "roll_cradle", "pitch_cradle",
-    axis=pitch_cradle.face("shaft.side"), limits=(-pitch_deg, pitch_deg),
-)
-design.slider("heave", "pitch_cradle", "deck", axis=pitch_cradle.face("post_fl.side"), limits=(-heave_mm, heave_mm))
-design.slider(
-    "heave_rod_l", "pitch_cradle", "heave_rod_l",
-    axis=pitch_cradle.face("post_fl.side"), limits=(-heave_mm, heave_mm),
-)
-design.slider(
-    "heave_rod_r", "pitch_cradle", "heave_rod_r",
-    axis=pitch_cradle.face("post_fl.side"), limits=(-heave_mm, heave_mm),
-)
-design.slider("surge_rod", "base", "surge_rod", axis=base.face("rail_l.side"), limits=(-surge_mm, surge_mm))
+design.slider("surge", "base", "sled", axis="X", limits=(-surge_mm, surge_mm))
+design.slider("heave", "sled", "heave_car", axis="Z", limits=(-heave_mm, heave_mm))
+design.revolute("roll", "heave_car", "ujoint", axis=ujoint.face("pin_x.side"), limits=(-roll_deg, roll_deg))
+design.revolute("pitch", "ujoint", "deck", axis=ujoint.face("pin_y.side"), limits=(-pitch_deg, pitch_deg))
+for name, x, y in motion.ACTUATORS:
+    crank = crank_l if y > 0 else crank_r
+    design.rigid("drive_" + name + "_on", "sled", "drive_" + name)
+    design.revolute("crank_" + name, "drive_" + name, "crank_" + name, axis=crank.face("hub.side"), limits=(-80, 80))
+    design.revolute("link_" + name, "crank_" + name, "link_" + name, axis=link.face("eye_lo.side"), limits=(-80, 80))
 
-design.rigid("body_l", "pitch_cradle", "heave_body_l")
-design.rigid("body_r", "pitch_cradle", "heave_body_r")
-design.rigid("surge_mount", "base", "surge_body")
 design.rigid("seat_d_on", "deck", "seat_d")
 design.rigid("mount_d_on", "deck", "mount_driver")
 design.rigid("driver_in", "seat_d", "driver")
@@ -135,8 +133,16 @@ design.rigid("wheel_on", "deck", "wheel")
 design.rigid("dash_on", "deck", "dash")
 design.rigid("pedals_on", "deck", "pedals")
 
-design.couple("heave_drive", {"heave": 1, "heave_rod_l": 1, "heave_rod_r": 1}, limits=(-heave_mm, heave_mm))
-design.couple("surge_drive", {"surge": 1, "surge_rod": 1}, limits=(-surge_mm, surge_mm))
+# Each crank (and its link, kept upright) follows the floor's axes with small-angle ratios.
+gears = {"heave_drive": {"heave": 1}, "pitch_drive": {"pitch": 1}, "roll_drive": {"roll": 1}}
+for name, x, y in motion.ACTUATORS:
+    for (axis, g), ratio in zip(gears.items(), motion.crank_ratios(x, y)):
+        g["crank_" + name] = ratio
+        g["link_" + name] = -ratio
+design.couple("heave_drive", gears["heave_drive"], limits=(-heave_mm, heave_mm))
+design.couple("pitch_drive", gears["pitch_drive"], limits=(-pitch_deg, pitch_deg))
+design.couple("roll_drive", gears["roll_drive"], limits=(-roll_deg, roll_deg))
+design.couple("surge_drive", {"surge": 1}, limits=(-surge_mm, surge_mm))
 
 dp = ergo.posture(driver_pct, "driver")
 b = ergo.BODY[driver_pct]
@@ -203,18 +209,29 @@ if rally:
     design.revolute("hand_brake", "handbrake", "hb_lever", axis=handbrake.face("bore_l.side"), limits=(0, 30))
     design.rigid("buttons_on", "deck", "button_box")
 
-design.pose("rest", heave_drive=0, surge_drive=0, roll=0, pitch=0, door_hinge=0, door_r_hinge=0)
-design.pose("bump", heave_drive=22, pitch=2, surge_drive=-8)
-design.pose("jump", heave_drive=40, pitch=7, surge_drive=18, roll=1)
-design.pose("air", heave_drive=8, pitch=4, surge_drive=40, roll=-1)
-design.pose("land", heave_drive=-40, pitch=-7, surge_drive=-30, roll=-2)
-design.pose("corner", roll=-7, heave_drive=12, pitch=-1, surge_drive=6)
+CUE = {
+    "rest": dict(heave_drive=0, surge_drive=0, roll_drive=0, pitch_drive=0),
+    "bump": dict(heave_drive=22, pitch_drive=2, surge_drive=-8, roll_drive=0),
+    "jump": dict(heave_drive=32, pitch_drive=7, surge_drive=18, roll_drive=1),
+    "air": dict(heave_drive=8, pitch_drive=4, surge_drive=40, roll_drive=-1),
+    "land": dict(heave_drive=-40, pitch_drive=-7, surge_drive=-30, roll_drive=-2),
+    "corner": dict(roll_drive=-7, heave_drive=12, pitch_drive=-1, surge_drive=6),
+}
+# The motion cue must stay inside the cranks' reach (+-65 deg): checked on the exact geometry.
+for pose, v in CUE.items():
+    for name, x, y in motion.ACTUATORS:
+        a = motion.crank_angle(x, y, v["heave_drive"], v["pitch_drive"], v["roll_drive"])
+        if a is None or abs(a) > 65:
+            raise ValueError(f"pose {pose!r} is out of reach for actuator {name}: crank {a}")
+for pose, v in CUE.items():
+    design.pose(pose, **v, **({"door_hinge": 0, "door_r_hinge": 0} if pose == "rest" else {}))
 design.pose("entry", door_hinge=100, door_r_hinge=-100)
-# Motion envelope corners: every axis at its stop at once, floor up.
-design.pose("env_fl", surge_drive=surge_mm, pitch=pitch_deg, roll=roll_deg, heave_drive=heave_mm)
-design.pose("env_fr", surge_drive=surge_mm, pitch=pitch_deg, roll=-roll_deg, heave_drive=heave_mm)
-design.pose("env_bl", surge_drive=-surge_mm, pitch=-pitch_deg, roll=roll_deg, heave_drive=heave_mm)
-design.pose("env_br", surge_drive=-surge_mm, pitch=-pitch_deg, roll=-roll_deg, heave_drive=heave_mm)
+# Cabin envelope: every axis at its stop at once. Beyond the actuators' reach on purpose: a
+# conservative superset of the motion for the occupants' clearance check only.
+design.pose("env_fl", surge_drive=surge_mm, pitch_drive=pitch_deg, roll_drive=roll_deg, heave_drive=heave_mm)
+design.pose("env_fr", surge_drive=surge_mm, pitch_drive=pitch_deg, roll_drive=-roll_deg, heave_drive=heave_mm)
+design.pose("env_bl", surge_drive=-surge_mm, pitch_drive=-pitch_deg, roll_drive=roll_deg, heave_drive=heave_mm)
+design.pose("env_br", surge_drive=-surge_mm, pitch_drive=-pitch_deg, roll_drive=-roll_deg, heave_drive=heave_mm)
 
 design.animation(
     "rally_stage",
@@ -259,6 +276,23 @@ design.fit_check(
     instances=occupants + cabin + cockpit,
     poses=["rest", "jump", "land", "corner", "env_fl", "env_fr", "env_bl", "env_br"],
 )
+
+# Platform fit: the mechanism against itself, the floor's under-frame and the shell, through the
+# motion cue (reachable poses) and each axis. Pins in their eyes, blocks on rails, the sleeve on its
+# column and the drives on the carriage are the designed contacts.
+mech = ["base", "sled", "heave_car", "ujoint", "deck"] + [
+    p + "_" + n for n, _x, _y in motion.ACTUATORS for p in ("drive", "crank", "link")]
+design.contact("sled", "base", kind="seated", max_overlap_mm3=1_000)
+design.contact("heave_car", "sled", kind="seated", max_overlap_mm3=1_000)
+design.contact("ujoint", "heave_car", kind="seated", max_overlap_mm3=2_000)
+design.contact("ujoint", "deck", kind="seated", max_overlap_mm3=2_000)
+for n, _x, _y in motion.ACTUATORS:
+    design.contact("drive_" + n, "sled", kind="seated", max_overlap_mm3=1_000)
+    design.contact("crank_" + n, "drive_" + n, kind="seated", max_overlap_mm3=2_000)
+    design.contact("link_" + n, "crank_" + n, kind="seated", max_overlap_mm3=2_000)
+    design.contact("link_" + n, "deck", kind="seated", max_overlap_mm3=2_000)
+design.fit_check("platform", instances=mech + ["shell", "mount_driver", "mount_codriver"] if rally else
+                 mech + ["shell", "mount_driver"], poses=list(CUE))
 
 design.explode(
     "major",

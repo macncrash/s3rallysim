@@ -1,6 +1,6 @@
 # S3 Rally Pod: two-seat cockpit, occupants, motion loads, intercom and telemetry
 
-Status, 2026-10-19. CAD: STEVE design "S3 Rally Pod", main revision 4 (the two-seat pod, merged from `two_seat`).
+Status, 2026-10-19. CAD: STEVE design "S3 Rally Pod", main revision 5 (two-seat cockpit + crank-actuator motion platform).
 Local source: `cad/pod/`. Renders: `renders/`, `gravity-renders/`. Load numbers: `analysis/platform_loads.json`.
 
 ## 1. Cockpit layout
@@ -70,28 +70,79 @@ What drove the fixes:
 - **Shell length:** at −7° pitch the seat-back tops swing back about 160 mm, which moved the rear wall back.
 - **Shell height:** the 95th-percentile helmet top is at 1,609 mm at rest.
 
-## 4. Motion platform: loads (not yet redesigned)
+## 4. Motion platform (`cad/pod/motion.py`)
 
-From the CAD masses (exact volume × library density) plus the occupants as lumped masses at the torso (`analysis/platform_loads.py`).
+**Architecture.** The old serial stack (sled → roll cradle → pitch cradle → heave posts, pivots at 118 and 176 mm) is
+gone. In its place:
+
+- **Four corner crank actuators lift the floor.** Each is a servo on a right-angle planetary gearbox driving a 125 mm
+  crank, with a 245 mm link on rod ends up to a clevis under the floor. The links' top eyes are spherical rod ends
+  (the floor tilts up to 7° about them).
+- **A passive centre post carries the side and fore-aft loads.** A heave sleeve slides on a square column, and a
+  universal joint on the sleeve holds the floor.
+  - The universal joint is the roll and pitch pivot, 380 mm up.
+  - It sits at x = −300, under the loaded floor's centre of mass. With two 95th-percentile occupants that centre of
+    mass is 18 mm from the pivot, so the old constant 1.6 kNm pitch load is gone.
+- **Surge:** the whole stack rides a surge carriage on size-25 profile rails, driven by a ballscrew.
+- **Floor height:** the floor top went up 25 mm (to 461 mm) so the cranks clear the ground by 25 mm at full swing. The
+  cockpit is positioned from the floor top, so the ergonomics are unchanged.
+
+**Workspace (`analysis/platform_clearance.py`, exact geometry).**
+
+- **Each axis alone:** heave ±40 mm, pitch ±7° and roll ±7° are each reachable over their full range.
+- **Combinations:**
+  - Full pitch with any heave: reachable.
+  - Full roll with heave from −40 to +35 mm: reachable.
+  - Full pitch *and* full roll together: **not** reachable. The motion software must blend the axes (normal for
+    4-actuator rigs).
+- **Built-in guard:** `main.py` refuses to build if any pose of the motion cue is out of the cranks' ±65° reach.
+- **Clearances over the whole workspace:**
+  - Links clear the floor's under-frame by ≥ 28 mm.
+  - Crank tips stay ≥ 25 mm above the ground.
+  - Links lean at most 18.5° from upright.
+
+**Fit checks (STEVE).** Both pass on main revision 5:
+
+| Check | Instance pairs | What it covers |
+|---|---|---|
+| `occupants` | 756 | Every pose and envelope corner |
+| `platform` | 670 | Every pose of the cue, plus a sweep of every axis |
+
+The only contacts are the designed ones (pins in eyes, blocks on rails, sleeve on column, drives on the carriage).
+STEVE gears the cranks with small-angle ratios and draws each link upright. The Blender walkaround and the Gravity sim
+solve each crank and link exactly.
+
+**Loads (`analysis/platform_loads.py`).**
 
 Cueing targets assumed:
 - heave 1 g
 - surge 0.6 g
 - roll and pitch 400°/s²
 
-| Crew | Heave mass | Heave force | Pitch I | Pitch peak | Roll I | Roll static | Roll peak | Surge force |
-|---|---|---|---|---|---|---|---|---|
-| 95 + 95 | 510 kg | 10.0 kN | 354 kg·m² | 4.4 kNm | 336 kg·m² | 32 Nm | 2.8 kNm | 3.1 kN |
-| 95 + 5 | 450 kg | 8.8 kN | 297 kg·m² | 3.6 kNm | 290 kg·m² | 226 Nm | 2.6 kNm | 2.8 kN |
-| 95 alone | 394 kg | 7.7 kN | 264 kg·m² | 3.1 kNm | 250 kg·m² | 407 Nm | 2.5 kNm | 2.4 kN |
-| 5 alone | 334 kg | 6.6 kN | 208 kg·m² | 2.3 kNm | 204 kg·m² | 213 Nm | 1.9 kNm | 2.1 kN |
+Every combination of those targets was checked. Forces are shared as four equal springs would share them.
 
-Findings:
-- **The motion stack under the floor is still the one-seat stack** (MGN15 rails, 16 mm heave guides, small drive blocks) and is nowhere near these loads. It needs a redesign.
-- **Pitch carries a constant load.** The loaded floor's centre of mass is about 320 mm behind the pitch axis, so the pitch drive holds about 1.6 kNm just to stay level. Move the pitch axis aft to the centre of mass, or counterbalance it.
-- **Asymmetric crews bias roll.** Driver alone, or a big driver with a small instructor, leaves 200–400 Nm on the roll drive the whole time. Size the roll drive for that continuously, or add a counterweight that moves with the passenger seat.
-- **The masses are conservative.** The seats are modelled as solid ABS (about 31 kg each against 8–10 kg for a real composite seat), and the dash crossbar and floor plate are solid. Expect the real moving mass to be 60–80 kg lower.
-- **The low pivots move heads a lot.** At 7° pitch or roll the occupants' heads translate 120–160 mm relative to the fixed screens, which gives false linear cues and parallax. The usual remedy is slow, rate-limited tilt (below the perception threshold) for sustained g, plus surge/heave to put the effective pivot near the head or hip. Use fast low-pivot rotation only for small, high-frequency road texture. Sources: [DLR](https://www.nads-sc.uiowa.edu/dscna/2005/papers/The_New_Dynamic_Driving_Simulator_%20DLR.pdf), [US 6431872](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6431872), [NASA TP-1999-208766](https://ntrs.nasa.gov/api/citations/19990080926/downloads/19990080926.pdf), [arXiv 1909.05833](https://arxiv.org/pdf/1909.05833). The platform redesign should make the effective pivot height a tunable parameter of the cueing software.
+| Crew | Floor mass | Actuator static | Actuator peak | Link tension peak | Crank peak torque | Centre post side load | Surge force |
+|---|---|---|---|---|---|---|---|
+| 95 + 95 | 568 kg | 1.32–1.46 kN | 5.1 kN | 2.2 kN | 641 Nm | 5.1 kN | 4.0 kN |
+| 95 + 5 | 508 kg | 1.07–1.42 kN | 4.8 kN | 1.9 kN | 595 Nm | 4.5 kN | 3.6 kN |
+| 95 alone | 452 kg | 0.85–1.36 kN | 4.4 kN | 1.7 kN | 553 Nm | 4.0 kN | 3.3 kN |
+| 5 alone | 392 kg | 0.68–1.24 kN | 3.9 kN | 1.4 kN | 487 Nm | 3.3 kN | 2.9 kN |
+
+- **Drive size:** about 2 kW servo with a 50:1 gearbox. That gives about 950 Nm peak (641 needed) and 320 Nm continuous
+  (183 Nm static).
+- **Links work in tension:** at −1 g heave combined with a tilt kick they pull at up to 2.2 kN, so the links and rod
+  ends must be rated for both directions.
+- **Uneven crews only shift load between corners:** the crank torques stay well inside the drive rating.
+- **Masses are conservative:** the seats are still solid placeholders (about 31 kg each).
+
+**Still to do on the platform:**
+
+- **Bought parts:** pick the real servos, gearboxes, rod ends, rails and ballscrew, using STEVE's standard-parts
+  catalogue.
+- **Structural check:** stress and stiffness on the floor frame and centre post (STEVE simulation).
+- **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
+  and the combined-axis envelope.
+- **Cueing:** virtual-pivot cueing near the occupants' heads. The universal joint is still about 1 m below them.
 
 ## 5. Intercom and headsets
 
@@ -143,8 +194,10 @@ AiM .xrk has no third-party writer.
 
 ## 7. Open items
 
-1. **Redesign the motion platform for the loads above:** pitch axis at the centre of mass, roll bias capacity or counterweight, and raised or virtual pivots.
-2. **Choose the vehicle-dynamics engine** per variant and write the loose-surface acceptance test.
-3. **Get the intercom technical sheets** and design the audio harness and recorder.
+1. **Platform bought parts and structure:** pick the servos, gearboxes, rod ends, rails and ballscrew, then check the
+   floor frame and centre post for stress and stiffness (see 4).
+2. **Vehicle-dynamics engine:** choose one per variant and write the loose-surface acceptance test.
+3. **Intercom:** get the technical sheets and design the audio harness and recorder.
 4. **Seat buck trial** with real drivers to confirm the ergonomic targets.
-5. **Real-weight parts:** replace the solid placeholder seats, crossbar and floor with real-weight parts and re-run `analysis/platform_loads.py`.
+5. **Real-weight parts:** replace the solid placeholder seats, crossbar and floor with real-weight parts and re-run
+   `analysis/platform_loads.py`.

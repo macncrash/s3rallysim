@@ -7,8 +7,9 @@ Usage:
 scene.json comes from build_scene.py. Millimetres in, metres in Blender, Z up as in STEVE.
 The occupants' eye views ride the moving floor, so the fixed screens move in them as they would
 for the real crew.
-The floor stack nests like the STEVE joints: surge -> roll (X at z 118) -> pitch (Y at z 176)
--> heave. Screens, shell and door stay on the ground.
+The floor stack nests like the STEVE joints: surge -> heave -> roll (X) -> pitch (Y), both about
+the universal joint. The four cranks and links are solved exactly every frame from the floor pose
+(STEVE's own animation gears them with small-angle ratios). Screens, shell and doors stay put.
 """
 
 import json
@@ -26,14 +27,14 @@ STILLS = "--stills" in argv
 FPS = 24
 SECONDS = 60
 MM = 0.001
-ROLL_Z = 118 * MM
-PITCH_Z = 176 * MM
 
 # Shots: name, start s, end s, camera, lens mm, hidden object-name prefixes.
 # camera: ("orbit", radius, height, deg_from, deg_to), ("path", (from, to), (from, to)) in metres,
 # or ("pov", who) at that occupant's eye, riding the moving floor.
 HEAD = ("helmet", "visor", "chin", "boom_mic", "mic_capsule", "neck", "tether")
 WALLS = ("shell.", "door", "window_", "bezel_")
+COCKPIT = ("deck.", "driver.", "codriver.", "seat_", "mount_", "dash.", "wheel.", "pedals.", "footrest.", "tunnel.",
+           "dogbox.", "dog_cap.", "lever.", "knob.", "handbrake.", "hb_lever.", "button_box.")
 SHOTS = [
     ("orbit", 0, 9, ("orbit", 4.6, 2.1, 210, 330), 28, ()),
     ("driver_eye", 9, 18, ("pov", "driver"), 18, tuple("driver." + h for h in HEAD)),
@@ -43,10 +44,11 @@ SHOTS = [
     ("leg_room", 35, 43, ("path", ((0.1, 2.6, 0.95), (0.1, 0.3, 0.8)), ((0.3, 2.6, 0.9), (0.1, 0.3, 0.75))), 30,
      ("shell.wall_", "shell.post_fl", "shell.post_bl", "shell.jamb_a_l", "shell.jamb_b_l", "shell.header_l",
       "shell.rail_l", "shell.roof_l", "shell.step_", "shell.knuckle", "door.", "window_l", "bezel_l")),
-    ("footwell", 43, 50, ("path", ((0.74, 0.02, 1.0), (0.42, 0.33, 0.62)), ((0.74, -0.05, 1.02), (0.42, 0.3, 0.6))),
+    ("footwell", 43, 47, ("path", ((0.74, 0.02, 1.0), (0.42, 0.33, 0.62)), ((0.74, -0.05, 1.02), (0.42, 0.3, 0.6))),
      16, ()),
-    ("base", 50, 55, ("path", ((2.4, 2.0, 0.8), (0.05, 0.0, 0.35)), ((2.0, -2.2, 0.9), (0.05, 0.0, 0.35))), 30,
-     WALLS + ("windscreen", "mirror", "driver.", "codriver.", "seat_", "mount_", "dash.", "wheel.")),
+    # The motion platform with the floor and cockpit lifted away: drives, cranks, links, centre post.
+    ("platform", 47, 55, ("path", ((1.5, -1.8, 0.85), (-0.35, 0.0, 0.2)), ((1.3, 1.9, 0.75), (-0.35, 0.0, 0.2))), 26,
+     WALLS + ("windscreen", "mirror") + COCKPIT),
     ("finale", 55, 60, ("orbit", 5.0, 2.3, -30, 30), 28, ()),
 ]
 
@@ -93,9 +95,33 @@ def stage_values(t, keys, poses):
         if ta <= t <= tb:
             u = smooth((t - ta) / (tb - ta))
             a, b = poses[pa], poses[pb]
-            names = ("surge_drive", "roll", "pitch", "heave_drive")
+            names = ("surge_drive", "roll_drive", "pitch_drive", "heave_drive")
             return {n: a.get(n, 0) + (b.get(n, 0) - a.get(n, 0)) * u for n in names}
-    return {"surge_drive": 0, "roll": 0, "pitch": 0, "heave_drive": 0}
+    return {"surge_drive": 0, "roll_drive": 0, "pitch_drive": 0, "heave_drive": 0}
+
+
+def floor_point(p, pivot, heave, pitch_deg, roll_deg):
+    """A floor point (mm) relative to the surge carriage for a floor pose: pitch inside roll, then heave."""
+    a, r = math.radians(pitch_deg), math.radians(roll_deg)
+    dx, dy, dz = p[0] - pivot[0], p[1], p[2] - pivot[2]
+    x1 = dx * math.cos(a) + dz * math.sin(a)
+    z1 = -dx * math.sin(a) + dz * math.cos(a)
+    y2 = dy * math.cos(r) - z1 * math.sin(r)
+    z2 = dy * math.sin(r) + z1 * math.cos(r)
+    return (x1 + pivot[0], y2, z2 + pivot[2] + heave)
+
+
+def solve_actuator(act, pivot, r, length, v):
+    """Crank angle (rad, about +Y, + lowers the tip) and the link's tilt from upright (rad, same sense)."""
+    pin = floor_point(act["pin"], pivot, v["heave_drive"], v["pitch_drive"], v["roll_drive"])
+    ax = act["axis"]
+    ddx, ddz = pin[0] - ax[0], pin[2] - ax[2]
+    d = math.hypot(ddx, ddz)
+    c = max(-1.0, min(1.0, (r * r + d * d - length * length) / (2 * r * d)))
+    tip_ang = math.atan2(ddz, ddx) - math.acos(c)  # tip direction, counter-clockwise from +X in X-Z
+    tip = (ax[0] + r * math.cos(tip_ang), ax[2] + r * math.sin(tip_ang))
+    tilt = math.atan2(pin[0] - tip[0], pin[2] - tip[1])  # from +Z toward +X
+    return -tip_ang, tilt
 
 
 def look(cam, origin, target):
@@ -133,11 +159,17 @@ def main():
         e.location = loc
         return e
 
+    pivot = data["pivot"]
     surge = empty("surge", None, (0, 0, 0))
-    roll = empty("roll", surge, (0, 0, ROLL_Z))
-    pitch = empty("pitch", roll, (0, 0, PITCH_Z - ROLL_Z))
-    heave = empty("heave", pitch, (0, 0, 0))
-    stages = {"surge": surge, "roll": roll, "pitch": pitch, "heave": heave}
+    heave = empty("heave", surge, (0, 0, 0))
+    roll = empty("roll", heave, (pivot[0] * MM, 0, pivot[2] * MM))
+    pitch = empty("pitch", roll, (0, 0, 0))
+    stages = {"surge": surge, "heave": heave, "roll": roll, "pitch": pitch}
+    acts = data["actuators"]
+    for act in acts:
+        n = act["name"]
+        stages["crank:" + n] = empty("crank_" + n, surge, tuple(c * MM for c in act["axis"]))
+        stages["link:" + n] = empty("link_" + n, surge, tuple(c * MM for c in act["tip"]))
     bpy.context.view_layer.update()
 
     shell_objs = []
@@ -177,18 +209,29 @@ def main():
         obj.location = loc
         scene.collection.objects.link(obj)
 
-    # Motion: STEVE rally_stage, looped, keyed every frame.
+    # Motion: STEVE rally_stage, looped, keyed every frame; cranks and links solved exactly.
     anim = data["animations"]["rally_stage"]
+    r, length = data["crank_r"], data["link_len"]
     for frame in range(scene.frame_start, scene.frame_end + 1):
         v = stage_values((frame - 1) / FPS, anim["keys"], data["poses"])
         surge.location.x = v["surge_drive"] * MM
-        roll.rotation_euler.x = math.radians(v["roll"])
-        pitch.rotation_euler.y = math.radians(v["pitch"])
         heave.location.z = v["heave_drive"] * MM
+        roll.rotation_euler.x = math.radians(v["roll_drive"])
+        pitch.rotation_euler.y = math.radians(v["pitch_drive"])
         surge.keyframe_insert("location", index=0, frame=frame)
+        heave.keyframe_insert("location", index=2, frame=frame)
         roll.keyframe_insert("rotation_euler", index=0, frame=frame)
         pitch.keyframe_insert("rotation_euler", index=1, frame=frame)
-        heave.keyframe_insert("location", index=2, frame=frame)
+        for act in acts:
+            crank, tilt = solve_actuator(act, pivot, r, length, v)
+            ce, le = stages["crank:" + act["name"]], stages["link:" + act["name"]]
+            ce.rotation_euler.y = crank
+            ax = act["axis"]
+            le.location = ((ax[0] + r * math.cos(-crank)) * MM, act["tip"][1] * MM, (ax[2] + r * math.sin(-crank)) * MM)
+            le.rotation_euler.y = tilt
+            ce.keyframe_insert("rotation_euler", index=1, frame=frame)
+            le.keyframe_insert("location", frame=frame)
+            le.keyframe_insert("rotation_euler", index=1, frame=frame)
 
     # One camera per shot, switched by timeline markers; hidden bodies keyed per shot.
     eyes = data.get("eyes", {})
@@ -209,8 +252,8 @@ def main():
             e = Vector(eyes[how[1]]) * MM
             origin = e + Vector((0.11, 0.0, 0.01))
             look(cam, origin, origin + Vector((1.0, -0.12 if how[1] == "driver" else 0.12, -0.12)))
-            cam.parent = heave
-            cam.matrix_parent_inverse = heave.matrix_world.inverted()
+            cam.parent = pitch
+            cam.matrix_parent_inverse = pitch.matrix_world.inverted()
         else:
             for f in range(f0, f1 + 1, 2):
                 u = (f - f0) / max(1, f1 - f0)

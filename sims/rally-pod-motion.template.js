@@ -22,7 +22,7 @@ export const meta = {
   bloom: 0.3,
   doc: {
     about: 'Motion cue for the enclosed two-seat rally pod, drawn from the CAD meshes. The shell and screens stay put; the floor carries both occupants, the seats, wheel, pedals and dash on surge, roll, pitch and heave.',
-    howItWorks: 'A 9.6 s stage keyed like the CAD animation: bump, jump nose-up, flight, landing, then a long corner. Each point belongs to a motion stage and is moved through the same nested chain as the CAD joints: heave inside pitch inside roll inside surge.',
+    howItWorks: 'A 9.6 s stage keyed like the CAD animation: bump, jump, flight, landing, then a long corner. Each point belongs to a motion stage: the floor turns about the universal joint (pitch inside roll), heaves and surges; the four cranks and links are solved exactly each step to follow it.',
     equations: [
       { label: 'chain', latex: 'p_w = S_x\\,R_x(\\phi)\\,R_y(\\theta)\\,H_z\\,p' },
     ],
@@ -31,9 +31,9 @@ export const meta = {
       { key: 'jump', symbol: 'A', meaning: 'Scales every key of the cue. 1 is the full stage.' },
     ],
     integrator: 'Direct sample of a scripted cue with smoothstep easing between keys. No force integration.',
-    mapping: '1 world unit = 700 mm. Y is up. Roll about X at 118 mm, pitch about Y at 176 mm, as in the CAD.',
+    mapping: '1 world unit = 700 mm. Y is up. Roll about X and pitch about Y through the universal joint, as in the CAD.',
     assumptions: 'Cue values are the CAD poses. Occupants are 95th percentile mannequins in race gear.',
-    limitations: 'No actuator dynamics, compliance or washout. The low pivots are modelled as built, so heads swing as they would on the real rig.',
+    limitations: 'No actuator dynamics, compliance or washout. Motion is the scripted cue, not a vehicle model.',
     references: [],
   },
 };
@@ -44,7 +44,7 @@ const KEYS = [
   [0, { h: 0, p: 0, s: 0, r: 0 }],
   [1.2, { h: 22, p: 2, s: -8, r: 0 }],
   [2.0, { h: 0, p: 0, s: 0, r: 0 }],
-  [3.2, { h: 40, p: 7, s: 18, r: 1 }],
+  [3.2, { h: 32, p: 7, s: 18, r: 1 }],
   [4.2, { h: 8, p: 4, s: 40, r: -1 }],
   [5.0, { h: -40, p: -7, s: -30, r: -2 }],
   [6.4, { h: 0, p: 0, s: 0, r: 0 }],
@@ -125,25 +125,71 @@ export function create(ctx) {
   const c = { h: 0, p: 0, s: 0, r: 0 };
   const peak = { h: 0, p: 0, s: 0, r: 0 };
 
+  const PV = POINTS.pivot, R = POINTS.crankR, L = POINTS.linkLen, ACTS = POINTS.acts;
+  const crankAng = new Float64Array(4), tipX = new Float64Array(4), tipZ = new Float64Array(4);
+  const linkTilt = new Float64Array(4);
+
+  // Pitch (about Y) inside roll (about X), both about the universal joint, then heave. In mm.
+  function floorPoint(x, y, z, sp, cp, sr, cr, heave, out) {
+    const dx = x - PV[0], dz = z - PV[2];
+    const x1 = dx * cp + dz * sp;
+    const z1 = -dx * sp + dz * cp;
+    out[0] = x1 + PV[0];
+    out[1] = y * cr - z1 * sr;
+    out[2] = y * sr + z1 * cr + PV[2] + heave;
+  }
+
+  const tmp = [0, 0, 0];
+  function solve(sp, cp, sr, cr, heave) {
+    for (let a = 0; a < 4; a++) {
+      const act = ACTS[a];
+      floorPoint(act.pin[0], act.pin[1], act.pin[2], sp, cp, sr, cr, heave, tmp);
+      const ddx = tmp[0] - act.axis[0], ddz = tmp[2] - act.axis[2];
+      const d = Math.hypot(ddx, ddz);
+      const c = Math.max(-1, Math.min(1, (R * R + d * d - L * L) / (2 * R * d)));
+      const tipAng = Math.atan2(ddz, ddx) - Math.acos(c);
+      crankAng[a] = tipAng;
+      tipX[a] = act.axis[0] + R * Math.cos(tipAng);
+      tipZ[a] = act.axis[2] + R * Math.sin(tipAng);
+      linkTilt[a] = Math.atan2(tmp[0] - tipX[a], tmp[2] - tipZ[a]);
+    }
+  }
+
   function place(g) {
-    const sp = Math.sin(c.p * g * Math.PI / 180), cp = Math.cos(c.p * g * Math.PI / 180);
-    const sr = Math.sin(c.r * g * Math.PI / 180), cr = Math.cos(c.r * g * Math.PI / 180);
+    const rad = Math.PI / 180;
+    const sp = Math.sin(c.p * g * rad), cp = Math.cos(c.p * g * rad);
+    const sr = Math.sin(c.r * g * rad), cr = Math.cos(c.r * g * rad);
     const heave = c.h * g, surge = c.s * g;
+    solve(sp, cp, sr, cr, heave);
     for (let i = 0; i < m; i++) {
       let x = xyz[i * 3], y = xyz[i * 3 + 1], z = xyz[i * 3 + 2];
       const st = stage[i];
-      if (st >= 4) z += heave;
-      if (st >= 3) {
-        const dz = z - 176;
-        const x1 = x * cp + dz * sp;
-        z = -x * sp + dz * cp + 176;
-        x = x1;
-      }
-      if (st >= 2) {
-        const dz = z - 118;
-        const y1 = y * cr - dz * sr;
-        z = y * sr + dz * cr + 118;
-        y = y1;
+      if (st >= 5 && st <= 8) {
+        // Crank: turn about its axis (CCW in X-Z by the tip angle).
+        const act = ACTS[st - 5], a = crankAng[st - 5];
+        const dx = x - act.axis[0], dz = z - act.axis[2];
+        x = act.axis[0] + dx * Math.cos(a) - dz * Math.sin(a);
+        z = act.axis[2] + dx * Math.sin(a) + dz * Math.cos(a);
+      } else if (st >= 9) {
+        // Link: tilt about its bottom pin, then move the pin to the crank tip.
+        const k = st - 9, act = ACTS[k], t = linkTilt[k];
+        const dx = x - act.tip[0], dz = z - act.tip[2];
+        x = tipX[k] + dx * Math.cos(t) + dz * Math.sin(t);
+        z = tipZ[k] - dx * Math.sin(t) + dz * Math.cos(t);
+      } else if (st >= 2) {
+        if (st >= 4) {
+          const dx = x - PV[0], dz = z - PV[2];
+          const x1 = dx * cp + dz * sp;
+          z = -dx * sp + dz * cp + PV[2];
+          x = x1 + PV[0];
+        }
+        if (st >= 3) {
+          const dz = z - PV[2];
+          const y1 = y * cr - dz * sr;
+          z = y * sr + dz * cr + PV[2];
+          y = y1;
+        }
+        z += heave;
       }
       if (st >= 1) x += surge;
       const o = i * 3;

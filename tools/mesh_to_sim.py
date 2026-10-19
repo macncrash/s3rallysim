@@ -14,7 +14,12 @@ import random
 import struct
 import sys
 
-STAGES = {"ground": 0, "surge": 1, "roll": 2, "pitch": 3, "heave": 4}
+# Stage codes: 0 ground, 1 surge carriage, 2 heave sleeve, 3 universal joint, 4 floor,
+# 5-8 cranks and 9-12 links (fl, fr, rl, rr).
+ACTS = ("fl", "fr", "rl", "rr")
+STAGES = {"ground": 0, "surge": 1, "heave": 2, "roll": 3, "pitch": 4}
+STAGES.update({"crank:" + n: 5 + i for i, n in enumerate(ACTS)})
+STAGES.update({"link:" + n: 9 + i for i, n in enumerate(ACTS)})
 # Bodies drawn per square metre, by instance. Big flat panels get few points, people get many.
 DENSITY = {"shell": 900, "door": 0, "door_r": 0, "windscreen": 2200, "window_l": 2200, "window_r": 2200,
            "driver": 30000, "codriver": 30000, "wheel": 40000, "pedals": 40000, "dash": 9000, "deck": 2500}
@@ -110,6 +115,9 @@ def main():
         "stage": base64.b64encode(bytes(stage)).decode(),
         "colour": base64.b64encode(bytes(colour)).decode(),
         "palette": [[round(v / 255, 3) for v in rgb] for rgb in palette],
+        "pivot": scene["pivot"], "crankR": scene["crank_r"], "linkLen": scene["link_len"],
+        "acts": [{"axis": a["axis"], "tip": a["tip"], "pin": a["pin"]}
+                 for a in sorted(scene["actuators"], key=lambda a: ACTS.index(a["name"]))],
     }
     src = open(template).read().replace("/*POINTS*/null", json.dumps(blob, separators=(",", ":")))
     src = src.replace("/*COUNT*/12000", str(count + 400))

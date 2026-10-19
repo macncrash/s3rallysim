@@ -61,17 +61,18 @@ class Design:
         return lambda *a, **k: None
 
 
-# Motion chain, outermost first. Instances not listed stay on the ground.
+# Motion chain, outermost first. Instances not listed stay on the ground. Each crank and link is its
+# own stage ("crank:fl", "link:fl"): the renderer solves them exactly from the floor pose.
 CHAIN = {
-    "surge": ["sled", "surge_rod"],
-    "roll": ["roll_cradle"],
-    "pitch": ["pitch_cradle", "heave_body_l", "heave_body_r"],
-    "heave": [
-        "deck", "heave_rod_l", "heave_rod_r", "seat_d", "seat_c", "mount_driver", "mount_codriver",
-        "driver", "codriver", "wheel", "dash", "pedals", "footrest", "tunnel", "dogbox", "dog_cap",
-        "lever", "knob", "handbrake", "hb_lever", "button_box",
+    "surge": ["sled", "drive_fl", "drive_fr", "drive_rl", "drive_rr"],
+    "heave": ["heave_car"],
+    "roll": ["ujoint"],
+    "pitch": [
+        "deck", "seat_d", "seat_c", "mount_driver", "mount_codriver", "driver", "codriver", "wheel", "dash",
+        "pedals", "footrest", "tunnel", "dogbox", "dog_cap", "lever", "knob", "handbrake", "hb_lever", "button_box",
     ],
 }
+ACTUATOR_STAGES = {p + "_" + n: p + ":" + n for n in ("fl", "fr", "rl", "rr") for p in ("crank", "link")}
 
 
 def main():
@@ -90,7 +91,7 @@ def main():
         exec(compile(fh.read(), "main.py", "exec"), scope)
     design = scope["design"]
 
-    group = {}
+    group = dict(ACTUATOR_STAGES)
     for stage, names in CHAIN.items():
         for name in names:
             group[name] = stage
@@ -110,11 +111,19 @@ def main():
         })
     ergo = sys.modules["ergo"]
     params = sys.modules["params"]
+    motion = sys.modules["motion"]
+    actuators = []
+    for name, x, y in motion.ACTUATORS:
+        side = 1 if y > 0 else -1
+        actuators.append({"name": name, "axis": motion.crank_axis(x, y), "tip": motion.crank_tip(x, y),
+                          "pin": motion.top_pin(x, y), "plane_y": y - side * 30})
     eyes = {"driver": ergo.posture(params.driver_pct, "driver")["eye"]}
     if ergo.rally:
         eyes["codriver"] = ergo.posture(params.codriver_pct, "codriver")["eye"]
     scene = {"items": items, "poses": design.poses, "animations": design.animations, "eyes": eyes,
-             "pedals": ergo.HEEL, "wheel": [ergo.WHEEL_X_HOME, ergo.DRIVER_Y, ergo.WHEEL_Z]}
+             "pedals": ergo.HEEL, "wheel": [ergo.WHEEL_X_HOME, ergo.DRIVER_Y, ergo.WHEEL_Z],
+             "pivot": [params.pivot_x, 0, params.pivot_z], "crank_r": params.crank_r,
+             "link_len": params.link_len, "actuators": actuators}
     with open(out, "w") as fh:
         json.dump(scene, fh, indent=1)
     print(len(items), "bodies,", len(design.poses), "poses ->", out)
