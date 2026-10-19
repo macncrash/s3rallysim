@@ -1,0 +1,10 @@
+# Regenerable: CAD mesh export, scene file, test stills
+render/build/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Superseded one-seat outputs
+renders/*.rev*.mp4
+gravity-renders/rally-pod-4-axis-cue-*.mp4
+sims/archive/
