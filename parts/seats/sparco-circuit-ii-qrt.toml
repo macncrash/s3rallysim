@@ -1,0 +1,22 @@
+# Sparco Circuit II QRT: fibreglass (QRT) side-mount competition bucket seat, large size of the Circuit QRT family
+id = "sparco-circuit-ii-qrt"
+category = "seats"
+maker = "Sparco"
+country = "IT"
+model = "Circuit II QRT (008011RNR)"
+notes = "Card is for the Circuit II (the large size; Sparco: 'Available in 2 sizes (Circuit II size L)'); the standard size is the Circuit QRT. Sparco gives shell 7.500 g, seat 8.700 g; mass_kg is the complete seat. Side fixing 4 x M8, 290 mm fore-aft spacing, 420.5 mm across the fixing points; external base width 487 mm, back shell width 560 mm, shoulder-strap slot height 700 mm (Sparco dimension drawing). Side brackets are not included and are not named on the page. Sparco publishes no internal hip/shoulder width, so internal_width_mm is left out: check against the 420 mm requirement on a sample. HANS / head-and-neck compatibility is not stated on the Sparco page. FIA 8855-1999 (not 8855-2021); homologation number from the Sparco product page. Sparco's product data lists country of manufacture as Tunisia."
+
+[sources]
+sparco = { title = "Sparco Official: CIRCUIT II QRT (008011RNR) product page", url = "https://www.sparco-official.com/en/sedile-circuit-ii-qrt.html" }
+sparco_dwg = { title = "Sparco Official: CIRCUIT QRT II dimension drawing (product gallery image)", url = "https://www.sparco-official.com/media/catalog/product/c/i/circuit_qrt_ii.jpg" }
+
+[values]
+fia_standard = { v = "8855-1999", src = "sparco" }
+fia_list_number = { v = "CS.408.18", src = "sparco" }
+mass_kg = { v = 8.7, src = "sparco" }
+overall_width_mm = { v = 625, src = "sparco_dwg" }
+overall_height_mm = { v = 950, src = "sparco_dwg" }
+overall_depth_mm = { v = 650, src = "sparco_dwg" }
+side_mount = { v = true, src = "sparco" }
+shell_material = { v = "QRT fibreglass", src = "sparco" }
+sizes = { v = "Circuit QRT (standard), Circuit II QRT (L)", src = "sparco" }

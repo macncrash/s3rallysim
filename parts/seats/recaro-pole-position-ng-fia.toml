@@ -1,0 +1,22 @@
+# Recaro Pole Position N.G. (FIA): GFRP competition bucket seat with fixed steel side mount
+id = "recaro-pole-position-ng-fia"
+category = "seats"
+maker = "Recaro"
+country = "DE"
+model = "Pole Position N.G. (FIA), velour black 070.98.UU11-01"
+notes = "Recaro lists no size options for this seat. Includes the FIA-approved Pole Position N.G. (FIA) steel side mount (item #7223825), 'No Substitutions'; Recaro's web page says the 590 mm dimension is valid for the fixed steel and fixed aluminium side mounts. mass_kg 7.7 is the complete shell incl. foam and upholstery, without side mount (web page lists side mounts at 3.3 / 2.6 kg steel, 1.1 kg aluminium). internal_width_mm is Recaro's 'Max seat cushion width' 385 mm (hip/cushion width), which is below the 420 mm requirement. Drawing also shows 406 mm and 500 mm across the base, 535 / 565 mm side heights, 873 mm back height and 122 mm head-restraint step; overall_height_mm uses the spec-table 'Max height' 850 mm, overall_depth_mm the 'Max seat cushion depth' 810 mm, overall_width_mm the 580 mm across the shoulders in the drawing. Recaro's overview table ticks GT and touring use but not 'for rally vehicles'. Other upholstery codes: 070.98.LL11-01, 070.98.LS19-01, 070.98.JS06-01. FIA list number not given in the hotsheet."
+
+[sources]
+hotsheet = { title = "RECARO hotsheet: Pole Position N.G. (FIA)", url = "https://www.recaro-automotive.com/fileadmin/01-products/documents/hotsheets/recaro-hotsheet-pole-position-ng-fia.pdf" }
+web = { title = "RECARO Automotive: RECARO Pole Position N.G. (FIA) product page", url = "https://www.recaro-automotive.com/en/race/recaro-pole-position-ng-fia" }
+
+[values]
+fia_standard = { v = "8855-1999", src = "hotsheet", page = 2 }
+hans_compatible = { v = true, src = "hotsheet", page = 2 }
+mass_kg = { v = 7.7, src = "hotsheet", page = 2 }
+internal_width_mm = { v = 385, src = "hotsheet", page = 2 }
+overall_width_mm = { v = 580, src = "hotsheet", page = 2 }
+overall_height_mm = { v = 850, src = "hotsheet", page = 2 }
+overall_depth_mm = { v = 810, src = "hotsheet", page = 2 }
+side_mount = { v = true, src = "hotsheet", page = 1 }
+shell_material = { v = "glass fiber reinforced polymer (GFRP)", src = "hotsheet", page = 2 }

@@ -1,0 +1,28 @@
+# HIWIN rolled ballscrew, 25 mm x 10 mm lead, single flanged nut to DIN 69051 part 5 form B (FSC/FSI)
+id = "hiwin-25-10k5-fsc-din"
+category = "ballscrews"
+maker = "HIWIN"
+country = "TW"
+model = "25-10K5 FSC/FSI (DIN 69051 part 5 form B), rolled"
+notes = """Row 25-10K5 in table 7.5 'Dimensions for DIN Rolled Ballscrews', FSC/FSI type, marked 'Stock' (PDF page 170, printed page 166). \
+PCD 25.1 mm, ball dia 3.175 mm, 5 circuits. Nut body D = 40 mm (g6), flange D6 = 62 mm, flange thickness L7 = 10 mm, \
+hole circle D4 = 51 mm with D5 = 6.6 mm holes, flange flat H1 = 48 mm, lube hole M6x1P. \
+Load ratings are printed in kgf (C = 2260 kgf, Co = 5200 kgf) and converted here at 1 kgf = 9.80665 N, rounded to the nearest N. \
+The table does not state an accuracy grade for this stock item; HIWIN precision rolled screws are offered in C6, C7, C8, C10 \
+(table 7.1, PDF page 156). Rolled 25 mm screws: max screw length 4000 mm at grade C7 (table 7.3, PDF page 157). \
+max_dn is HIWIN's Dm x N limit where Dm is the pitch circle diameter (not nominal diameter), N max rpm; \
+the catalogue says structural enhancement is designed by HIWIN for Dm-N 70,000 to 180,000 and to consult above 180,000 (PDF page 37, printed page 33). \
+The catalogue does not give a nut mass or axial play for this row. Ordering code suffix for DIN types: mark 'DIN' (catalogue ordering note)."""
+
+[sources]
+cat = { title = "HIWIN Ballscrew Technical Information, FORM S99TE22-2009", url = "https://hiwin.com/wp-content/uploads/Ballscrew-Catalog.pdf" }
+
+[values]
+nominal_diameter_mm = { v = 25, src = "cat", page = 170 }
+lead_mm = { v = 10, src = "cat", page = 170 }
+dynamic_axial_load_n = { v = 22163, src = "cat", page = 170 }
+static_axial_load_n = { v = 50995, src = "cat", page = 170 }
+nut_type = { v = "FSC/FSI single nut with flange, DIN 69051-5 form B, rolled screw", src = "cat", page = 170 }
+nut_length_mm = { v = 70, src = "cat", page = 170 }
+nut_flange_diameter_mm = { v = 62, src = "cat", page = 170 }
+max_dn = { v = 70000, src = "cat", page = 37 }

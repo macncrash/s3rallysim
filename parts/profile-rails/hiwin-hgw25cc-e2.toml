@@ -1,0 +1,22 @@
+# HIWIN HG series size 25 flanged ball block, heavy-load C length, mount top or bottom, with E2 self-lubrication kit and ZZ seals
+id = "hiwin-hgw25cc-e2"
+category = "profile-rails"
+maker = "HIWIN"
+country = "TW"
+model = "HGW25CC + ZZ/E2"
+notes = "Flanged block, 4 x M8 threaded through-flange holes on a 57 x 45 mm pattern (B x C), mountable from top or bottom; runs on HGR25 rail (M6x20 bolts, pitch 60 mm). Order code per catalogue example 'HGW25CC2R1600ZAPII + ZZ / E2' (PDF p. 205): add preload/accuracy/rail length. Catalogue prints C = 34.9 kN, C0 = 52.82 kN; converted to N. C for ball guideways is based on 50 km (PDF p. 6). Block length 104.0 mm is the E2 module table value for HG25C with ZZ seals (max. 105.0 mm incl. screws/seal lips; 100.0 mm with SS seals); the bare HGW25CC block is 84 mm long and 0.59 kg (PDF p. 44). Mass of the E2 block is not stated, so block_mass_kg is left out. Maintenance interval: HIWIN's E2 life test (HGW25CC, 60 m/min, 1500 mm stroke, 500 kgf load) shows 'more than 10000km', footnoted 'Depending on different specifications' (PDF p. 205); the cost table on PDF p. 204 assumes '10 cc (5 years 10000km)' of oil and says E2 is 'maintenance free in most applications'. This is a test result, not a guaranteed interval. E2 operating temperature -10 to 50 C. The oil cartridge is replaceable/refillable. Page numbers are PDF page indices; printed page = PDF page - 3."
+
+[sources]
+hiwin_lg = { title = "HIWIN Linear Guideway Technical Information, G99TE22-2011", url = "https://hiwin.com/wp-content/uploads/Linear_Guideway-E.pdf" }
+
+[values]
+rail_size = { v = 25, src = "hiwin_lg", page = 44 }
+dynamic_load_n = { v = 34900, src = "hiwin_lg", page = 44 }
+dynamic_rating_basis_km = { v = 50, src = "hiwin_lg", page = 6 }
+static_load_n = { v = 52820, src = "hiwin_lg", page = 44 }
+block_length_mm = { v = 104.0, src = "hiwin_lg", page = 206 }
+block_width_mm = { v = 70, src = "hiwin_lg", page = 44 }
+total_height_mm = { v = 36, src = "hiwin_lg", page = 44 }
+rail_width_mm = { v = 23, src = "hiwin_lg", page = 44 }
+rail_mass_kg_per_m = { v = 3.21, src = "hiwin_lg", page = 44 }
+maintenance_interval_km = { v = 10000, src = "hiwin_lg", page = 205 }

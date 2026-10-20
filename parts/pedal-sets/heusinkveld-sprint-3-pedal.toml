@@ -1,0 +1,16 @@
+# Heusinkveld Sprint 3-pedal set (clutch, brake, throttle), load-cell brake
+id = "heusinkveld-sprint-3-pedal"
+category = "pedal-sets"
+maker = "Heusinkveld"
+country = "NL"
+model = "Sprint 3-pedal set"
+notes = "Card is for the 3-pedal set (clutch, throttle, brake) as sold. brake_max_force_kg is the maker's 'Max actual braking force' (65 kg); the brake load cell is rated 120 kg (load_cell_rating_kg). Maker prints 'Dimensions: 363x222x90mm' without axis labels or saying whether it is the set or one pedal, so length/width/height are left out. Controller integrated in the brake pedal. Mounting 'On a full frame rig (you can use the optional Sprint Baseplate)'; each pedal has four mounting slots for fore-aft adjustment. Maker FAQ: cannot be installed on a floor without further support. No maker document found stating the pivot location or lateral spacing adjustment, so floor_hinged and adjustable_pedal_spacing are left out (the pedals are individual units like the Ultimate+, which suggests both, but unconfirmed)."
+
+[sources]
+shop = { title = "Sprint 3-pedal set (Heusinkveld shop)", url = "https://heusinkveld.com/shop/sprint-pedals/sprint-3-pedal-set/" }
+
+[values]
+pedal_count = { v = 3, src = "shop" }
+brake_max_force_kg = { v = 65, src = "shop" }
+load_cell_rating_kg = { v = 120, src = "shop" }
+mass_kg = { v = 4.05, src = "shop" }

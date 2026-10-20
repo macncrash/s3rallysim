@@ -1,0 +1,28 @@
+# WITTENSTEIN alpha SPK+ 140 hypoid right-angle gearbox with planetary output stage, 2-stage, i = 50
+id = "wittenstein-spk-140-mf2-50"
+category = "gearboxes"
+maker = "WITTENSTEIN alpha"
+country = "DE"
+model = "SPK+ 140 S-MF2-50-1H1-1K01"
+notes = "Order code assembled from the hypoid/bevel ordering key (PDF p. 348, printed 350): size 140, S = standard, M = motor-mounted, F = standard model, 2 stages, i = 50, output 1 = shaft with key, clamping hub H = 28 mm (standard; K = 38 mm also listed), backlash 1 = standard, generation 1, K = coupling, 0 input stages, 1 output stage - confirm with WITTENSTEIN / cymex before ordering. Page numbers are PDF indexes (PDF 154 = printed 156, PDF 155 = printed 157). nominal_output_torque_nm is T2N (at n1N) = 360 N·m; max_accel_output_torque_nm is T2B = 625 N·m (max. 1000 cycles per hour) - below the 800 N·m target, the smaller sibling of the SPK+ 180 card; T2alpha = 625 N·m; emergency_stop_torque_nm T2Not = 1250 N·m (1000 times). Torques are for a smooth shaft and standard hub; a keyed shaft has reduced performance (product page) - check in cymex. nominal_input_speed_rpm is permitted average input speed n1N = 2300 rpm (at T2N, 20 C ambient). Lateral force F2QMax 9600 N and axial F2AMax 9870 N refer to the center of the output shaft or flange; max tilting moment 1000 N·m. Backlash standard <= 4, reduced <= 2 arcmin. Efficiency 94%. Mass 20 kg incl. standard adapter plate. Input inertia 2.79 kg·cm2 (i = 50, 28 mm hub). Input: motor shafts up to 28 (H) / 38 (K) mm; a 24 mm servo shaft uses a bushing (min. 1 mm wall); adapter plate depends on the motor. Output: 141 mm square flange, 130 g7 pilot, 4 x 11 holes on 165 PCD, shaft 40 k6 x 82 (key 12 mm), overall length about 323.2 mm (drawing). Rotation: input and output opposite."
+
+[sources]
+cat = { title = "WITTENSTEIN alpha Advanced Line product catalog (US)", url = "https://www.wittenstein-group.com/index.php?eID=dumpWittFile&t=f&f=4054&dl=1&st=1&lg=0&token=57fa9998322ea89436482a2a3f650338b2deeb07" }
+page = { title = "WITTENSTEIN SPK+ hypoid gearbox product page", url = "https://www.wittenstein-group.com/int-en/product/spk" }
+
+[values]
+ratio = { v = 50, src = "cat", page = 154 }
+nominal_output_torque_nm = { v = 360, src = "cat", page = 154 }
+max_accel_output_torque_nm = { v = 625, src = "cat", page = 154 }
+emergency_stop_torque_nm = { v = 1250, src = "cat", page = 154 }
+max_radial_output_load_n = { v = 9600, src = "cat", page = 154 }
+max_axial_output_load_n = { v = 9870, src = "cat", page = 154 }
+max_input_speed_rpm = { v = 5500, src = "cat", page = 154 }
+nominal_input_speed_rpm = { v = 2300, src = "cat", page = 154 }
+backlash_arcmin = { v = 4, src = "cat", page = 154 }
+efficiency_pct = { v = 94, src = "cat", page = 154 }
+right_angle = { v = true, src = "page" }
+mass_kg = { v = 20, src = "cat", page = 154 }
+frame_size_mm = { v = 141, src = "cat", page = 155 }
+output_shaft_diameter_mm = { v = 40, src = "cat", page = 155 }
+torsional_stiffness_nm_per_arcmin = { v = 53, src = "cat", page = 154 }

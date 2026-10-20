@@ -1,0 +1,28 @@
+# WITTENSTEIN alpha SPK+ 180 hypoid right-angle gearbox with planetary output stage, 2-stage, i = 50
+id = "wittenstein-spk-180-mf2-50"
+category = "gearboxes"
+maker = "WITTENSTEIN alpha"
+country = "DE"
+model = "SPK+ 180 S-MF2-50-1K1-1K01"
+notes = "Order code assembled from the hypoid/bevel ordering key (PDF p. 348, printed 350): size 180, S = standard, M = motor-mounted, F = standard model, 2 stages, i = 50, output 1 = shaft with key, clamping hub K = 38 mm, backlash 1 = standard, generation 1, K = coupling motor connection, 0 input stages, 1 output stage - confirm with WITTENSTEIN / cymex before ordering. Page numbers are PDF indexes (PDF 158 = printed 160, PDF 159 = printed 161). i = 50 is a 2-stage ratio (also 40, 70). nominal_output_torque_nm is T2N (at n1N) = 750 N·m; max_accel_output_torque_nm is T2B = 1050 N·m (max. 1000 cycles per hour); max torque T2alpha = 1050 N·m (at max. 10% F2QMax, smooth shaft); emergency_stop_torque_nm T2Not = 2000 N·m (1000 times in service life). Torque values are for a smooth shaft and the standard clamping hub; a keyed shaft has reduced performance per the product page - check in cymex. nominal_input_speed_rpm is permitted average input speed n1N = 2100 rpm (at T2N, 20 C ambient). Lateral force F2QMax 15000 N and axial F2AMax 15570 N refer to the center of the output shaft or flange; max tilting moment 1800 N·m. Backlash standard <= 4, reduced <= 2 arcmin. Efficiency at full load 94%. Mass 45 kg including standard adapter plate - heavy. Mass moment of inertia at the input 12.8 kg·cm2 (i = 50, 38 mm hub). Input: standard clamping hub 38 mm; smaller motor shafts (24 mm on AKM2G-5x / AM8052 / SGM7A-20, 22 mm Delta, 19 mm Siemens) are compensated by a bushing (min. 1 mm wall); adapter plate dimensions depend on the motor. Output: 182 mm square flange, 160 g7 pilot, 4 x 13.5 holes on 215 PCD, shaft 55 k6 x 82 (key 16 mm), overall length about 395.4 mm (drawing, PDF p. 159). frame_size_mm is the 182 mm square output flange (catalog size 180). The catalog URL is a tokenised download link from the product page and may change. Rotation: input and output opposite directions."
+
+[sources]
+cat = { title = "WITTENSTEIN alpha Advanced Line product catalog (US)", url = "https://www.wittenstein-group.com/index.php?eID=dumpWittFile&t=f&f=4054&dl=1&st=1&lg=0&token=57fa9998322ea89436482a2a3f650338b2deeb07" }
+page = { title = "WITTENSTEIN SPK+ hypoid gearbox product page", url = "https://www.wittenstein-group.com/int-en/product/spk" }
+
+[values]
+ratio = { v = 50, src = "cat", page = 158 }
+nominal_output_torque_nm = { v = 750, src = "cat", page = 158 }
+max_accel_output_torque_nm = { v = 1050, src = "cat", page = 158 }
+emergency_stop_torque_nm = { v = 2000, src = "cat", page = 158 }
+max_radial_output_load_n = { v = 15000, src = "cat", page = 158 }
+max_axial_output_load_n = { v = 15570, src = "cat", page = 158 }
+max_input_speed_rpm = { v = 5000, src = "cat", page = 158 }
+nominal_input_speed_rpm = { v = 2100, src = "cat", page = 158 }
+backlash_arcmin = { v = 4, src = "cat", page = 158 }
+efficiency_pct = { v = 94, src = "cat", page = 158 }
+right_angle = { v = true, src = "page" }
+mass_kg = { v = 45, src = "cat", page = 158 }
+frame_size_mm = { v = 182, src = "cat", page = 159 }
+output_shaft_diameter_mm = { v = 55, src = "cat", page = 159 }
+torsional_stiffness_nm_per_arcmin = { v = 175, src = "cat", page = 158 }

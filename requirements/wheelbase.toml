@@ -1,0 +1,24 @@
+# Direct-drive wheelbase on the steering column (cad/pod/components/wheel.py).
+title = "Cockpit: direct-drive wheelbase"
+category = "dd-wheelbases"
+
+[[check]]
+field = "peak_torque_nm"
+min = 20
+why = "Rally kickback through a 350 mm wheel"
+
+[[check]]
+field = "mass_kg"
+max = 12
+why = "Hangs on the dash crossbar and rides the motion floor"
+
+[[check]]
+field = "front_mount"
+equals = true
+why = "Clamps to the column bracket from the front, nothing in the footwell"
+
+[[check]]
+field = "quick_release"
+equals = true
+prefer = true
+why = "Wheel comes off for entry and for the formula module's wheel"

@@ -1,0 +1,25 @@
+# Yaskawa Sigma-7 SGM7A-20A 2.0 kW 200 V low-inertia servo motor with 24 V holding brake
+id = "yaskawa-sgm7a-20a"
+category = "servo-motors"
+maker = "Yaskawa"
+country = "JP"
+model = "SGM7A-20A7A6C"
+notes = "Order code from the model designation (manual p. 5-2): 20 = 2.0 kW, A = 200 VAC, 7 = 24-bit absolute encoder (6 = batteryless absolute, F = incremental), A = design revision, 6 = straight shaft with key and tap (2 = without key), C = with 24 VDC holding brake (E = oil seal + brake). Page numbers below are PDF page indexes; printed pages: 80 = 5-2, 85 = 5-7, 101 = 5-23. cont_torque_nm is the rated torque (continuous at rated speed, 40 C ambient, 300 x 300 x 12 mm aluminium heat sink); the manual gives no separate stall torque. Values are typical at 20 C winding. drive_vac: the 200 V class (200 VAC input SERVOPACK). kb_vrms_per_krpm left out: the manual gives no back-EMF constant. rotor_inertia_kgcm2 is the 'with holding brake' value 2.72 x 10^-4 kg·m2 converted to kg·cm2 (2.47 without brake). Brake: 24 VDC, 12 W, holding torque 7.84 N·m, release 170 ms, engage 80 ms - the brake holds 1.23 x rated torque only, less than peak. Allowable shaft loads: radial 686 N at LF 45 mm, thrust 196 N. Flange 100 mm square (LC), 95 mm spigot (0/-0.035), 4 x 7 holes on 115 PCD. length_mm is LL = 214 mm (flange face to rear, without the 45 mm shaft); overall L = 259 mm; batteryless-encoder version is 8 mm longer. Shaft 24 mm (0/-0.013) x 40 mm. Mass 6.8 kg approx. with brake."
+
+[sources]
+man = { title = "Yaskawa Sigma-7-Series AC Servo Drive Rotary Servomotor Product Manual, SIEP S800001 36J", url = "https://www.yaskawa.eu.com/_downloads/download_d5516" }
+
+[values]
+cont_torque_nm = { v = 6.36, src = "man", page = 85 }
+peak_torque_nm = { v = 19.1, src = "man", page = 85 }
+rated_speed_rpm = { v = 3000, src = "man", page = 85 }
+rated_power_w = { v = 2000, src = "man", page = 85 }
+kt_nm_per_arms = { v = 0.561, src = "man", page = 85 }
+drive_vac = { v = 200, src = "man", page = 85 }
+holding_brake = { v = true, src = "man", page = 80 }
+brake_holding_torque_nm = { v = 7.84, src = "man", page = 85 }
+mass_kg = { v = 6.8, src = "man", page = 101 }
+rotor_inertia_kgcm2 = { v = 2.72, src = "man", page = 85 }
+flange_mm = { v = 100, src = "man", page = 101 }
+length_mm = { v = 214, src = "man", page = 101 }
+shaft_diameter_mm = { v = 24, src = "man", page = 101 }

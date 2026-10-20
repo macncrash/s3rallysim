@@ -1,0 +1,25 @@
+# Neugart WPLN142 precision right-angle gearbox (hypoid right-angle stage + planetary), 2-stage, i = 50
+id = "neugart-wpln142-50"
+category = "gearboxes"
+maker = "Neugart"
+country = "DE"
+model = "WPLN142 i=50 (2-stage, S)"
+notes = "Full order code depends on the motor adaptation and is generated in Neugart's Tec Data Finder / NCP; this card is for WPLN142 2-stage at i = 50 (offered ratios near 50: 40, 50, 64). Page numbers are PDF indexes of the chapter (PDF 3 = catalog p. 142, 4 = 143, 5 = 144, 6 = dimensions). nominal_output_torque_nm is the continuous torque T2D = 315 N·m; Neugart's cyclic torque T2Z at i = 50 is 375 N·m. max_accel_output_torque_nm is the maximum torque T2max = 600 N·m. emergency_stop_torque_nm T2Stop = 1200 N·m, permitted 1000 times. nominal_input_speed_rpm is the continuous input speed n1D = 1350 rpm at i = 50 (thermal; 3000 rpm continuous is above this), max mechanical input speed 9500 rpm (2-stage). Radial force 12500 N (2-stage); the chapter does not state the load point on the shaft (the catalog says technical explanations start on p. 201, not in this chapter). Axial 12000 N, max tilting moment 1420 N·m (2-stage). Backlash: standard < 5 arcmin, reduced (R) < 3 arcmin on 2-stage. Efficiency 94% (2-stage). Mass 23.7 - 24.3 kg and torsional stiffness 31.5 - 42.5 N·m/arcmin are ranges over ratios (exact values in Tec Data Finder), so mass_kg and torsional_stiffness_nm_per_arcmin are left out. Input: 2-stage reference clamping diameter 24 mm (F), also 35 mm (G); a 24 mm servo shaft (AKM2G-5x, AM8052, SGM7A-20) uses the F clamp, Delta 22 mm / Siemens 19 mm would need a bushing or other clamp - motor adapter flange per motor from Tec Data Finder. Output: 142 mm square flange, 130 g7 centering, 4 x 11 holes on 165 PCD, shaft 40 k6 x 110 (keyed A 12x8x65 or smooth or DIN 5480 splined), total length 342.5 mm (2-stage). Counterdirectional rotation."
+
+[sources]
+cat = { title = "Neugart WPLN catalog chapter, 05/2026 (EN)", url = "https://cdn.neugart.com/fileadmin/user_upload/Downloads/Catalog_Chapters/05_2026/WPLN/WPLN_2026_05_EN.pdf" }
+
+[values]
+ratio = { v = 50, src = "cat", page = 4 }
+nominal_output_torque_nm = { v = 315, src = "cat", page = 5 }
+max_accel_output_torque_nm = { v = 600, src = "cat", page = 4 }
+emergency_stop_torque_nm = { v = 1200, src = "cat", page = 5 }
+max_radial_output_load_n = { v = 12500, src = "cat", page = 3 }
+max_axial_output_load_n = { v = 12000, src = "cat", page = 3 }
+max_input_speed_rpm = { v = 9500, src = "cat", page = 5 }
+nominal_input_speed_rpm = { v = 1350, src = "cat", page = 5 }
+backlash_arcmin = { v = 5, src = "cat", page = 3 }
+efficiency_pct = { v = 94, src = "cat", page = 3 }
+right_angle = { v = true, src = "cat", page = 2 }
+frame_size_mm = { v = 142, src = "cat", page = 6 }
+output_shaft_diameter_mm = { v = 40, src = "cat", page = 6 }

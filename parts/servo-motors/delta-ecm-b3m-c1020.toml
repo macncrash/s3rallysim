@@ -1,0 +1,25 @@
+# Delta ECM-B3M 2 kW 220 V 3000 rpm medium-inertia servo motor, 100 mm frame, with holding brake
+id = "delta-ecm-b3m-c1020"
+category = "servo-motors"
+maker = "Delta Electronics"
+country = "TW"
+model = "ECM-B3M-CA1020SS1"
+notes = "Order code from the model explanation (PDF p. 30-31): C = 220 V / 3000 rpm, A = 24-bit absolute optical encoder (2 = 24-bit incremental), 10 = 100 mm frame, 20 = 2.0 kW, S = keyway with brake and oil seal, S = standard shaft and connectors (J = IP67 CHOGORI connectors), 1 = standard. CAUTION: the matching drive is ASD-B3x-2023-x (PDF p. 35), code 23 = 220 V three-phase input (p. 28); the 220 V single-/three-phase '21' drives stop at 1.5 kW. Page numbers are PDF indexes; printed pages: 963 = A-18, 990 = A-45. cont_torque_nm is the rated torque (continuous, 0-40 C, 300 x 300 x 12 mm aluminium heat sink); the T-N curve (p. 979) shows 6.37 N·m flat to 3000 rpm then falling to 3.19 N·m at 6000 rpm. kb_vrms_per_krpm left out: the manual gives KE = 23.7 mVrms/rpm without saying phase or line-line, and with KT = 0.640 it looks like a phase value (line-line would be ~41 V/krpm) - unclear, so not carried. rotor_inertia_kgcm2 is the 'with brake' value 4.95 x 10^-4 kg·m2 converted (4.68 without). Brake: 24 Vdc, 17.6 W, holding torque 9.5 N·m min, release 50 ms, pull-in 110 ms. Shaft loads: radial 490 N (at LR - 5 mm), axial 196 N. Flange 100 mm square (LC), 95 spigot (LB +0/-0.03), 4 x 9 holes on 115 PCD. length_mm is LL with brake (flange to rear, excluding the 45 mm shaft LR). Shaft 22 mm (+0/-0.013) x 45, key 8 mm, M6 tap. Manual is Delta's own document (DELTA_IA-ASD_ASDA-B3_UM_EN_20231025) retrieved from a distributor mirror; Delta's download center was not reachable."
+
+[sources]
+um = { title = "Delta ASDA-B3 Series Servo Drive User Manual, DELTA_IA-ASD_ASDA-B3_UM_EN_20231025", url = "https://deltaacdrives.com/Delta-ASDA-B3-Servo-Drive-User-Manual.pdf" }
+
+[values]
+cont_torque_nm = { v = 6.37, src = "um", page = 963 }
+peak_torque_nm = { v = 19.11, src = "um", page = 963 }
+rated_speed_rpm = { v = 3000, src = "um", page = 963 }
+rated_power_w = { v = 2000, src = "um", page = 963 }
+kt_nm_per_arms = { v = 0.640, src = "um", page = 963 }
+drive_vac = { v = 220, src = "um", page = 30 }
+holding_brake = { v = true, src = "um", page = 31 }
+brake_holding_torque_nm = { v = 9.5, src = "um", page = 963 }
+mass_kg = { v = 6.51, src = "um", page = 963 }
+rotor_inertia_kgcm2 = { v = 4.95, src = "um", page = 963 }
+flange_mm = { v = 100, src = "um", page = 990 }
+length_mm = { v = 209.9, src = "um", page = 990 }
+shaft_diameter_mm = { v = 22, src = "um", page = 990 }

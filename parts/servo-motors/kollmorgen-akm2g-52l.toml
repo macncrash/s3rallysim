@@ -1,0 +1,26 @@
+# Kollmorgen AKM2G-52L servo motor, 114 mm frame, 240 Vac-rated winding, 24 V holding brake
+id = "kollmorgen-akm2g-52l"
+category = "servo-motors"
+maker = "Kollmorgen"
+country = "US"
+model = "AKM2G-52L-ACD2CA00"
+notes = "Order code built from the nomenclature (p. 16): mount A (IEC), shaft C (keyway), connection D (single M23 power+feedback), brake 2 (24 V holding brake), feedback CA (SFD3), thermal 0 (PT-1000 + PTC), customization 0. Change C/D/CA for other shaft, connector or feedback. cont_torque_nm is the stall Tcs at dT winding = 100 C (p. 36); 60 C rise gives 9.42 N·m. rated_speed_rpm / rated_power_w / drive_vac are the 240 Vac line of the performance table (rated torque there 10.2 N·m at 3200 rpm, 3.42 kW); max rated equivalent line voltage for the L winding is 400 Vac. kb: table gives Ke = 64.7 Vrms/krpm (±10%, at 25 C) without stating line-line; resistance in the same table is line-line and Kt is consistent with a line-line Ke. mass_kg = 7.03 kg without brake + 2.6 kg brake adder (p. 37 note 4), my sum. rotor_inertia_kgcm2 is the motor (with resolver) without brake; the brake adds 1.2 kg·cm2 (p. 37). Brake: minimum static torque 16 N·m at 120 C, 24 Vdc, 20.8 W, engage 50 ms, release 110 ms (p. 54). Flange: 114 mm square, 110 j6 pilot, 4 x dia 9 holes on 130 PCD (p. 40). length_mm = L max 172.20 (A-/C-/D- connector, Cx feedback) + 57.00 brake adder (p. 40), my sum. Shaft 24 k6 x 50 mm with 8 mm key (AC flange-shaft). Document retrieved from a distributor mirror (AHS Antriebstechnik) of Kollmorgen's selection guide KM_SG_000315_RevE_EN; kollmorgen.com blocked automated download. Derate curves for the brake version are graphs only (p. 38); not captured."
+
+[sources]
+sg = { title = "Kollmorgen AKM2G Servo Motor Selection Guide, KM_SG_000315_RevE_EN", url = "https://www.ahs-antriebstechnik.de/images/PDFDateien/Servomotoren/2023/AKM2G-Selectionguide-E.pdf" }
+
+[values]
+cont_torque_nm = { v = 11.93, src = "sg", page = 36 }
+peak_torque_nm = { v = 28.9, src = "sg", page = 36 }
+rated_speed_rpm = { v = 3200, src = "sg", page = 36 }
+rated_power_w = { v = 3420, src = "sg", page = 36 }
+kt_nm_per_arms = { v = 0.956, src = "sg", page = 37 }
+kb_vrms_per_krpm = { v = 64.7, src = "sg", page = 37 }
+drive_vac = { v = 240, src = "sg", page = 36 }
+holding_brake = { v = true, src = "sg", page = 16 }
+brake_holding_torque_nm = { v = 16, src = "sg", page = 54 }
+mass_kg = { v = 9.63, src = "sg", page = 37 }
+rotor_inertia_kgcm2 = { v = 4.58, src = "sg", page = 37 }
+flange_mm = { v = 114, src = "sg", page = 40 }
+length_mm = { v = 229.2, src = "sg", page = 40 }
+shaft_diameter_mm = { v = 24, src = "sg", page = 40 }

@@ -1,0 +1,36 @@
+# Rod ends at both ends of each actuator link (cad/pod/components/link.py).
+# Loads: analysis/platform_loads.json, crew "95 + 95": 5.1 kN compression peak, 2.2 kN tension.
+title = "Motion platform: link rod end"
+category = "rod-ends"
+
+[[check]]
+field = "static_radial_load_n"
+min = 10200
+why = "Twice the 5.1 kN peak link force"
+
+[[check]]
+field = "dynamic_radial_load_n"
+min = 5100
+why = "Peak link force, cycling every cue"
+
+[[check]]
+field = "bore_mm"
+min = 16
+max = 20
+why = "Pin size for these loads; the CAD pins are 20 mm"
+
+[[check]]
+field = "tilt_angle_deg"
+min = 10
+why = "The floor tilts the top eye up to 7 deg out of the crank plane, plus margin"
+
+[[check]]
+field = "maintenance_free"
+equals = true
+prefer = true
+why = "No greasing schedule for an arcade machine"
+
+[[check]]
+field = "permissible_alternating_load_n"
+min = 5100
+why = "The link swings between 5.1 kN push and 2.2 kN pull: the maker's alternating-load rating must cover the peak"

@@ -1,0 +1,19 @@
+# igus igubal polymer rod end, female thread, 20 mm bore, igumid G housing with iglidur W300 ball bearing
+id = "igus-kbrm-20"
+category = "rod-ends"
+maker = "igus"
+country = "DE"
+model = "KBRM-20"
+notes = "Maintenance-free, self-lubricating all-polymer rod end (housing igumid G, spherical bearing iglidur W300), female thread, dimensional series K per DIN ISO 12240. Variant KBRM-20 M20 has an M20 x 2,5 thread; left-hand KBLM-20; KBRM-20 MH adds a metal sleeve. Load table (PDF p. 3, printed 51.6), in N: max static tensile strength 5400 short term / 2700 long term; max radial load 2100 short term / 1050 long term (static_radial_load_n records the 2100 N short-term radial value as labelled; the table does not say which direction 'radial load' is relative to the shank, so verify with igus). Also minimum thread depth 22 mm, max torque inside thread 60,0 Nm, max torque through ball 55 Nm (standard) / 200 Nm (MH). No basic dynamic load rating C is published (igus offers an online lifetime calculator instead). Dims (PDF p. 4, printed 51.7): d2 50 (eye outer dia), d4 28,0, d5 34,0, h1 77, l3 33, l4 102, spanner flat SW30; d1 bore tolerance E10. Max pivot angle 23 deg recorded as tilt_angle_deg. Mass not given. Source is a 2008 igus datasheet hosted by a distributor (chipdip); current igus values may differ. Far below the 10.2 kN static requirement."
+
+[sources]
+igus = { title = "igus igubal Rod End Bearings KBRM / KBLM datasheet (pages 51.6-51.7, 2008; copy hosted by ChipDip)", url = "https://static.chipdip.ru/lib/015/DOC022015220.pdf" }
+
+[values]
+bore_mm = { v = 20, src = "igus", page = 4 }
+thread = { v = "M20x1.5 female right-hand", src = "igus", page = 4 }
+static_radial_load_n = { v = 2100, src = "igus", page = 3 }
+tilt_angle_deg = { v = 23, src = "igus", page = 4 }
+maintenance_free = { v = true, src = "igus", page = 3 }
+ball_width_mm = { v = 25, src = "igus", page = 4 }
+eye_width_mm = { v = 18.0, src = "igus", page = 4 }

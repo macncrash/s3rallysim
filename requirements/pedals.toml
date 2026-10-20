@@ -1,0 +1,24 @@
+# Driver's pedal set (cad/pod/components/pedals.py): floor-hinged, three pedals for rally.
+title = "Cockpit: pedal set"
+category = "pedal-sets"
+
+[[check]]
+field = "pedal_count"
+min = 3
+why = "Clutch, brake, throttle for rally"
+
+[[check]]
+field = "brake_max_force_kg"
+min = 100
+why = "Load-cell brake that matches a real rally car's pedal effort"
+
+[[check]]
+field = "floor_hinged"
+equals = true
+why = "Heel on the floor, pedals hinged at the bottom, as the ergonomics assume"
+
+[[check]]
+field = "mass_kg"
+max = 15
+prefer = true
+why = "Rides the motion floor"

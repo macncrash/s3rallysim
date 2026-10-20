@@ -1,0 +1,27 @@
+# Beckhoff AM8052 servo motor, 104 mm flange, L winding (4000 rpm at 230 V), permanent-magnet holding brake
+id = "beckhoff-am8052-1lg1"
+category = "servo-motors"
+maker = "Beckhoff"
+country = "DE"
+model = "AM8052-1LG1"
+notes = "Order code from the type key AM8052-wLyz on the product page: w = 1 shaft with groove and feather key (DIN 6885), L = winding, y = G One Cable Technology single-turn 24-bit SIL 2 encoder (H = multi-turn), z = 1 backlash-free permanent-magnet holding brake. Beckhoff winding 'L' appears as column '52L' in the infosys table. AM8000 is rated for 100...480 Vac mains (bus ~ mains x 1.41); the product page quotes the 400 Vac ratings (7300 rpm, 5.40 N·m, 4.13 kW). This card uses the infosys 'Power supply UN = 230 V' block: nominal speed 4000 rpm, nominal torque 6.90 N·m, nominal output 2.89 kW. cont_torque_nm is standstill torque M0 (reference flange 305 x 305 x 10 mm aluminium). kb: Beckhoff gives KErms = 49 mVmin, i.e. 49 V per 1000 rpm, defined by Beckhoff as sine RMS between two terminals (line-line); mVmin -> V/krpm is a unit relabel, same number. Peak current 60.7 A at 35.34 N·m - at the 13.6 N·m needed only ~19 A. Brake: holding torque 9 N·m at 120 C, 24 Vdc, 18 W, release 40 ms, apply 20 ms. rotor_inertia_kgcm2 is the 'with brake' value (4.09 without). Flange 104 mm square (r), 95 j6 spigot (a), PCD 115 mm (l). length_mm is k with brake (housing length, excluding the 50 mm shaft d). Shaft 24 k6 x 50. Both sources are HTML pages, so no page numbers."
+
+[sources]
+infosys = { title = "Beckhoff Information System: AM8000 and AM8500 Synchronous Servomotors operating instructions, AM805x & AM855x technical data", url = "https://infosys.beckhoff.com/content/1033/am8000_am8500_ba/8010717067.html" }
+product = { title = "Beckhoff product page AM8052-wLyz", url = "https://www.beckhoff.com/en-au/products/motion/rotary-servomotors/am8000-servomotors/am8052-wlyz.html" }
+
+[values]
+cont_torque_nm = { v = 8.20, src = "infosys" }
+peak_torque_nm = { v = 35.34, src = "infosys" }
+rated_speed_rpm = { v = 4000, src = "infosys" }
+rated_power_w = { v = 2890, src = "infosys" }
+kt_nm_per_arms = { v = 0.72, src = "infosys" }
+kb_vrms_per_krpm = { v = 49, src = "infosys" }
+drive_vac = { v = 230, src = "infosys" }
+holding_brake = { v = true, src = "product" }
+brake_holding_torque_nm = { v = 9, src = "infosys" }
+mass_kg = { v = 6.60, src = "infosys" }
+rotor_inertia_kgcm2 = { v = 4.75, src = "infosys" }
+flange_mm = { v = 104, src = "product" }
+length_mm = { v = 216.5, src = "product" }
+shaft_diameter_mm = { v = 24, src = "product" }

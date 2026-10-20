@@ -1,0 +1,20 @@
+# Simagic Alpha U (Alpha Ultimate) direct-drive wheelbase, 23 Nm
+id = "simagic-alpha-u"
+category = "dd-wheelbases"
+maker = "Simagic"
+country = "CN"
+model = "Alpha U"
+notes = "Specs from the Alpha U user manual V2.1, section 2.3 Specifications (PDF page 7, printed page 06), matching the product page: 306.5 x 110 x 110 mm, 10.4 kg (p. 7); 23 Nm max torque (p. 5). The manual's drawing 'Front Four Holes Spacing' shows 4 x M8 depth 12 on a 91.92 x 91.92 mm square on the 110 mm front face (front_mount = true is read from that drawing); bottom holes 78.4 x 66 mm (product page lists 'M6 X 4 Threaded Holes'; the drawing does not mark the bottom thread size). Quick release: Simagic QR is listed as Optional (manual p. 10 'Optional Contents'), not in the box; quick_release = true means the base takes the maker's QR. Power supply is in the box but its rating is not published on the page or manual. Shaft diameter not published."
+
+[sources]
+manual = { title = "ALPHA U BASE USER MANUAL (VERSION V2.1)", url = "https://image.simagic.com/profile/upload/2024/06/06/SIMAGIC_Alpha_U_UM.pdf" }
+product = { title = "Alpha U Wheelbase - SIMAGIC (product page)", url = "https://simagic.com/pages/details-alpha-u" }
+
+[values]
+peak_torque_nm = { v = 23, src = "manual", page = 5 }
+mass_kg = { v = 10.4, src = "manual", page = 7 }
+front_mount = { v = true, src = "manual", page = 7 }
+quick_release = { v = true, src = "manual", page = 10 }
+length_mm = { v = 306.5, src = "manual", page = 7 }
+diameter_or_width_mm = { v = 110, src = "manual", page = 7 }
+mounting_pattern = { v = "Front: 4 x M8 depth 12 on 91.92 x 91.92 mm square; bottom: 78.4 x 66 mm", src = "manual", page = 7 }

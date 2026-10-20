@@ -1,0 +1,19 @@
+# Simagic P2000-R hydraulic pedal set, 3-pedal with 200 kg brake load cell
+id = "simagic-p2000-r-s200r"
+category = "pedal-sets"
+maker = "Simagic"
+country = "CN"
+model = "P2000-S200R"
+notes = "Maker sells dual- and tri-pedal editions (SKUs P2000-S100R/S200R/S100RF/S200RF and L-variants with long throttle). The maker pages do not decode the SKUs or print a brake force in kg; the reseller Apex Sim Racing lists S200R as '3 Pedal 200kg' (throttle, brake, clutch) with a '200kg load cell brake', reproduced here as load_cell_rating_kg and pedal_count, and the S100 variants presumably carry a 100 kg cell (not confirmed). Maximum achievable braking force is not published, so brake_max_force_kg is left out. Dimensions 326 x 380 x 258.84 mm (L x W x H) and 6.1 kg from the maker page; the maker does not say whether these are for the 2- or 3-pedal edition or include the mounting plate. Package includes a mounting plate and control box. Maker lists 'Position Adjustment: Supported' without saying whether that is lateral spacing, so adjustable_pedal_spacing is left out. Pivot location not stated (floor_hinged left out). Load-cell sensors on throttle, brake and clutch; hydraulic cylinder damping; USB to PC or Simagic wheelbase."
+
+[sources]
+maker = { title = "P2000-R Pedal Set (Simagic)", url = "https://simagic.com/pages/details-p2000-r" }
+apex = { title = "Simagic P2000r - Hydraulic Pedal Set (Apex Sim Racing, reseller)", url = "https://www.apexsimracing.com/products/simagic-p2000r-hydraulic-pedal-set-200kg" }
+
+[values]
+pedal_count = { v = 3, src = "apex" }
+load_cell_rating_kg = { v = 200, src = "apex" }
+mass_kg = { v = 6.1, src = "maker" }
+length_mm = { v = 326, src = "maker" }
+width_mm = { v = 380, src = "maker" }
+height_mm = { v = 258.84, src = "maker" }

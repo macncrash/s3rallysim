@@ -1,0 +1,42 @@
+# Servo motor for each of the four crank drives (cad/pod/drive_parts.py), behind a ~50:1 gearbox.
+# Loads: analysis/platform_loads.json, crew "95 + 95" (worst case).
+# Run: python3 tools/partsel/partsel.py requirements/crank-servo.toml --detail
+title = "Motion platform: crank servo motor"
+category = "servo-motors"
+
+[operating]
+speed_rpm = 3000          # 60 rpm at the crank (0.5 m/s floor speed at 50 deg crank angle) x 50:1
+peak_torque_nm = 13.6     # 641 N·m crank peak / (50 x 0.94 gearbox efficiency)
+cont_torque_needed_nm = 5.3   # 250 N·m crank continuous (183 N·m static + cueing RMS) / (50 x 0.94)
+bus_vdc = 325             # single-phase 230 Vac drive, rectified: arcade site supply
+
+[[check]]
+field = "peak_torque_nm"
+min = "peak_torque_nm"
+why = "Crank peak torque through the gearbox"
+
+[[check]]
+field = "cont_torque_nm"
+min = "cont_torque_needed_nm"
+why = "Holds the floor and the cueing RMS without overheating"
+
+[[check]]
+field = "rated_speed_rpm"
+min = "speed_rpm"
+why = "Crank speed for a 0.5 m/s floor velocity"
+
+[[check]]
+field = "bus_vdc_needed"
+max = "bus_vdc"
+why = "Back-EMF at duty speed must stay under a 230 Vac drive's DC bus"
+
+[[check]]
+field = "holding_brake"
+equals = true
+why = "The floor must not drop when power is cut: a fail-safe brake on every lift axis"
+
+[[check]]
+field = "mass_kg"
+max = 9
+prefer = true
+why = "Lighter motors ride on the surge carriage"

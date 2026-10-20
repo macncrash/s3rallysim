@@ -1,0 +1,23 @@
+# SKF maintenance-free rod end, female thread, 20 mm bore, steel/PTFE FRP sliding contact
+id = "skf-sikb-20-f"
+category = "rod-ends"
+maker = "SKF"
+country = "SE"
+model = "SIKB 20 F"
+notes = "Female thread M 20x1,5, tolerance 6H; left-hand version SILKB 20 F. Housing width C1 is a max value. Other dims (PDF p. 204-205, printed 202-203): d2 max 51 (eye outer dia), h1 77 (bore centre to shank end), dk 34,9 (ball dia), l4 max 103 (overall length), l3 min 30 (thread length), w 30 h14 (spanner flat), d4 max 37. C and C0 converted from kN as printed (decimal comma) to N. Per the catalogue (PDF p. 41, printed 39), C0 for a rod end is set by the strength of the housing under a constant load along the shank axis (safety factor of at least 1,2 to housing yield), so static_radial_load_n is the rod-end housing static rating, not the bare bearing C0. Permissible shank-axis load Pperm = C0 x b2 x b6 (PDF p. 46, printed 44): b6 = 1 for constant load, 0,5 for pulsating or alternating direction (0,35 for rod ends with a relubrication facility); for alternating link load use about half of C0. Load perpendicular to the shank must not exceed 0,1 C0. SKF warns load ratings are not comparable between makers (PDF p. 40). Table PDF pages are offset by 2 from printed page numbers. No dynamic/static housing material or temperature limits recorded here."
+
+[sources]
+skf = { title = "SKF spherical plain bearings and rod ends, PUB BU/P1 06116/1 EN, May 2013 (copy hosted by RS Components)", url = "https://docs.rs-online.com/8c2b/A700000014067355.pdf" }
+
+[values]
+bore_mm = { v = 20, src = "skf", page = 204 }
+thread = { v = "M20x1.5 female right-hand", src = "skf", page = 204 }
+dynamic_radial_load_n = { v = 31000, src = "skf", page = 204 }
+static_radial_load_n = { v = 50000, src = "skf", page = 204 }
+tilt_angle_deg = { v = 14, src = "skf", page = 204 }
+maintenance_free = { v = true, src = "skf", page = 204 }
+ball_width_mm = { v = 25, src = "skf", page = 204 }
+eye_width_mm = { v = 18, src = "skf", page = 204 }
+mass_kg = { v = 0.38, src = "skf", page = 204 }
+alternating_load_factor = { v = 0.5, src = "skf", page = 46 }
+eye_diameter_mm = { v = 51, src = "skf", page = 204 }

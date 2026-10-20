@@ -1,0 +1,21 @@
+# Simucube 2 Sport direct-drive wheelbase, 17 Nm
+id = "simucube-2-sport"
+category = "dd-wheelbases"
+maker = "Simucube"
+country = "FI"
+model = "Simucube 2 Sport"
+notes = "Dimensions are printed as 130 x 130 x 250 mm including the Simucube Quick Release (SQR); length_mm = 250 and diameter_or_width_mm = 130 taken from that. Front flange: 4 x M8 threaded holes on a 145 mm bolt circle (same pattern as the Pro); mounting guide says Sport and Pro mount with 30 mm M8 x 1.25 bolts and flat washers into the threaded front-flange holes. Package includes the pin for the SQR but NOT the SQR side parts (quick_release = true means the base takes the maker's QR). Page does not say what the 8 kg weight includes. Power supply printed only as '280 W'. Shaft diameter not published. Below the 20 Nm requirement; kept as the lighter comparison."
+
+[sources]
+product = { title = "Simucube 2 Sport - Simucube (product page, Technical Details)", url = "https://simucube.com/simucube-2-sport/" }
+mounting = { title = "Simucube 2 Mounting - Simucube documentation", url = "https://docs.simucube.com/Simucube 2/Mounting.html" }
+
+[values]
+peak_torque_nm = { v = 17, src = "product" }
+mass_kg = { v = 8, src = "product" }
+front_mount = { v = true, src = "mounting" }
+quick_release = { v = true, src = "product" }
+length_mm = { v = 250, src = "product" }
+diameter_or_width_mm = { v = 130, src = "product" }
+power_supply = { v = "280 W", src = "product" }
+mounting_pattern = { v = "4 x M8 threaded holes on 145 mm dia. bolt circle", src = "product" }

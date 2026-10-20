@@ -1,0 +1,24 @@
+# Siemens SIMOTICS S-1FL6 low-inertia 2 kW 200 V servo motor (for SINAMICS V90 200 V), with holding brake
+id = "siemens-1fl6054-2af21"
+category = "servo-motors"
+maker = "Siemens"
+country = "DE"
+model = "1FL6054-2AF21-0MB1"
+notes = "Order code from the rating-plate key (p. 29) and device-combination table (p. 30): 05 = shaft height 50, 4 = 6.37 N·m, 2 = low inertia, F = 3000 rpm, 2 = 200 V supply, 0 = straight connectors, M = absolute encoder single-turn 21-bit (A = incremental TTL 2500 ppr), B = shaft with key and brake (H = plain shaft with brake), 1 = IP65 with shaft oil seal. Drive is SINAMICS V90 PN 6SL3210-5FB12-0UF0, which is 3-phase 200-240 Vac (the 1/3-phase V90 200 V drives stop at 0.75 kW, p. 30). Picked as Siemens' 200 V-class 2 kW motor; 1FK7 / 1FK2 were not checked. cont_torque_nm is the rated torque (tolerance ±10%); the 1FL605x is rated 0-30 C without derating, -10% power from 30 to 40 C (p. 52-53). Siemens does not give Kt or Ke here (rated current 11.6 A, max 34.8 A), so kt/kb are left out. rotor_inertia_kgcm2 is the 'with brake' value 2.82 x 10^-4 kg·m2 converted (2.62 without). Brake: 24 V ±10%, 0.57 A, holding torque 6.37 N·m (equal to rated torque, about a third of peak), opening 90 ms, closing 35 ms; 200 emergency stops at 300% inertia from 3000 rpm for 1.5-2 kW motors. Flange 100 mm square, 95 mm spigot, 4 x 9 holes on 115 PCD (p. 70). length_mm is L1 with brake = 250 mm (flange to rear, not counting the 45 mm shaft). Shaft 19 mm (0/-0.013) x 45, 6 mm key. Page numbers are PDF indexes, which match the printed numbers."
+
+[sources]
+oi = { title = "SINAMICS V90, SIMOTICS S-1FL6 Operating Instructions (PROFINET, 200 V / 400 V), 04/2016, A5E37208830", url = "https://cache.industry.siemens.com/dl/files/880/109737880/att_884436/v1/SINAMICS_V90_PN_200V_400V_OPI_en-US_en-US.pdf" }
+
+[values]
+cont_torque_nm = { v = 6.37, src = "oi", page = 52 }
+peak_torque_nm = { v = 19.1, src = "oi", page = 52 }
+rated_speed_rpm = { v = 3000, src = "oi", page = 52 }
+rated_power_w = { v = 2000, src = "oi", page = 52 }
+drive_vac = { v = 200, src = "oi", page = 30 }
+holding_brake = { v = true, src = "oi", page = 29 }
+brake_holding_torque_nm = { v = 6.37, src = "oi", page = 52 }
+mass_kg = { v = 8.00, src = "oi", page = 53 }
+rotor_inertia_kgcm2 = { v = 2.82, src = "oi", page = 52 }
+flange_mm = { v = 100, src = "oi", page = 70 }
+length_mm = { v = 250, src = "oi", page = 70 }
+shaft_diameter_mm = { v = 19, src = "oi", page = 70 }

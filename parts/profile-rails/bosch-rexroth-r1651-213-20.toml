@@ -1,0 +1,22 @@
+# Bosch Rexroth standard BSHP steel ball runner block FNS (flange, normal length, standard height), size 25
+id = "bosch-rexroth-r1651-213-20"
+category = "profile-rails"
+maker = "Bosch Rexroth"
+country = "DE"
+model = "R1651 213 20"
+notes = "Material number built from the catalogue option table (PDF p. 50): R1651 2.. = FNS size 25, preload C1 (moderate), accuracy class H, standard seal SS, without ball chain. Other preload/accuracy codes change only the digits. Flange 4 x M8 holes on 57 x 45 mm (E1 x E2). C = 28 600 N and C0 = 35 900 N are for the block without ball chain; Rexroth bases C on 100,000 m (100 km) per DIN ISO 14728-1 and says multiply by 1.26 to compare with 50 km ratings (about 36 000 N). Rail mass 3.2 kg/m is for the standard steel guide rail SNS/SNO size 25 (PDF p. 113). Total height H = 36 mm. Pre-lubricated; the catalogue gives a grease relubrication-interval calculation example (2 150 km) but no self-lubricating option interval, so maintenance_interval_km is left out. vmax 5 m/s, amax 500 m/s2. Catalogue R999000485/2025-11; PDF page indices equal printed page numbers."
+
+[sources]
+rexroth_brs = { title = "Bosch Rexroth Ball rail systems, High Precision BSHP, R999000485/2025-11", url = "https://www.boschrexroth.com/media/ec1fd87f-8f69-4a5e-9596-e3f0089bc0f9" }
+
+[values]
+rail_size = { v = 25, src = "rexroth_brs", page = 51 }
+dynamic_load_n = { v = 28600, src = "rexroth_brs", page = 51 }
+dynamic_rating_basis_km = { v = 100, src = "rexroth_brs", page = 51 }
+static_load_n = { v = 35900, src = "rexroth_brs", page = 51 }
+block_length_mm = { v = 86.2, src = "rexroth_brs", page = 51 }
+block_width_mm = { v = 70, src = "rexroth_brs", page = 51 }
+total_height_mm = { v = 36, src = "rexroth_brs", page = 51 }
+rail_width_mm = { v = 23, src = "rexroth_brs", page = 51 }
+block_mass_kg = { v = 0.65, src = "rexroth_brs", page = 51 }
+rail_mass_kg_per_m = { v = 3.2, src = "rexroth_brs", page = 113 }

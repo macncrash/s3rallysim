@@ -1,0 +1,19 @@
+# Heusinkveld Ultimate+ 3-pedal set (clutch, brake, throttle), load-cell brake, hydraulic damping
+id = "heusinkveld-ultimate-plus-3-pedal"
+category = "pedal-sets"
+maker = "Heusinkveld"
+country = "NL"
+model = "Ultimate+ 3-pedal set Black"
+notes = "Card is for the 3-pedal set (clutch, throttle, brake) as sold; a 2-pedal set also exists. brake_max_force_kg is the maker's 'Max actual braking force' (140 kg); the brake load cell itself is rated 200 kg (load_cell_rating_kg). Maker prints 'Dimensions: 445x310x91mm' without saying which axis is which or whether it is the whole set or one pedal (resellers print the same figure for the clutch alone), so length/width/height are left out. Quick Start drawing (p. 2) shows one pedal's mounting slots spanning 140 mm by 68 mm, M6 flanged bolts (Torx 25), pedal angle options 95/80/15 deg. Each pedal is a separate unit bolted to the Ultimate+ Baseplate 'or a very rigid base' (maker: mount 'on a full frame rig'), so spacing is set by where each pedal is bolted. floor_hinged is read from the Quick Start side-view drawing (p. 2), which shows the pedal arm pivoting at the base of the pedal; the text does not state it. External controller box; USB to PC (Windows 10 or newer). Weight 6.64 kg is the maker's figure; it does not say whether it includes the controller box."
+
+[sources]
+shop = { title = "Ultimate+ 3-pedal set Black (Heusinkveld shop)", url = "https://heusinkveld.com/shop/pedals/ultimate-3-pedal-set-black/" }
+qs = { title = "Quick Start Ultimate+ pedals (Quickstart_UltPedalsBlack_9FEB2024)", url = "https://cdn.heusinkveld.com/wp-content/uploads/2025/06/Quickstart_UltPedalsBlack_9FEB2024_Losse-paginas.pdf" }
+
+[values]
+pedal_count = { v = 3, src = "shop" }
+brake_max_force_kg = { v = 140, src = "shop" }
+load_cell_rating_kg = { v = 200, src = "shop" }
+floor_hinged = { v = true, src = "qs", page = 2 }
+mass_kg = { v = 6.64, src = "shop" }
+adjustable_pedal_spacing = { v = true, src = "qs", page = 2 }

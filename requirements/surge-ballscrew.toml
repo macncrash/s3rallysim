@@ -1,0 +1,19 @@
+# Surge ballscrew (cad/pod/components/base.py). Load: 4.0 kN peak surge force (0.6 g on 675 kg).
+title = "Motion platform: surge ballscrew"
+category = "ballscrews"
+
+[[check]]
+field = "dynamic_axial_load_n"
+min = 12000
+why = "4.0 kN peak x 1.5 load factor x margin for life"
+
+[[check]]
+field = "lead_mm"
+in = [10, 16, 20]
+why = "0.5 m/s at up to 3000 rpm needs a 10 mm or longer lead"
+
+[[check]]
+field = "nominal_diameter_mm"
+min = 16
+max = 32
+why = "Fits the 110 mm housing on the base"

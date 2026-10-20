@@ -1,0 +1,21 @@
+# Recaro Pro Racer SPG XL: GFRP competition bucket seat, XL size, side-mount, head-and-neck compatible
+id = "recaro-pro-racer-spg-xl"
+category = "seats"
+maker = "Recaro"
+country = "DE"
+model = "Pro Racer SPG XL, velour black 071.38.0630-01"
+notes = "Card is for the XL size, chosen for a 95th-percentile driver: Recaro says the XL 'is 1.4 inches wider and 2.0 inches higher than the standard size'. FIA homologation CS.135.05 (XL; the standard SPG is CS.305.14). Recaro's overview table ticks GT, touring and rally use. Mounting hardware sold separately: steel side mount 360942, flexible (fore-aft) adaptor 7206293NA for the XL. mass_kg 10 excludes mounting hardware. Recaro's dimension drawing is for the standard SPG only (575 mm shoulder width, 455 mm and 350 mm internal widths, 402 / 455 mm base, 860 mm height, 820 mm length); no XL drawing, so internal_width_mm and overall_width_mm are left out. Recaro's site lists the seat as Pro Racer SPG XL; check current availability."
+
+[sources]
+hotsheet = { title = "RECARO hotsheet: Pro Racer SPG / SPG XL", url = "https://www.recaro-automotive.com/fileadmin/01-products/documents/hotsheets/recaro-hotsheet-pro-racer-spg-xl.pdf" }
+
+[values]
+fia_standard = { v = "8855-1999", src = "hotsheet", page = 1 }
+fia_list_number = { v = "CS.135.05", src = "hotsheet", page = 1 }
+hans_compatible = { v = true, src = "hotsheet", page = 1 }
+mass_kg = { v = 10, src = "hotsheet", page = 2 }
+overall_height_mm = { v = 915, src = "hotsheet", page = 2 }
+overall_depth_mm = { v = 820, src = "hotsheet", page = 2 }
+side_mount = { v = true, src = "hotsheet", page = 1 }
+shell_material = { v = "glass fiber reinforced polymer (GFRP)", src = "hotsheet", page = 1 }
+sizes = { v = "SPG, SPG XL", src = "hotsheet", page = 1 }

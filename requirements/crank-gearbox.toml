@@ -1,0 +1,50 @@
+# Gearbox for each crank drive: right-angle planetary, crank on the output shaft.
+# Loads: analysis/platform_loads.json, crew "95 + 95".
+title = "Motion platform: crank gearbox"
+category = "gearboxes"
+
+[operating]
+input_speed_rpm = 3000
+
+[[check]]
+field = "ratio"
+min = 40
+max = 60
+why = "60 rpm at the crank from a 3000 rpm servo"
+
+[[check]]
+field = "nominal_output_torque_nm"
+min = 250
+why = "Continuous crank torque: 183 N·m static plus cueing RMS"
+
+[[check]]
+field = "max_accel_output_torque_nm"
+min = 800
+why = "641 N·m peak crank torque x 1.25 for the cueing's repeated starts and stops"
+
+[[check]]
+field = "max_radial_output_load_n"
+min = 7700
+why = "The 5.1 kN peak link force lands on the output shaft through the crank: x 1.5"
+
+[[check]]
+field = "max_input_speed_rpm"
+min = "input_speed_rpm"
+why = "Servo duty speed"
+
+[[check]]
+field = "backlash_arcmin"
+max = 10
+why = "10 arcmin at a 125 mm crank is 0.36 mm of play at the floor"
+
+[[check]]
+field = "right_angle"
+equals = true
+prefer = true
+why = "Right-angle boxes let the motor lie along the carriage, under the floor"
+
+[[check]]
+field = "mass_kg"
+max = 15
+prefer = true
+why = "Rides on the surge carriage"

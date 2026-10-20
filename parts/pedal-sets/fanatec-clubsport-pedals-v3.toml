@@ -1,0 +1,14 @@
+# Fanatec ClubSport Pedals V3, 3-pedal set with 90 kg load-cell brake
+id = "fanatec-clubsport-pedals-v3"
+category = "pedal-sets"
+maker = "Fanatec (Endor AG)"
+country = "DE"
+model = "ClubSport Pedals V3"
+notes = "Sold as throttle, brake and clutch (manual covers connection of all three); pedal_count from that. brake_max_force_kg is the maker's '90kg Loadcell at the brake pedal' rating; maximum achievable force is not separately stated. Manual gives no dimensions or weight; outline dimensions are on a separate drilling template not read here. Plates adjust in height and angle via extensions and plate holes; spacing between pedals and pivot location are not addressed, so adjustable_pedal_spacing and floor_hinged are left out. Mounting: screws through the feet per drilling template. Fanatec packaging figures (50 x 40 x 34 cm, 11.48 kg) are shipping figures, not the product."
+
+[sources]
+manual = { title = "ClubSport Pedals V3 Manual | Quick Start Guide | Fanatec", url = "https://www.fanatec.com/uk/en/explorer/products/pedals/csp-v3/" }
+
+[values]
+pedal_count = { v = 3, src = "manual" }
+brake_max_force_kg = { v = 90, src = "manual" }

@@ -1,0 +1,22 @@
+# HIWIN HG series size 25 square (non-flanged) ball block, heavy-load C length, mounted from top (HGH25CA)
+id = "hiwin-hgh25ca"
+category = "profile-rails"
+maker = "HIWIN"
+country = "TW"
+model = "HGH25CA"
+notes = "Square narrow block, 4 x M6x8 tapped holes from top on a 35 x 35 mm pattern (B x C), runs on HGR25 rail (rail bolts M6x20, pitch 60 mm). Catalogue prints C = 34.9 kN and C0 = 52.82 kN; converted to N here. HIWIN states C for ball guideways is based on 50 km nominal life (PDF page 6). Block mass 0.51 kg and rail 3.21 kg/m as printed. Page numbers are PDF page indices; printed catalogue page = PDF page - 3 (e.g. PDF p. 40 = printed p. 37, catalogue G99TE22-2011). Block length L = 84 mm is the standard block with standard seals; options (ZZ/DD/KK seals, E2 self-lube) lengthen it. No self-lubricating interval stated for this part as specified; the E2 option (see hiwin-hgw25cc-e2) is available for HG25C. Preload and accuracy class (e.g. ZA/H) must be added to the order code."
+
+[sources]
+hiwin_lg = { title = "HIWIN Linear Guideway Technical Information, G99TE22-2011", url = "https://hiwin.com/wp-content/uploads/Linear_Guideway-E.pdf" }
+
+[values]
+rail_size = { v = 25, src = "hiwin_lg", page = 40 }
+dynamic_load_n = { v = 34900, src = "hiwin_lg", page = 40 }
+dynamic_rating_basis_km = { v = 50, src = "hiwin_lg", page = 6 }
+static_load_n = { v = 52820, src = "hiwin_lg", page = 40 }
+block_length_mm = { v = 84, src = "hiwin_lg", page = 40 }
+block_width_mm = { v = 48, src = "hiwin_lg", page = 40 }
+total_height_mm = { v = 40, src = "hiwin_lg", page = 40 }
+rail_width_mm = { v = 23, src = "hiwin_lg", page = 40 }
+block_mass_kg = { v = 0.51, src = "hiwin_lg", page = 40 }
+rail_mass_kg_per_m = { v = 3.21, src = "hiwin_lg", page = 40 }

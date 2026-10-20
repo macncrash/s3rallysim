@@ -1,0 +1,22 @@
+# Sparco Master Advanced: FIA 8855-2021 competition seat with steel side brackets, for rally and racing
+id = "sparco-master-advanced-8855-2021"
+category = "seats"
+maker = "Sparco"
+country = "IT"
+model = "Master Advanced 8855-2021 (BRR0015B0)"
+notes = "One size; Sparco: 'Suitable for drivers between 1.75 and 1.95 m tall'. Homologated only with floor seat brackets 004926 (steel); the FIA form also lists alternative brackets BAA0385B0 (DOMEX 700 MC, driver and co-driver LH/RH). Brackets are sold separately (Sparco also lists 'Master side mounting frames' 004919). Mass: Sparco gives 'Weight of frame only: 9.5 kg, Standard saddle weight: 11.7 kg, Weight with light saddle (on demand): 11 kg' (machine-translated wording; 'saddle' = upholstered seat); mass_kg is the standard 11.7 kg. The FIA presentation form states seat weight 10 kg. Side fixing 4 x M12 at 290 mm fore-aft; 401 mm front / 390 mm rear across the fixing points; head-restraint outer width 457 mm; strap-slot height 672 mm (Sparco drawing, titled 'MASTER'). No internal hip/shoulder width published: internal_width_mm left out. Shell material not stated beyond 'backrest with carbon fibre front skin'. HANS/FHR compatibility not stated on the Sparco page (8855-2021 seats are designed for FHR use, but the source does not say so)."
+
+[sources]
+sparco = { title = "Sparco Official: SEAT MASTER ADVANCED 8855-2021 (BRR0015B0) product page", url = "https://www.sparco-official.com/en/seat-master-advanced-8855-2021.html" }
+sparco_dwg = { title = "Sparco Official: MASTER seat dimension drawing (product gallery image)", url = "https://www.sparco-official.com/media/catalog/product/0/0/008030_master-seat-dimension.jpg" }
+fia = { title = "FIA presentation form for competition seat (FIA 8855-2021), Sparco Master Advance, CS.024.2025", url = "https://www.fia.com/sites/default/files/cs.024.25_presentation_form_v01.pdf" }
+
+[values]
+fia_standard = { v = "8855-2021", src = "fia", page = 1 }
+fia_list_number = { v = "CS.024.2025", src = "fia", page = 1 }
+mass_kg = { v = 11.7, src = "sparco" }
+overall_width_mm = { v = 612, src = "sparco_dwg" }
+overall_height_mm = { v = 954, src = "sparco_dwg" }
+overall_depth_mm = { v = 697, src = "sparco_dwg" }
+side_mount = { v = true, src = "fia", page = 2 }
+sizes = { v = "one size (drivers 1.75 to 1.95 m)", src = "sparco" }

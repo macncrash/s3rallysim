@@ -1,0 +1,29 @@
+# Bosch Rexroth ball screw assembly (BASA), 25 x 10 mm, single nut with flange FEM-E-S
+id = "rexroth-fem-e-s-25x10rx3-4"
+category = "ballscrews"
+maker = "Bosch Rexroth"
+country = "DE"
+model = "FEM-E-S 25 x 10R x 3 - 4, nut part number R1512 240 13"
+notes = """Size d0 x P x Dw - i = 25 x 10R x 3 - 4 (right-hand, 3 mm balls, 4 ball track turns), category A. \
+Nut: D1 = 38 g6 body, flange D5 = 63 mm, hole circle D6 = 50 mm, holes D7 = 6.6 mm, hole pattern BB4, design style BF1, \
+L = 64 mm, L3 = 12, L4 = 16, L10 = 52, lube port M6, mass 0.44 kg; screw d1 = 24.0, d2 = 21.9 (catalogue page 39). \
+Max linear speed vmax 60 m/min (page 38). Supplied with seals; preload classes C0, C00, C1, C2, C3; \
+tolerance grades T3, T5, T7, T9 (page 38). The load ratings C = 18,800 N and C0 = 27,000 N are valid for tolerance grades T3 and T5 only; \
+for T7 multiply by fac = 0.9, for T9 by 0.8 (page 137), i.e. T7 would give C = 16,920 N (calculated, not printed). \
+accuracy_grade lists the offered grades; the grade is chosen at order. \
+max_dn: characteristic speed d0 x n <= 150,000 with d0 = nominal diameter, 'up to 150,000 depending on the nut type' (page 137). \
+Load ratings per ISO 3408-5, 10^6 revolutions basis. PDF page numbers equal printed page numbers."""
+
+[sources]
+basa = { title = "Bosch Rexroth, Screw assemblies: Ball screw assemblies BASA / Planetary screw assemblies PLSA, R999001185/2025-11", url = "https://www.boschrexroth.com/media/8516e0f6-8d8e-47ec-9777-b3af5bac1d2a" }
+
+[values]
+nominal_diameter_mm = { v = 25, src = "basa", page = 38 }
+lead_mm = { v = 10, src = "basa", page = 38 }
+dynamic_axial_load_n = { v = 18800, src = "basa", page = 38 }
+static_axial_load_n = { v = 27000, src = "basa", page = 38 }
+nut_type = { v = "FEM-E-S single nut with flange, Rexroth connection dimensions, with seals", src = "basa", page = 38 }
+nut_length_mm = { v = 64, src = "basa", page = 39 }
+nut_flange_diameter_mm = { v = 63, src = "basa", page = 39 }
+accuracy_grade = { v = "T3, T5, T7 or T9 (order option; printed ratings valid for T3 and T5)", src = "basa", page = 38 }
+max_dn = { v = 150000, src = "basa", page = 137 }

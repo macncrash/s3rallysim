@@ -1,0 +1,28 @@
+# Apex Dynamics ABR142 right-angle helical planetary gearbox, 2-stage, i = 50
+id = "apex-abr142-050"
+category = "gearboxes"
+maker = "Apex Dynamics"
+country = "TW"
+model = "ABR142 i=50 (2-stage, P2)"
+notes = "The catalog has no explicit order-code page; motor adapter dimensions C1-C10 are motor specific and chosen with Apex's design tool (www.apexdyna.com). Shaft options S1 smooth, S2 keyed, S3 DIN 5480 spline. Page numbers are PDF indexes (PDF 8 = printed p. 7, PDF 11 = printed p. 10). nominal_output_torque_nm is T2N = 650 N·m at i = 50. emergency_stop_torque_nm and max_accel_output_torque_nm are NOT printed as numbers: the table says T2NOT = 3 times nominal output torque and footnote 2 says T2B = 60% of T2NOT, The card records those printed rules (estop_torque_factor, accel_torque_pct_of_estop); partsel derives T2NOT and T2B from them. Radial load F2rB 9400 N and axial 4700 N are 'applied to the output shaft center at 100 rpm' (footnote 3); max tilting moment 990 N·m. Backlash classes for 2-stage: standard P2 <= 9, reduced P1 <= 7, micro P0 <= 4 arcmin; card uses P2. Efficiency >= 92% (2-stage); torsional rigidity 50 N·m/arcmin; nominal input speed n1N 3000 rpm, max n1B 6000 rpm. Mass 21.5 kg (ABR142 2-stage; the ABR142A variant is 29.6 kg). Output: 142 mm square (L1), 130 g6 pilot, 4 x 11 holes on 165 PCD, shaft 40 j6 (D3) with 12 mm key width (B1), overall length L8 365 mm. Input: standard metric adapter shown is C1 130 PCD, C5 110 pilot, C3 motor shaft <= 32 mm - matches the Kollmorgen AKM2G-5x flange (110 j6 pilot, 130 PCD, 24 mm shaft); 95/115 flange motors (Beckhoff AM8052, Yaskawa SGM7A-20, Delta, Siemens 1FL605) need a different adapter plate from Apex. Ratios offered near 50: 45, 48, 50, 60."
+
+[sources]
+cat = { title = "Apex Dynamics High precision planetary gearbox AB / ABR series catalog (Gearbox-AB-ABR-Series, 2026-07-29 EV1)", url = "https://www.apexdyna.com/uploadimages/catalog/16/Gearbox-AB-ABR-Series-tw-20260729-EV1.pdf" }
+
+[values]
+ratio = { v = 50, src = "cat", page = 8 }
+nominal_output_torque_nm = { v = 650, src = "cat", page = 8 }
+estop_torque_factor = { v = 3, src = "cat", page = 8 }
+accel_torque_pct_of_estop = { v = 60, src = "cat", page = 8 }
+max_radial_output_load_n = { v = 9400, src = "cat", page = 8 }
+max_axial_output_load_n = { v = 4700, src = "cat", page = 8 }
+max_input_speed_rpm = { v = 6000, src = "cat", page = 8 }
+nominal_input_speed_rpm = { v = 3000, src = "cat", page = 8 }
+backlash_arcmin = { v = 9, src = "cat", page = 8 }
+efficiency_pct = { v = 92, src = "cat", page = 8 }
+right_angle = { v = true, src = "cat", page = 11 }
+mass_kg = { v = 21.5, src = "cat", page = 8 }
+frame_size_mm = { v = 142, src = "cat", page = 11 }
+output_shaft_diameter_mm = { v = 40, src = "cat", page = 11 }
+torsional_stiffness_nm_per_arcmin = { v = 50, src = "cat", page = 8 }
+overall_length_mm = { v = 365, src = "cat", page = 11 }

@@ -1,0 +1,27 @@
+# THK precision ball screw with finished shaft ends, 25 mm x 20 mm lead, C7 grade, clearance G2
+id = "thk-bnk2520-3-6g2"
+category = "ballscrews"
+maker = "THK"
+country = "JP"
+model = "BNK2520-3.6G2+<L3>LC7Y (e.g. BNK 2520-3.6G2+1251LC7Y)"
+notes = """Catalogue pages A15-194/A15-195 (2-page PDF excerpt; page 1 = A15-194 drawing and lengths, page 2 = A15-195 specifications). \
+Stock overall lengths L3 = 751, 851, 1051, 1251, 1451, 1651, 1851 mm for strokes 500 to 1,600 mm; shaft ends are finished (support-side ends 20 mm / M20x1 / 15h6). \
+Nut: body 47 g6, flange dia 74 mm cut to 66 x 49 mm, flange 12 mm thick, 4 x 6.6 mm through holes with 11 mm counterbore on PCD 60, M6 lube hole; nut length 53 mm (page 1). \
+BCD 26 mm, thread minor diameter 21.9 mm, 2 threads (1.8 turns x 2 rows), end-cap circulation, axial clearance G2 = 0.02 mm or less, \
+rigidity 360 N/um, nut mass 0.53 kg, shaft mass 3.03 kg/m, permissible rotational speed 2,690 min-1 (page 2). \
+Ratings printed in kN (Ca 16.7, C0a 38) and converted to N. The preloaded C5 version BNK2520-3.6G0 has lower ratings (Ca 10.5 kN, C0a 19 kN, spacer balls 1:1). \
+DN value 70,000 is printed in the page header; THK's definition of DN was not on these pages."""
+
+[sources]
+a15_194 = { title = "THK Ball Screw catalogue A15-194/195, BNK2520-3.6 Shaft Diameter: 25; Lead: 20", url = "https://tech.thk.com/en/products/pdfs/en_a15_194.pdf" }
+
+[values]
+nominal_diameter_mm = { v = 25, src = "a15_194", page = 1 }
+lead_mm = { v = 20, src = "a15_194", page = 2 }
+dynamic_axial_load_n = { v = 16700, src = "a15_194", page = 2 }
+static_axial_load_n = { v = 38000, src = "a15_194", page = 2 }
+nut_type = { v = "Flanged single nut, end-cap circulation, finished shaft ends (BNK)", src = "a15_194", page = 2 }
+nut_length_mm = { v = 53, src = "a15_194", page = 1 }
+nut_flange_diameter_mm = { v = 74, src = "a15_194", page = 1 }
+accuracy_grade = { v = "C7", src = "a15_194", page = 1 }
+max_dn = { v = 70000, src = "a15_194", page = 1 }

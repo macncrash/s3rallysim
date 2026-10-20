@@ -1,0 +1,23 @@
+# NSK NH series size 25 square (non-flanged) ball slide, high-load standard length (NH25AN)
+id = "nsk-nh25an"
+category = "profile-rails"
+maker = "NSK"
+country = "JP"
+model = "NH25AN"
+notes = "Square type, 4 x M6x1x9 tapped holes on 35 x 35 mm (B x J); rail N1H25, pitch 60 mm, bolt holes 7x11x9. NSK prints both C50 = 33 500 N (50 km) and C100 = 26 800 N (100 km); the 50 km value is recorded as dynamic_load_n. C0 = 46 000 N. The smooth-motion specification has lower ratings (Table 18, PDF p. 6: C50 31 500 N, C0 41 500 N). Interchangeable slide code NAH25AN; option '-L' adds the NSK K1-L lubrication unit, lengthening the slide from 79 to 90.6 mm (K1-L catalogue E3335, PDF p. 3). NSK's K1-L brochure reports endurance tests on NH25 (no external load, 3.2 m/s) of 56 000 km with K1-L alone and 118 000 km with K1-L + AS2 grease, with 'There is no guarantee of values/performance in actual equipment' (E3335 PDF p. 2); that is not a stated interval, so maintenance_interval_km is left out. Page numbers are PDF page indices."
+
+[sources]
+nsk_nh = { title = "NSK Linear Guides NH/NS Models, Cat. E3332c", url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/precision/e3332c.pdf" }
+nsk_k1l = { title = "NSK Linear Guides NSK K1-L Lubrication Unit, Cat. E3335", url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/precision/e3335.pdf" }
+
+[values]
+rail_size = { v = 25, src = "nsk_nh", page = 8 }
+dynamic_load_n = { v = 33500, src = "nsk_nh", page = 8 }
+dynamic_rating_basis_km = { v = 50, src = "nsk_nh", page = 8 }
+static_load_n = { v = 46000, src = "nsk_nh", page = 8 }
+block_length_mm = { v = 79, src = "nsk_nh", page = 8 }
+block_width_mm = { v = 48, src = "nsk_nh", page = 8 }
+total_height_mm = { v = 40, src = "nsk_nh", page = 8 }
+rail_width_mm = { v = 23, src = "nsk_nh", page = 8 }
+block_mass_kg = { v = 0.55, src = "nsk_nh", page = 8 }
+rail_mass_kg_per_m = { v = 3.6, src = "nsk_nh", page = 8 }

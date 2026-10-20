@@ -1,0 +1,22 @@
+# MOZA R21 Ultra direct-drive wheelbase, 21 Nm
+id = "moza-r21-ultra"
+category = "dd-wheelbases"
+maker = "MOZA Racing (Gudsen Technology)"
+country = "CN"
+model = "R21 Ultra"
+notes = "MOZA prints 'Maximum Torque 21 N·m' and states it is sustained torque, not a short-term peak; no separate peak figure is published. Dimensions printed as 248.8 x 140 x 135 mm (length x width x height); MOZA's mounting-hole drawing shows 250.2 mm length, 140 mm width, 135 mm height. Mounting per spec: 'Front, side, and bottom mounting supported (optional adjustable bracket available)'. From the drawing: front face 4 x M6 depth 12 on a 79.9 x 79.9 mm square; bottom 4 x M6 depth 15 on 78.4 x 66 mm; each side 2 x M6 depth 10 at 66 mm; top 2 x M3 depth 8.5 at 70 mm. Front holes are M6, not M8 as on Simucube. Quick release 'Supported' but not in the box (box: base, power adapter, power cord, data cord, bolt kit). Shaft diameter not published. Not to be confused with the older R21 / R21 V2 (327 x 170 x 130 mm, 8.9 kg)."
+
+[sources]
+product = { title = "MOZA R21 Ultra Direct Drive Wheel Base (product page, specifications)", url = "https://mozaracing.com/products/r21-ultra" }
+support = { title = "MOZA R21 Ultra Wheel Base Support - MOZA Support", url = "https://support.mozaracing.com/en/support/solutions/articles/70000679653-moza-r21-ultra-wheelbase-support" }
+drawing = { title = "Product Dimensions & Installation Diagram, 1.9 R21 Ultra Base Mounting Hole Diagram - MOZA Support", url = "https://support.mozaracing.com/en/support/solutions/articles/70000635191-product-dimensions-installation-diagram" }
+
+[values]
+peak_torque_nm = { v = 21, src = "product" }
+mass_kg = { v = 9.0, src = "product" }
+front_mount = { v = true, src = "product" }
+quick_release = { v = true, src = "product" }
+length_mm = { v = 248.8, src = "product" }
+diameter_or_width_mm = { v = 140, src = "product" }
+power_supply = { v = "110V~220V AC -> 36V DC external adapter, rated power 360W", src = "product" }
+mounting_pattern = { v = "Front: 4 x M6 depth 12 on 79.9 x 79.9 mm square; bottom: 4 x M6 depth 15 on 78.4 x 66 mm", src = "drawing" }

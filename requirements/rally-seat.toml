@@ -1,0 +1,29 @@
+# Rally bucket seats, driver and co-driver (cad/pod/components/seat.py, ergo.py).
+title = "Cockpit: rally seat"
+category = "seats"
+
+[[check]]
+field = "fia_standard"
+in = ["8855-2021", "8855-1999", "8862-2009"]
+why = "Real rally seats, so crews train in what they race in: 8855-1999 seats are still what most national crews race"
+
+[[check]]
+field = "hans_compatible"
+equals = true
+why = "Both occupants wear HANS"
+
+[[check]]
+field = "mass_kg"
+max = 12
+why = "The CAD placeholder is 31 kg of solid ABS; the platform loads assume a real seat"
+
+[[check]]
+field = "internal_width_mm"
+min = 420
+why = "95th percentile seated hip breadth (ergo.py) plus suit"
+
+[[check]]
+field = "side_mount"
+equals = true
+prefer = true
+why = "Side-mount brackets on the seat rails, as the CAD assumes"

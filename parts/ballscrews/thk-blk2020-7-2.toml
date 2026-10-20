@@ -1,0 +1,25 @@
+# THK rolled ball screw, 20 mm x 20 mm lead, BLK nut with 4 x 1.8 turns
+id = "thk-blk2020-7-2"
+category = "ballscrews"
+maker = "THK"
+country = "JP"
+model = "BLK2020-7.2"
+notes = """Catalogue page A15-268 'BLK (Rolled Ball Screw)', no preload (2-page PDF excerpt, page 1). \
+Ball center-to-center diameter dp 20.75 mm, thread minor diameter dc 17.5 mm, 4 rows x 1.8 turns, rigidity K 410 N/um, \
+nut outer diameter D = 39 mm, flange D1 = 62 mm, H = 10 mm flange thickness, 4 mounting holes. \
+Ratings printed in kN (Ca 13.9, C0a 44.6) and converted to N. The 2-row BLK2020-3.6 is lower (Ca 7.7 kN). \
+Model coding example on the page: BLK3232-3.6 ZZ +1500L C7 T H1K (accuracy symbol, see A15-12, not retrieved), so grade is an order option and is left out here. \
+DN value 70,000 printed in the page header; THK's definition of DN was not on this page. Nut mass not given on this page."""
+
+[sources]
+a15_268 = { title = "THK Ball Screw catalogue A15-268, BLK (Rolled Ball Screw)", url = "https://tech.thk.com/en/products/pdfs/en_a15_268.pdf" }
+
+[values]
+nominal_diameter_mm = { v = 20, src = "a15_268", page = 1 }
+lead_mm = { v = 20, src = "a15_268", page = 1 }
+dynamic_axial_load_n = { v = 13900, src = "a15_268", page = 1 }
+static_axial_load_n = { v = 44600, src = "a15_268", page = 1 }
+nut_type = { v = "BLK rolled ball screw nut, flanged, no preload", src = "a15_268", page = 1 }
+nut_length_mm = { v = 45, src = "a15_268", page = 1 }
+nut_flange_diameter_mm = { v = 62, src = "a15_268", page = 1 }
+max_dn = { v = 70000, src = "a15_268", page = 1 }

@@ -1,0 +1,51 @@
+# Chosen parts: one entry per requirement. tools/partsel/to_cad.py turns this into cad/pod/bought.py,
+# so the CAD's bought-part sizes and masses come from the cards (and their vendor sources).
+# status: "chosen" (decided), "provisional" (selector's pick, waiting on a value or a decision).
+
+[wheelbase]
+requirement = "wheelbase.toml"
+part = "simucube-2-pro"
+status = "chosen"
+decided = "2026-10-19, by the project owner"
+
+[pedals]
+requirement = "pedals.toml"
+part = "heusinkveld-ultimate-plus-3-pedal"
+status = "chosen"
+decided = "2026-10-19, by the project owner"
+
+[rally_seat]
+requirement = "rally-seat.toml"
+part = "recaro-pro-racer-spg-xl"
+status = "provisional"
+why = "XL size for the 95th percentile; internal width not published, confirm on a sample seat"
+
+[link_rod_end]
+requirement = "link-rod-end.toml"
+part = "skf-sikb-20-f"
+status = "provisional"
+why = "Passes every check, maintenance-free, fits the 20 mm pins already in the CAD"
+
+[surge_rail]
+requirement = "surge-rail.toml"
+part = "hiwin-hgw25cc-e2"
+status = "provisional"
+why = "Passes, and the only block with a stated self-lubrication interval"
+
+[surge_ballscrew]
+requirement = "surge-ballscrew.toml"
+part = "hiwin-25-10k5-fsc-din"
+status = "provisional"
+why = "Passes; 25 x 10 suits 0.5 m/s at 3000 rpm; same maker as the rails"
+
+[crank_servo]
+requirement = "crank-servo.toml"
+part = "kollmorgen-akm2g-51k"
+status = "provisional"
+why = "Passes, with brake; its 114 mm flange fits the Apex ABR142's standard adapter, no adapter plate"
+
+[crank_gearbox]
+requirement = "crank-gearbox.toml"
+part = "apex-abr142-050"
+status = "provisional"
+why = "Passes with T2B derived from Apex's printed rule (60% of 3 x T2N); half the mass of the Wittenstein SPK+ 180. Confirm T2B with Apex"

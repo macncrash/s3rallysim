@@ -1,0 +1,25 @@
+# Profile rail blocks under the surge carriage (cad/pod/components/sled.py): 4 blocks on 2 rails.
+# Load: (568 kg floor + 107 kg carriage, drives, cranks) / 4 = 1.66 kN static per block.
+title = "Motion platform: surge rail block"
+category = "profile-rails"
+
+[[check]]
+field = "dynamic_load_n"
+min = 20000
+why = "About 12 x the static block load: long life under cueing vibration and the 4 kN surge shove"
+
+[[check]]
+field = "static_load_n"
+min = 30000
+why = "Landing shocks: 1 g heave on top of the weight, unevenly shared"
+
+[[check]]
+field = "rail_size"
+in = [20, 25]
+why = "Size of the rails the CAD was drawn round"
+
+[[check]]
+field = "maintenance_interval_km"
+min = 1000
+prefer = true
+why = "Self-lubricating blocks for an arcade"

@@ -1,0 +1,25 @@
+# Neugart WPLHE120 Economy Line right-angle planetary gearbox (bevel right-angle stage), 2-stage, i = 40
+id = "neugart-wplhe120-40"
+category = "gearboxes"
+maker = "Neugart"
+country = "DE"
+model = "WPLHE120 i=40 (2-stage, S)"
+notes = "Economy-line reference point; WPLHE offers no i = 50 (2-stage ratios near 50: 40 and 64), so i = 40 is the closest. Full order code depends on the motor adaptation and comes from Neugart's Tec Data Finder / NCP. Page numbers are PDF indexes of the chapter (PDF 3 = catalog p. 82, 4 = 83, 5 = 84, 6 = dimensions). nominal_output_torque_nm is continuous torque T2D = 195 N·m; Neugart's cyclic torque T2Z at i = 40 is 230 N·m. max_accel_output_torque_nm is maximum torque T2max = 365 N·m. emergency_stop_torque_nm T2Stop = 500 N·m (permitted 1000 times). nominal_input_speed_rpm is continuous input speed n1D = 3500 rpm; max mechanical 6500 rpm. Radial force 6000 N, axial 6500 N, max tilting moment 488 N·m; the chapter does not state the radial-load point on the shaft. Backlash standard < 13 arcmin (2-stage), < 11 (1-stage). Efficiency 94%. Mass 12.5 - 12.8 kg and torsional stiffness 16.7 - 27.0 N·m/arcmin (2-stage) are ranges over ratios, so mass_kg and torsional_stiffness_nm_per_arcmin are left out. Input: reference clamping diameter 24 mm (F) - fits a 24 mm servo shaft (AKM2G-5x, AM8052, SGM7A-20); motor adapter from Tec Data Finder. Output: 110 mm square flange, 90 h7 centering, 4 x 9 holes on 120 PCD, shaft 32 k7. Housing steel, IP65, grease lifetime lubrication."
+
+[sources]
+cat = { title = "Neugart WPLHE catalog chapter, 05/2026 (EN)", url = "https://cdn.neugart.com/fileadmin/user_upload/Downloads/Catalog_Chapters/05_2026/WPLHE/WPLHE_2026_05_EN.pdf" }
+
+[values]
+ratio = { v = 40, src = "cat", page = 4 }
+nominal_output_torque_nm = { v = 195, src = "cat", page = 5 }
+max_accel_output_torque_nm = { v = 365, src = "cat", page = 4 }
+emergency_stop_torque_nm = { v = 500, src = "cat", page = 5 }
+max_radial_output_load_n = { v = 6000, src = "cat", page = 3 }
+max_axial_output_load_n = { v = 6500, src = "cat", page = 3 }
+max_input_speed_rpm = { v = 6500, src = "cat", page = 5 }
+nominal_input_speed_rpm = { v = 3500, src = "cat", page = 5 }
+backlash_arcmin = { v = 13, src = "cat", page = 3 }
+efficiency_pct = { v = 94, src = "cat", page = 3 }
+right_angle = { v = true, src = "cat", page = 2 }
+frame_size_mm = { v = 110, src = "cat", page = 6 }
+output_shaft_diameter_mm = { v = 32, src = "cat", page = 6 }

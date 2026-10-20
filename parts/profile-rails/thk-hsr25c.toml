@@ -1,0 +1,23 @@
+# THK HSR global-standard LM Guide, size 25 flanged block with tapped flange holes (HSR25C)
+id = "thk-hsr25c"
+category = "profile-rails"
+maker = "THK"
+country = "JP"
+model = "HSR25C"
+notes = "Requested HSR25A; the current THK catalogue (515-2E) lists the flanged, tapped-hole type as HSR-C ('The flange of the LM block has tapped holes. This type can be mounted from the top or the bottom', PDF p. 3), so this card is HSR25C. Flange holes 4 x M8 (through dia. 6.8) on 57 x 45 mm (B x C). Order code e.g. 'HSR25 C 2 QZ UU C0 M +1240L P T M' (PDF p. 11). Catalogue prints C = 27.6 kN, C0 = 36.4 kN; converted to N. THK's C for ball LM guides is based on 50 km (A1 general section, en_a01_060.pdf PDF p. 8); C100 = C50/1.26. Block length L = 83.1 mm is with UU or SS seals; other seals/lubricators (e.g. QZ) lengthen it. Rail max. standard length 3000 mm. HSR25LC (longer block, C = 35.2 kN, C0 = 51.6 kN) is in the same table. The source did not state a lubrication-free interval for the QZ lubricator, so maintenance_interval_km is left out. Page numbers are PDF page indices within en_a01_182.pdf (PDF p. 11 = printed A1-192, p. 12 = A1-193)."
+
+[sources]
+thk_hsr = { title = "THK LM Guide General Catalog 515-2E, Global Standard LM Guide Model HSR (A1-182 onward)", url = "https://tech.thk.com/en/products/pdf/en_a01_182.pdf" }
+thk_life = { title = "THK LM Guide General Catalog, A1-60 onward (Calculating the Nominal Life)", url = "https://tech.thk.com/en/products/pdf/en_a01_060.pdf" }
+
+[values]
+rail_size = { v = 25, src = "thk_hsr", page = 11 }
+dynamic_load_n = { v = 27600, src = "thk_hsr", page = 12 }
+dynamic_rating_basis_km = { v = 50, src = "thk_life", page = 8 }
+static_load_n = { v = 36400, src = "thk_hsr", page = 12 }
+block_length_mm = { v = 83.1, src = "thk_hsr", page = 11 }
+block_width_mm = { v = 70, src = "thk_hsr", page = 11 }
+total_height_mm = { v = 36, src = "thk_hsr", page = 11 }
+rail_width_mm = { v = 23, src = "thk_hsr", page = 12 }
+block_mass_kg = { v = 0.59, src = "thk_hsr", page = 12 }
+rail_mass_kg_per_m = { v = 3.3, src = "thk_hsr", page = 12 }
