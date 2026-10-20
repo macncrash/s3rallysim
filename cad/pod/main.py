@@ -82,7 +82,7 @@ design.add(shell)
 design.add(door, at=(DOOR_X0, door_y, 0))
 design.add(door_r, at=(DOOR_X0, -door_y, 0))
 design.add(display_55, name="windscreen", at=((screen_x, 0, screen_z), ("Z", 180)))
-side_x, side_y, side_z = 620, shell_half_w - 140, 1300
+side_x, side_y, side_z = 620, shell_half_w - 140, screen_z - 30
 design.add(monitor_27, name="window_l", at=((side_x, side_y, side_z), ("Z", -110)))
 design.add(monitor_27, name="window_r", at=((side_x, -side_y, side_z), ("Z", 110)))
 design.add(bezel, name="bezel_l", at=((side_x - 7, side_y - 19, side_z), ("Z", -110)), print=BEZEL)
@@ -99,7 +99,7 @@ DRIVES = {"fl": (drive_a, 0), "rr": (drive_a, 180), "rl": (drive_b, 0), "fr": (d
 for name, x, y in motion.ACTUATORS:
     side = 1 if y > 0 else -1
     ax = motion.crank_axis(x, y)
-    plane = (ax[0], y - side * 30, ax[2])
+    plane = (ax[0], y + side * motion.CRANK_DY, ax[2])
     comp, turn = DRIVES[name]
     design.add(comp, name="drive_" + name, at=(plane, ("Z", turn)))
     design.add(crank_l if side > 0 else crank_r, name="crank_" + name, at=plane)

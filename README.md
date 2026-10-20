@@ -11,7 +11,7 @@ The formula / F1 version is a different cockpit module in the same pod: one recl
 formula wheel and electronics, no dog box. The pod does not get smaller. The two-person rally version comes first;
 the F1 module follows once rally is feature-complete.
 
-Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261019-213037.mp4)
+Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261020-031352.mp4)
 
 ## What's here
 
@@ -23,6 +23,9 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `cad/pod/motion.py` | Motion-platform geometry: actuator points, crank reach, exact crank and link solution |
 | `analysis/platform_loads.py` | Actuator, crank and centre-post loads from the CAD masses plus the occupants, for full, mixed and driver-only crews |
 | `analysis/platform_clearance.py` | Exact reachable workspace and link and crank clearances |
+| `parts/` | Bought-part cards (seats, wheelbases, pedals, servos, gearboxes, rod ends, rails, ballscrews), every value sourced from the vendor's documents |
+| `requirements/` | What each bought part must meet, from the loads and ergonomics; `selection.toml` names the chosen part for each |
+| `tools/partsel/` | Part selector: checks cards against requirements, and writes the selection into `cad/pod/bought.py` |
 | `render/` | Blender walkaround driven by the CAD's own `rally_stage` animation |
 | `tools/mesh_to_sim.py` | Samples the CAD meshes into the Gravity motion-cue sim |
 | `sims/rally-pod-motion.js` | The Gravity sim (paste into Gravity → ✎ new sim) |
@@ -41,8 +44,11 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
   two 95th percentile and as two 5th percentile occupants.
 - **Motion platform:** four crank actuators lift the floor's corners, and a passive centre post with a universal
   joint under the loaded floor's centre of mass takes the side loads. Each crank and link is solved exactly in the
-  renders. See `docs/two-seat-pod.md` §4 for the workspace, clearances and loads (about 640 Nm peak per crank with two
-  large occupants).
+  renders. See `docs/two-seat-pod.md` §4 for the workspace, clearances and loads (about 460 Nm peak per crank with
+  two large occupants).
+- **Real parts:** Simucube 2 Pro wheelbase, Heusinkveld Ultimate+ pedals, FIA rally seats, and Kollmorgen servos on
+  Apex 50:1 right-angle gearboxes driving the cranks. Sizes and masses come from the vendors' documents through the
+  part selector (see [`tools/partsel/`](tools/partsel/)).
 
 ## Rebuilding the outputs
 
@@ -71,9 +77,18 @@ You need Python 3, Blender 4.5 and ffmpeg.
 5. Recompute the platform loads and check the workspace:
 
    ```sh
-   python3 analysis/platform_loads.py render/build/mesh cad/pod
+   python3 analysis/platform_loads.py render/build/mesh cad/pod > analysis/platform_loads.json
    python3 analysis/platform_clearance.py cad/pod
    ```
+
+## Choosing parts
+
+```sh
+python3 tools/partsel/partsel.py requirements/crank-gearbox.toml --detail   # which gearboxes fit, and why
+python3 tools/partsel/to_cad.py                                             # selection.toml -> cad/pod/bought.py
+```
+
+Add a part by writing a card in `parts/<category>/` (copy a neighbour, cite every number), then re-run the selector.
 
 ## Working on the CAD
 

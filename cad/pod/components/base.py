@@ -30,9 +30,10 @@ for name, x in (("rear", X0 + 30), ("mid", pivot_x + 100), ("front", X1 - 30)):
         base.cylinder("foot_" + name + "_" + side, 30, 12, at=(x, s * (RAIL_Y + 60), 0), direction=(0, 0, 1), op="new")
 
 # Surge actuator: servo and ballscrew in a housing; the screw's nut rod is fixed to the carriage.
-base.box("surge_body", 460, 110, 90, at=(-650, 0, 50), op="new")
-base.cylinder("surge_bore", 15, 470, at=(-885, 0, 50), direction=(1, 0, 0), op="cut", body="surge_body")
-base.cylinder("surge_motor", 55, 200, at=(-880, 0, 50), direction=(-1, 0, 0), op="new")
+# Under the surge carriage's frame (it starts 96 mm up): body and motor stay below 90 mm.
+base.box("surge_body", 460, 110, 80, at=(-650, 0, 45), op="new")
+base.cylinder("surge_bore", 15, 470, at=(-885, 0, 45), direction=(1, 0, 0), op="cut", body="surge_body")
+base.cylinder("surge_motor", 44, 200, at=(-880, 0, 45), direction=(-1, 0, 0), op="new")
 
 base.material("steel-s235jr", finish="powder-coated", color="#2c3138")
 base.material("steel-1c45", bodies=["rail_l", "rail_r"], color="#8d939c")

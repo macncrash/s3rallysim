@@ -70,7 +70,7 @@ def make_material(key, color, kind):
     mat.use_nodes = True
     bsdf = mat.node_tree.nodes["Principled BSDF"]
     bsdf.inputs["Base Color"].default_value = srgb(color)
-    if kind.startswith("glass"):
+    if kind.startswith("glass") and not kind.startswith("glass-fibre"):
         # Game screens: lit panels, they also light the cockpit.
         bsdf.inputs["Emission Color"].default_value = srgb("#7fc4c8")
         bsdf.inputs["Emission Strength"].default_value = 2.5

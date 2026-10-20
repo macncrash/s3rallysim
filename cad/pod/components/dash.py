@@ -9,9 +9,14 @@ dash = Component("dash", name="Dash frame")
 bx, bz = DASH[0], DASH[2]
 span = (seat_y + 300) if rally else 300
 posts = ((span - 10, "l"), (0, "c"), (-(span - 10), "r")) if rally else ((span - 10, "l"), (-(span - 10), "r"))
+# Steel tube: 50 x 2.5 crossbar, 44 x 2 uprights.
 dash.cylinder("crossbar", 25, 2 * span, at=(bx, -span, bz), direction=(0, 1, 0), op="new")
+dash.cylinder("crossbar_bore", 22.5, 2 * span + 2, at=(bx, -span - 1, bz), direction=(0, 1, 0), op="cut",
+              body="crossbar")
 for y, name in posts:
     dash.cylinder("upright_" + name, 22, bz - deck_top, at=(bx, y, deck_top), direction=(0, 0, 1), op="new")
+    dash.cylinder("upright_" + name + "_bore", 20, bz - deck_top - 30, at=(bx, y, deck_top + 15),
+                  direction=(0, 0, 1), op="cut", body="upright_" + name)
     dash.box("foot_" + name, 110, 90, 10, at=(bx, y, deck_top + 5), op="new")
 dash.box("clamp", 80, 70, 70, at=(bx, DRIVER_Y, bz), op="new")
 

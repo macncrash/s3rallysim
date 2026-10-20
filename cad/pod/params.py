@@ -18,25 +18,26 @@ roll_deg = 7  # deg corner and camber stop
 pitch_deg = 7  # deg nose up and down stop
 heave_mm = 40  # mm bump and landing stop
 
-shell_h = 1880  # mm enclosure height
+shell_h = 1930  # mm enclosure height
 shell_front = 980  # mm front posts
 shell_rear = -1160  # mm rear posts
 shell_half_w = 880  # mm side posts from the centreline
 screen_x = 800  # mm windscreen display plane
-screen_z = 1330  # mm windscreen display centre
+screen_z = 1380  # mm windscreen display centre
 
 # Motion platform: four crank actuators lift the floor's corners; a passive centre post with a
 # universal joint under the floor's centre of mass takes the side loads and sets the pivot.
 pivot_x = -300  # mm universal joint under the loaded floor's centre of mass
-pivot_z = 380  # mm universal joint centre: roll and pitch turn about it
+pivot_z = 430  # mm universal joint centre: roll and pitch turn about it
 act_xf = 170  # mm front actuator line
 act_xr = -770  # mm rear actuator line
-act_y = 520  # mm actuators from the centreline
+act_y = 390  # mm actuator links from the centreline (gearboxes sit outboard of them)
 crank_r = 125  # mm crank radius: +-113 mm at the floor (crank at +-65 deg)
-link_len = 245  # mm connecting link, pin to pin
-deck_z = 455  # mm moving floor centre: cranks clear the ground by 25 mm at full swing
-deck_t = 12  # mm moving floor thickness
-deck_top = 461  # mm moving floor top
+link_len = 295  # mm connecting link, pin to pin
+deck_z = 509  # mm moving floor plate centre (4 mm sheet on a welded frame): high enough that the floor
+# frame clears the gearboxes below it by 15 mm or more anywhere the cranks can reach
+deck_t = 4  # mm moving floor sheet
+deck_top = 511  # mm moving floor top
 
 seat_y = 330  # mm seat centreline from the car centreline
 seat_rake = 18  # deg seat back from vertical
@@ -48,7 +49,7 @@ elbow_deg = 100  # deg target elbow angle, hands at quarter to three
 seat_travel = 200  # mm seat rail travel forward of the 95th percentile position
 seat_lift_max = 80  # mm cushion lift for small drivers to see over the rim
 column_travel = 60  # mm steering column reach adjustment
-wheel_z = 1105  # mm wheel centre height (645 above the floor top)
+wheel_z = 1155  # mm wheel centre height (645 above the floor top)
 wheel_tilt = 25  # deg wheel face from vertical, top toward the screens
 wheel_r = 175  # mm rim radius (350 mm rally wheel)
 column_len = 280  # mm wheel centre to the dash crossbar along the column

@@ -8,14 +8,15 @@ heave, pitch and roll, keeps the poses every crank can reach within +-65 deg, an
 - the reachable workspace (how much of each axis is available at the extremes of the others);
 - the smallest gap between each link (rod and eyes) and the floor's under-frame tubes, in the
   floor's own frame;
-- the lowest crank tip above the ground and the largest link lean.
+- the lowest crank tip above the ground, the largest link lean, and the gap between the floor's
+  under-frame and the gearbox drives below it.
 """
 
 import itertools
 import math
 import sys
 
-ROD_R, EYE_R = 13, 20
+ROD_R = 13
 
 
 def box_distance(p, lo, hi):
@@ -44,6 +45,9 @@ def main():
     sys.path.insert(0, sys.argv[1])
     import motion  # noqa: E402
     import params  # noqa: E402
+    import drive_parts  # noqa: E402
+    from bought import LINK_ROD_END  # noqa: E402
+    eye_r = LINK_ROD_END["eye_diameter_mm"] / 2
     pivot = (params.pivot_x, 0, params.pivot_z)
     r, length = params.crank_r, params.link_len
     top = motion.DECK_BOT
@@ -57,7 +61,22 @@ def main():
         "front": ((x1 - 40, -w, bot), (x1, w, top)),
     }
     reach = []
-    worst = {"tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None)}
+    worst = {"tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None), "drive_gap": (1e9, None)}
+    # Drive tops (gearbox body and its mounting plate) under the floor's under-frame, per actuator.
+    frame_bottom = motion.DECK_BOT - motion.FRAME_H
+    drives = []
+    for name, x, y in motion.ACTUATORS:
+        s_ = 1 if y > 0 else -1
+        ax = motion.crank_axis(x, y)
+        plane = y + s_ * motion.CRANK_DY
+        y0, y1 = plane + s_ * drive_parts.BODY_Y0, plane + s_ * drive_parts.BODY_Y1
+        top = ax[2] + drive_parts.FRAME / 2 + 20  # mounting plate stands 20 above the gearbox
+        # Only where the floor actually is: its frame ends at +-w and x0..x1.
+        ys = [yy for yy in (y0, y1)]
+        ys = [max(-w, min(w, yy)) for yy in ys]
+        xs = [max(x0, min(x1, ax[0] + dx)) for dx in (-215, 215)]
+        corners = [(xx, yy, frame_bottom) for xx in xs for yy in ys]
+        drives.append((name, corners, top))
     for h, p, ro in itertools.product(range(-40, 41, 5), [x * 0.5 for x in range(-14, 15)],
                                       [x * 0.5 for x in range(-14, 15)]):
         ok = True
@@ -74,19 +93,23 @@ def main():
         if not ok:
             continue
         reach.append((h, p, ro))
+        for name, corners, top in drives:
+            low = min(motion.floor_point(c, h, p, ro)[2] for c in corners)
+            if low - top < worst["drive_gap"][0]:
+                worst["drive_gap"] = (low - top, (name, h, p, ro))
         for name, tip, pin in geo:
             lean = math.degrees(math.atan2(pin[0] - tip[0], pin[2] - tip[2]))
             if abs(lean) > worst["lean"][0]:
                 worst["lean"] = (abs(lean), (name, h, p, ro))
-            if tip[2] - EYE_R < worst["tip_low"][0]:
-                worst["tip_low"] = (tip[2] - EYE_R, (name, h, p, ro))
+            if tip[2] - eye_r < worst["tip_low"][0]:
+                worst["tip_low"] = (tip[2] - eye_r, (name, h, p, ro))
             # Link from tip to pin, in the floor's frame, against the under-frame tubes.
             a_f, b_f = to_floor(tip, h, p, ro, pivot), to_floor(pin, h, p, ro, pivot)
             # The top eye sits in its clevis by design: stop the check one eye radius short of the pin.
-            frac = 1 - (EYE_R + 2) / length
+            frac = 1 - (eye_r + 2) / length
             b_f = tuple(a_f[i] + (b_f[i] - a_f[i]) * frac for i in range(3))
             for tname, (lo, hi) in tubes.items():
-                gap = segment_box(a_f, b_f, lo, hi) - EYE_R
+                gap = segment_box(a_f, b_f, lo, hi) - eye_r
                 if gap < worst["tube_gap"][0]:
                     worst["tube_gap"] = (gap, (name, tname, h, p, ro))
 
@@ -110,6 +133,7 @@ def main():
     print("smallest link-to-tube gap mm: %.1f at %s" % worst["tube_gap"])
     print("lowest crank tip (eye bottom) above ground mm: %.1f at %s" % worst["tip_low"])
     print("largest link lean deg: %.1f at %s" % worst["lean"])
+    print("smallest floor-frame-to-drive gap mm: %.1f at %s" % worst["drive_gap"])
 
 
 if __name__ == "__main__":

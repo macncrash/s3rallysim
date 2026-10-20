@@ -116,7 +116,7 @@ def main():
     for name, x, y in motion.ACTUATORS:
         side = 1 if y > 0 else -1
         actuators.append({"name": name, "axis": motion.crank_axis(x, y), "tip": motion.crank_tip(x, y),
-                          "pin": motion.top_pin(x, y), "plane_y": y - side * 30})
+                          "pin": motion.top_pin(x, y), "plane_y": y + side * motion.CRANK_DY})
     eyes = {"driver": ergo.posture(params.driver_pct, "driver")["eye"]}
     if ergo.rally:
         eyes["codriver"] = ergo.posture(params.codriver_pct, "codriver")["eye"]

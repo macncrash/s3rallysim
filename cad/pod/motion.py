@@ -5,7 +5,7 @@ ends; a passive centre post carries a heave sleeve and a universal joint under t
 mass, which takes the side and fore-aft loads and sets the roll and pitch pivot. The whole stack rides
 a surge carriage on profile rails, driven by a ballscrew.
 
-Millimetres and degrees, design frame, floor at rest. Each crank arm points +X at rest (horizontal),
+Bought parts (servo, gearbox, rod ends, rails) come from bought.py. Millimetres and degrees, design frame, floor at rest. Each crank arm points +X at rest (horizontal),
 so a crank turns through about asin(dz / crank_r) for a floor point that moves dz.
 """
 
@@ -21,11 +21,12 @@ STROKE = 113  # mm floor travel per actuator, crank at +-65 deg
 # Base and surge carriage heights.
 BASE_H = 60  # base beams 0..60
 RAIL_H = 23  # surge rails on the base beams
-CAR_H = 30  # surge rail carriages
+CAR_H = 13  # surge rail blocks above the rail: HIWIN HGW25CC total height 36 mm (bought.SURGE_RAIL)
 SLED_Z0 = BASE_H + RAIL_H + CAR_H  # surge carriage frame underside
 SLED_H = 60
 SLED_TOP = SLED_Z0 + SLED_H
 RAIL_Y = 300  # surge rails from the centreline
+CRANK_DY = 30  # crank arm plane outboard of its link; the gearbox sits outboard of the crank
 
 # Actuators: name, x, y. Front pair, rear pair.
 ACTUATORS = (

@@ -4,7 +4,7 @@ from params import pivot_x, pivot_z
 # Heave sleeve on the column, with the lower yoke of the universal joint: two lugs across X that
 # carry the roll pin.
 heave_car = Component("heave_car", name="Heave sleeve and lower yoke")
-z0, z1 = 230, 335
+z0, z1 = pivot_z - 150, pivot_z - 45
 heave_car.box("sleeve", 180, 180, z1 - z0, at=(pivot_x, 0, (z0 + z1) / 2))
 heave_car.box("bore", 124, 124, z1 - z0 + 4, at=(pivot_x, 0, (z0 + z1) / 2), op="cut", body="sleeve")
 top = pivot_z + 25

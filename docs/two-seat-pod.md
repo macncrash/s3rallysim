@@ -1,6 +1,6 @@
 # S3 Rally Pod: two-seat cockpit, occupants, motion loads, intercom and telemetry
 
-Status, 2026-10-19. CAD: STEVE design "S3 Rally Pod", main revision 5 (two-seat cockpit + crank-actuator motion platform).
+Status, 2026-10-19. CAD: STEVE design "S3 Rally Pod", main revision 6 (two-seat cockpit, crank-actuator motion platform, real bought parts).
 Local source: `cad/pod/`. Renders: `renders/`, `gravity-renders/`. Load numbers: `analysis/platform_loads.json`.
 
 ## 1. Cockpit layout
@@ -15,7 +15,7 @@ Local source: `cad/pod/`. Renders: `renders/`, `gravity-renders/`. Load numbers:
   - Two 27" side-window displays on the A-pillars, and a rear-view display.
   - The co-driver gets a 10" telemetry/coaching display on the crossbar.
   - The driver gets a 7" dash display above the column.
-- **Shell:** 2,180 × 1,760 × 1,880 mm frame. It was enlarged until the occupants cleared it at every motion extreme (see 3).
+- **Shell:** 2,180 × 1,760 × 1,930 mm frame. It was enlarged until the occupants cleared it at every motion extreme (see 3).
 
 ## 2. Occupants and ergonomics (`cad/pod/ergo.py`)
 
@@ -63,12 +63,12 @@ Relevant FIA standards ([technical lists](https://www.fia.com/regulation/categor
 - **Poses:** at rest, jump, land, corner, and four envelope corners where every axis is at its stop at once.
 - **Sweeps:** each axis through its full range, plus the shifter, handbrake and both doors.
 - **Clearance required:** 50 mm to the cabin, 25 mm to the dash frame.
-- **Result:** all 612 pairs are clear with two 95th-percentile occupants (branch revision 5) and again with two 5th-percentile occupants (revision 6). The only contacts are the six designed ones: seats, gloves on the rim, boots on the pedals and footrest, and the column clamp. The branch is left at 95/95, the worst case for clearance and loads.
+- **Result:** all pairs are clear (756 on main revision 6, real parts fitted) with two 95th-percentile occupants (branch revision 5) and again with two 5th-percentile occupants (revision 6). The only contacts are the six designed ones: seats, gloves on the rim, boots on the pedals and footrest, and the column clamp. The branch is left at 95/95, the worst case for clearance and loads.
 
 What drove the fixes:
 - **Shell width:** at 7° roll the occupants' shoulders and elbows move about 120 mm sideways, which needed ±880 mm posts.
 - **Shell length:** at −7° pitch the seat-back tops swing back about 160 mm, which moved the rear wall back.
-- **Shell height:** the 95th-percentile helmet top is at 1,609 mm at rest.
+- **Shell height:** the 95th-percentile helmet top is at 1,684 mm at rest (floor top at 511 mm).
 
 ## 4. Motion platform (`cad/pod/motion.py`)
 
@@ -76,32 +76,51 @@ What drove the fixes:
 gone. In its place:
 
 - **Four corner crank actuators lift the floor.** Each is a servo on a right-angle planetary gearbox driving a 125 mm
-  crank, with a 245 mm link on rod ends up to a clevis under the floor. The links' top eyes are spherical rod ends
-  (the floor tilts up to 7° about them).
+  crank, with a 295 mm link on spherical rod ends up to a clevis under the floor (the floor tilts up to 7° about
+  them). The links stand 390 mm either side of the centreline. Each crank sits 30 mm outboard of its link, and the
+  gearbox and motor sit further outboard, under the floor's edge.
 - **A passive centre post carries the side and fore-aft loads.** A heave sleeve slides on a square column, and a
   universal joint on the sleeve holds the floor.
-  - The universal joint is the roll and pitch pivot, 380 mm up.
+  - The universal joint is the roll and pitch pivot, 430 mm up.
   - It sits at x = −300, under the loaded floor's centre of mass. With two 95th-percentile occupants that centre of
-    mass is 18 mm from the pivot, so the old constant 1.6 kNm pitch load is gone.
+    mass is 20 mm from the pivot.
 - **Surge:** the whole stack rides a surge carriage on size-25 profile rails, driven by a ballscrew.
-- **Floor height:** the floor top went up 25 mm (to 461 mm) so the cranks clear the ground by 25 mm at full swing. The
-  cockpit is positioned from the floor top, so the ergonomics are unchanged.
+- **Floor:** a 4 mm sheet on a welded frame, top at 511 mm. That is high enough for the frame to clear the gearboxes by
+  15.9 mm or more anywhere the cranks can reach. The cockpit is positioned from the floor top, so the ergonomics are
+  unchanged.
+
+**Bought parts.** Every bought part has a vendor-sourced card in [`parts/`](../parts/). The selector in
+[`tools/partsel/`](../tools/partsel/) checks the cards against the requirements in [`requirements/`](../requirements/),
+which come from the loads below. `tools/partsel/to_cad.py` writes the chosen parts into `cad/pod/bought.py`, and the
+CAD reads sizes and masses from there.
+
+| Role | Part | Status |
+|---|---|---|
+| Wheelbase | Simucube 2 Pro | chosen |
+| Pedals | Heusinkveld Ultimate+ 3-pedal | chosen |
+| Seats (×2) | Recaro Pro Racer SPG XL (FIA 8855-1999 and 8855-2021 seats are allowed) | provisional: internal width not published, confirm on a sample |
+| Crank servo (×4) | Kollmorgen AKM2G-51K, with brake | provisional |
+| Crank gearbox (×4) | Apex ABR142, 50:1 right angle | provisional: T2B derived from Apex's printed rule, confirm with Apex |
+| Link rod ends (×8) | SKF SIKB 20 F | provisional |
+| Surge rails | HIWIN HGW25CC (E2 self-lubricating) | provisional |
+| Surge ballscrew | HIWIN 25 × 10 | provisional |
 
 **Workspace (`analysis/platform_clearance.py`, exact geometry).**
 
 - **Each axis alone:** heave ±40 mm, pitch ±7° and roll ±7° are each reachable over their full range.
 - **Combinations:**
-  - Full pitch with any heave: reachable.
-  - Full roll with heave from −40 to +35 mm: reachable.
-  - Full pitch *and* full roll together: **not** reachable. The motion software must blend the axes (normal for
-    4-actuator rigs).
-- **Built-in guard:** `main.py` refuses to build if any pose of the motion cue is out of the cranks' ±65° reach.
+  - Full pitch or full roll with any heave: reachable.
+  - Full pitch *and* full roll together: reachable at heave −15 to 0 mm. Elsewhere the motion software must blend the
+    axes (normal for 4-actuator rigs).
+- **Built-in guard:** `main.py` refuses to build if any pose of the motion cue is out of the cranks' ±65° reach. The
+  cue's largest crank angle is 57.5°.
 - **Clearances over the whole workspace:**
-  - Links clear the floor's under-frame by ≥ 28 mm.
-  - Crank tips stay ≥ 25 mm above the ground.
-  - Links lean at most 18.5° from upright.
+  - Links clear the floor's under-frame by ≥ 23 mm.
+  - Crank tips (rod-end eye bottoms) stay ≥ 28 mm above the ground.
+  - The floor frame clears the gearboxes by ≥ 15.9 mm.
+  - Links lean at most 15.6° from upright.
 
-**Fit checks (STEVE).** Both pass on main revision 5:
+**Fit checks (STEVE).** Both pass on main revision 6:
 
 | Check | Instance pairs | What it covers |
 |---|---|---|
@@ -112,7 +131,7 @@ The only contacts are the designed ones (pins in eyes, blocks on rails, sleeve o
 STEVE gears the cranks with small-angle ratios and draws each link upright. The Blender walkaround and the Gravity sim
 solve each crank and link exactly.
 
-**Loads (`analysis/platform_loads.py`).**
+**Loads (`analysis/platform_loads.py`, main revision 6 masses).**
 
 Cueing targets assumed:
 - heave 1 g
@@ -123,22 +142,24 @@ Every combination of those targets was checked. Forces are shared as four equal 
 
 | Crew | Floor mass | Actuator static | Actuator peak | Link tension peak | Crank peak torque | Centre post side load | Surge force |
 |---|---|---|---|---|---|---|---|
-| 95 + 95 | 568 kg | 1.32–1.46 kN | 5.1 kN | 2.2 kN | 641 Nm | 5.1 kN | 4.0 kN |
-| 95 + 5 | 508 kg | 1.07–1.42 kN | 4.8 kN | 1.9 kN | 595 Nm | 4.5 kN | 3.6 kN |
-| 95 alone | 452 kg | 0.85–1.36 kN | 4.4 kN | 1.7 kN | 553 Nm | 4.0 kN | 3.3 kN |
-| 5 alone | 392 kg | 0.68–1.24 kN | 3.9 kN | 1.4 kN | 487 Nm | 3.3 kN | 2.9 kN |
+| 95 + 95 | 392 kg | 0.89–1.03 kN | 3.7 kN | 1.6 kN | 462 Nm | 3.6 kN | 3.3 kN |
+| 95 + 5 | 332 kg | 0.58–1.05 kN | 3.4 kN | 1.3 kN | 427 Nm | 3.0 kN | 3.0 kN |
+| 95 alone | 276 kg | 0.33–1.02 kN | 3.1 kN | 1.1 kN | 389 Nm | 2.4 kN | 2.6 kN |
+| 5 alone | 216 kg | 0.19–0.87 kN | 2.5 kN | 0.8 kN | 311 Nm | 1.8 kN | 2.3 kN |
 
-- **Drive size:** about 2 kW servo with a 50:1 gearbox. That gives about 950 Nm peak (641 needed) and 320 Nm continuous
-  (183 Nm static).
-- **Links work in tension:** at −1 g heave combined with a tilt kick they pull at up to 2.2 kN, so the links and rod
-  ends must be rated for both directions.
+- **Real-weight parts cut the loads by about 30%.** The floor is now a 4 mm sheet on a frame instead of a solid 12 mm
+  plate. The seats are 10 kg composite shells instead of 31 kg solid placeholders, and the dash frame is tube. With
+  two 95th-percentile occupants the floor went from 568 to 392 kg.
+- **The requirements keep the old envelope on purpose.** They were sized from the heavier model (641 Nm peak crank
+  torque, 5.1 kN actuator peak), which leaves room for the cockpit hardware still to be fitted (electronics, wiring,
+  intercom, seat brackets). Each chosen drive gives about 720 Nm peak and 313 Nm continuous at the crank (AKM2G-51K
+  15.7 / 6.81 Nm × 50 × 92%; the gearbox's own limit is higher) against 462 Nm peak and 131 Nm static.
+- **Links work in tension:** at −1 g heave combined with a tilt kick they pull at up to 1.6 kN, so the links and rod
+  ends must be rated for both directions. The SKF rod ends are checked against an alternating load.
 - **Uneven crews only shift load between corners:** the crank torques stay well inside the drive rating.
-- **Masses are conservative:** the seats are still solid placeholders (about 31 kg each).
 
 **Still to do on the platform:**
 
-- **Bought parts:** pick the real servos, gearboxes, rod ends, rails and ballscrew, using STEVE's standard-parts
-  catalogue.
 - **Structural check:** stress and stiffness on the floor frame and centre post (STEVE simulation).
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
   and the combined-axis envelope.
@@ -194,10 +215,11 @@ AiM .xrk has no third-party writer.
 
 ## 7. Open items
 
-1. **Platform bought parts and structure:** pick the servos, gearboxes, rod ends, rails and ballscrew, then check the
-   floor frame and centre post for stress and stiffness (see 4).
+1. **Platform structure:** check the floor frame and centre post for stress and stiffness (see 4). Confirm the
+   provisional bought parts with their makers (Apex T2B, seat internal width).
 2. **Vehicle-dynamics engine:** choose one per variant and write the loose-surface acceptance test.
 3. **Intercom:** get the technical sheets and design the audio harness and recorder.
 4. **Seat buck trial** with real drivers to confirm the ergonomic targets.
-5. **Real-weight parts:** replace the solid placeholder seats, crossbar and floor with real-weight parts and re-run
-   `analysis/platform_loads.py`.
+5. **Remaining cockpit hardware:** model the Heusinkveld pedals at their real size and mass (the CAD pedal box is
+   4.4 kg, the set is 6.6 kg), the handbrake and sequential shifter as bought parts, the intercom amplifier, the
+   electronics and cabling, and E-stops and door switches. Then re-run `analysis/platform_loads.py`.

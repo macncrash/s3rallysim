@@ -7,156 +7,156 @@
  },
  "crews": {
   "95 + 95": {
-   "floor_mass_kg": 567.8,
+   "floor_mass_kg": 391.5,
    "floor_com_mm": [
-    -318,
-    5,
-    773
+    -320,
+    13,
+    831
    ],
    "com_from_pivot_mm": [
-    -18,
-    5,
-    393
+    -20,
+    13,
+    401
    ],
-   "inertia_pitch_kgm2": 218.3,
-   "inertia_roll_kgm2": 208.6,
-   "surge_mass_kg": 675.1,
-   "surge_force_N": 3973,
+   "inertia_pitch_kgm2": 139.8,
+   "inertia_roll_kgm2": 139.0,
+   "surge_mass_kg": 565.0,
+   "surge_force_N": 3326,
    "actuator_static_N": {
-    "fl": 1353,
-    "fr": 1324,
-    "rl": 1461,
-    "rr": 1432
+    "fl": 953,
+    "fr": 888,
+    "rl": 1032,
+    "rr": 968
    },
    "actuator_peak_N": {
-    "fl": 4917,
-    "fr": 4859,
-    "rl": 5131,
-    "rr": 5074
+    "fl": 3538,
+    "fr": 3408,
+    "rl": 3697,
+    "rr": 3567
    },
    "actuator_min_N": {
-    "fl": -2210,
-    "fr": -2210,
-    "rl": -2210,
-    "rr": -2210
+    "fl": -1632,
+    "fr": -1632,
+    "rl": -1632,
+    "rr": -1632
    },
-   "crank_peak_Nm": 641,
-   "crank_static_Nm": 183,
-   "post_side_load_N": 5144
+   "crank_peak_Nm": 462,
+   "crank_static_Nm": 129,
+   "post_side_load_N": 3571
   },
   "95 + 5": {
-   "floor_mass_kg": 507.8,
+   "floor_mass_kg": 331.5,
    "floor_com_mm": [
-    -276,
-    45,
-    756
+    -255,
+    75,
+    805
    ],
    "com_from_pivot_mm": [
-    24,
     45,
-    376
+    75,
+    375
    ],
-   "inertia_pitch_kgm2": 194.2,
-   "inertia_roll_kgm2": 181.3,
-   "surge_mass_kg": 615.1,
-   "surge_force_N": 3620,
+   "inertia_pitch_kgm2": 115.8,
+   "inertia_roll_kgm2": 111.8,
+   "surge_mass_kg": 505.0,
+   "surge_force_N": 2973,
    "actuator_static_N": {
-    "fl": 1416,
-    "fr": 1201,
-    "rl": 1290,
-    "rr": 1074
+    "fl": 1047,
+    "fr": 733,
+    "rl": 893,
+    "rr": 579
    },
    "actuator_peak_N": {
-    "fl": 4761,
-    "fr": 4330,
-    "rl": 4507,
-    "rr": 4076
+    "fl": 3413,
+    "fr": 2786,
+    "rl": 3105,
+    "rr": 2477
    },
    "actuator_min_N": {
-    "fl": -1928,
-    "fr": -1928,
-    "rl": -1928,
-    "rr": -1928
+    "fl": -1319,
+    "fr": -1319,
+    "rl": -1319,
+    "rr": -1319
    },
-   "crank_peak_Nm": 595,
-   "crank_static_Nm": 177,
-   "post_side_load_N": 4523
+   "crank_peak_Nm": 427,
+   "crank_static_Nm": 131,
+   "post_side_load_N": 2950
   },
   "95 alone": {
-   "floor_mass_kg": 451.8,
+   "floor_mass_kg": 275.5,
    "floor_com_mm": [
-    -275,
-    91,
-    738
+    -249,
+    158,
+    775
    ],
    "com_from_pivot_mm": [
-    25,
-    91,
-    358
+    51,
+    158,
+    345
    ],
-   "inertia_pitch_kgm2": 177.8,
-   "inertia_roll_kgm2": 158.7,
-   "surge_mass_kg": 559.1,
-   "surge_force_N": 3291,
+   "inertia_pitch_kgm2": 99.4,
+   "inertia_roll_kgm2": 89.1,
+   "surge_mass_kg": 449.0,
+   "surge_force_N": 2643,
    "actuator_static_N": {
-    "fl": 1362,
-    "fr": 972,
-    "rl": 1244,
-    "rr": 854
+    "fl": 1022,
+    "fr": 475,
+    "rl": 876,
+    "rr": 330
    },
    "actuator_peak_N": {
-    "fl": 4424,
-    "fr": 3644,
-    "rl": 4187,
-    "rr": 3407
+    "fl": 3109,
+    "fr": 2017,
+    "rl": 2818,
+    "rr": 1725
    },
    "actuator_min_N": {
-    "fl": -1699,
-    "fr": -1699,
-    "rl": -1699,
-    "rr": -1699
+    "fl": -1066,
+    "fr": -1066,
+    "rl": -1066,
+    "rr": -1066
    },
-   "crank_peak_Nm": 553,
-   "crank_static_Nm": 170,
-   "post_side_load_N": 3953
+   "crank_peak_Nm": 389,
+   "crank_static_Nm": 128,
+   "post_side_load_N": 2380
   },
   "5 alone": {
-   "floor_mass_kg": 391.8,
+   "floor_mass_kg": 215.5,
    "floor_com_mm": [
-    -214,
-    55,
-    710
+    -131,
+    110,
+    721
    ],
    "com_from_pivot_mm": [
-    86,
-    55,
-    330
+    169,
+    110,
+    291
    ],
-   "inertia_pitch_kgm2": 153.8,
-   "inertia_roll_kgm2": 131.5,
-   "surge_mass_kg": 499.1,
-   "surge_force_N": 2937,
+   "inertia_pitch_kgm2": 75.3,
+   "inertia_roll_kgm2": 61.9,
+   "surge_mass_kg": 389.0,
+   "surge_force_N": 2290,
    "actuator_static_N": {
-    "fl": 1239,
-    "fr": 1036,
-    "rl": 886,
-    "rr": 683
+    "fl": 867,
+    "fr": 570,
+    "rl": 487,
+    "rr": 190
    },
    "actuator_peak_N": {
-    "fl": 3894,
-    "fr": 3488,
-    "rl": 3189,
-    "rr": 2783
+    "fl": 2487,
+    "fr": 1893,
+    "rl": 1727,
+    "rr": 1133
    },
    "actuator_min_N": {
-    "fl": -1417,
-    "fr": -1417,
-    "rl": -1417,
-    "rr": -1417
+    "fl": -753,
+    "fr": -753,
+    "rl": -753,
+    "rr": -753
    },
-   "crank_peak_Nm": 487,
-   "crank_static_Nm": 155,
-   "post_side_load_N": 3333
+   "crank_peak_Nm": 311,
+   "crank_static_Nm": 108,
+   "post_side_load_N": 1761
   }
  }
 }
