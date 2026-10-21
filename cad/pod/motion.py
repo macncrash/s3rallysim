@@ -1,8 +1,8 @@
 """Motion platform geometry, shared by the platform components, main.py and the analysis scripts.
 
 Four rotary crank actuators lift the moving floor at its corners through vertical links with rod
-ends; a passive centre post carries a heave sleeve and a universal joint under the floor's centre of
-mass, which takes the side and fore-aft loads and sets the roll and pitch pivot. The whole stack rides
+ends; a passive heave guide carries a universal joint under the floor's centre of mass, which takes the
+side and fore-aft loads and sets the roll and pitch pivot. The whole stack rides
 a surge carriage on profile rails, driven by a ballscrew.
 
 Bought parts (servo, gearbox, rod ends, rails) come from bought.py. Millimetres and degrees, design frame, floor at rest. Each crank arm points +X at rest (horizontal),
@@ -27,6 +27,17 @@ SLED_H = 60
 SLED_TOP = SLED_Z0 + SLED_H
 RAIL_Y = 300  # surge rails from the centreline
 CRANK_DY = 30  # crank arm plane outboard of its link; the gearbox sits outboard of the crank
+
+# Heave guide (docs/floor-structure.md, fixes D and F): two fixed steel columns either side of the universal joint,
+# each braced by two struts down to the surge rail blocks. The crosshead carrying the joint's lower yoke runs on one
+# guide rail per side, in two blocks fixed on each column (bought.HEAVE_GUIDE).
+GUIDE_Y = 215  # column centres from the centreline
+GUIDE_COL = 100  # column square section, 8 mm wall
+GUIDE_TOP = 415  # column top: clears the floor plate at -40 mm heave with full roll and pitch
+GUIDE_RAIL_H = 23  # guide rail height, as RAIL_H; the block's total height comes from bought.HEAVE_GUIDE
+STRUT_Z = 360  # where the struts meet the column axis
+STRUT_R = 30.15  # struts: CHS 60.3 x 5
+STRUT_T = 5
 
 # Actuators: name, x, y. Front pair, rear pair.
 ACTUATORS = (

@@ -163,3 +163,23 @@ CRANK_GEARBOX = {
     'torsional_stiffness_nm_per_arcmin': 50,
     'overall_length_mm': 365,
 }
+
+# heave_guide: HIWIN HGW25CC + ZZ/E2 (provisional, selector CHECK)
+HEAVE_GUIDE = {
+    'id': 'hiwin-hgw25cc-e2',
+    'maker': 'HIWIN',
+    'model': 'HGW25CC + ZZ/E2',
+    'status': 'provisional',
+    'verdict': 'CHECK',
+    'card': 'parts/profile-rails/hiwin-hgw25cc-e2.toml',
+    'rail_size': 25,
+    'dynamic_load_n': 34900,
+    'dynamic_rating_basis_km': 50,
+    'static_load_n': 52820,
+    'block_length_mm': 104.0,
+    'block_width_mm': 70,
+    'total_height_mm': 36,
+    'rail_width_mm': 23,
+    'rail_mass_kg_per_m': 3.21,
+    'maintenance_interval_km': 10000,
+}

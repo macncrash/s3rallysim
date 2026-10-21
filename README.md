@@ -26,7 +26,7 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `parts/` | Bought-part cards (seats, wheelbases, pedals, servos, gearboxes, rod ends, rails, ballscrews), every value sourced from the vendor's documents |
 | `requirements/` | What each bought part must meet, from the loads and ergonomics; `selection.toml` names the chosen part for each |
 | `tools/partsel/` | Part selector: checks cards against requirements, and writes the selection into `cad/pod/bought.py` |
-| `cad/fea/` | The floor, centre post and carriage, each rebuilt as one welded solid for STEVE structural studies |
+| `cad/fea/` | The floor, the old centre post, the carriage and the new heave-guide tower, each rebuilt as one welded solid for STEVE structural studies |
 | `analysis/floor_fea_loads.py`, `floor_fea_study.py` | Cockpit bolt loads and centre-post loads for those studies, and the study definitions |
 | `requirements/vd-loose-surface.toml` | The rally vehicle model's loose-surface acceptance test: manoeuvres, metrics, pass bands |
 | `tools/vdat/` | Runs that test: logged real-car runs against pod runs |
@@ -34,7 +34,7 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `tools/mesh_to_sim.py` | Samples the CAD meshes into the Gravity motion-cue sim |
 | `sims/rally-pod-motion.js` | The Gravity sim (paste into Gravity → ✎ new sim) |
 | `docs/two-seat-pod.md` | Design notes: ergonomics, fit check, platform loads, intercom, telemetry and physics stack, open items |
-| `docs/floor-structure.md` | Structural check of the floor, centre post and carriage, with the fixes |
+| `docs/floor-structure.md` | Structural check of the floor, heave guide and carriage, with the fixes |
 | `docs/vehicle-dynamics.md` | Vehicle-dynamics engine recommendation and the loose-surface acceptance test |
 | `renders/`, `gravity-renders/` | The current videos |
 
@@ -48,8 +48,9 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 - **Fit check:** STEVE checks both occupants against the shell, doors, screens, wheel, dash and pedals. It runs at
   rest, through every axis, and at the envelope corners where every axis is at its stop at once. The crew passes as
   two 95th percentile and as two 5th percentile occupants.
-- **Motion platform:** four crank actuators lift the floor's corners, and a passive centre post with a universal
-  joint under the loaded floor's centre of mass takes the side loads. Each crank and link is solved exactly in the
+- **Motion platform:** four crank actuators lift the floor's corners, and a passive heave guide (a crosshead on
+  linear guides between two braced columns) with a universal joint under the loaded floor's centre of mass takes the
+  side loads. Each crank and link is solved exactly in the
   renders. See `docs/two-seat-pod.md` §4 for the workspace, clearances and loads (about 460 Nm peak per crank with
   two large occupants).
 - **Real parts:** Simucube 2 Pro wheelbase, Heusinkveld Ultimate+ pedals, FIA rally seats, and Kollmorgen servos on

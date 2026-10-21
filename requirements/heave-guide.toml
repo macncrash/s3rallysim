@@ -1,0 +1,33 @@
+# Profile rail blocks of the heave guide (cad/pod/components/sled.py, heave_car.py): one rail on each side of the
+# crosshead, two blocks fixed on each column, 4 blocks in all. The crosshead carries the universal joint, so the
+# blocks take the joint's 3.4 kN fore-aft and 1.1 kN side load (platform_loads.py) and the moment of that load about
+# them: up to 159 mm above the block pair's centre at the +40 mm heave stop.
+# Worst block: 3.4 kN / 4 + 3.4 kN x 0.159 m / (2 columns x 0.104 m block pitch) = 3.4 kN lateral.
+title = "Motion platform: heave guide block"
+category = "profile-rails"
+
+[[check]]
+field = "dynamic_load_n"
+min = 20000
+why = "About 6 x the worst block load: cue reversals at up to 10 Hz for the pod's life"
+
+[[check]]
+field = "static_load_n"
+min = 30000
+why = "Landing and kerb shocks, several times the cueing load"
+
+[[check]]
+field = "rail_size"
+in = [25]
+why = "The column, ear and crosshead were drawn round size 25 (36 mm total height)"
+
+[[check]]
+field = "radial_rigidity_n_per_um"
+min = 100
+why = "Stiffness at the joint: the FE of the tower (docs/floor-structure.md) leaves the guides 38 kN/mm of the 9.7 kN/mm budget for a 25 Hz floor mode; with the joint 159 mm above a 104 mm block pair that needs about 100 N/um per block, lateral and radial. Not printed on the cards: confirm with the maker at the chosen preload"
+
+[[check]]
+field = "maintenance_interval_km"
+min = 1000
+prefer = true
+why = "Self-lubricating blocks for an arcade"

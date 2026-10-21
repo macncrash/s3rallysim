@@ -79,8 +79,9 @@ gone. In its place:
   crank, with a 295 mm link on spherical rod ends up to a clevis under the floor (the floor tilts up to 7° about
   them). The links stand 390 mm either side of the centreline. Each crank sits 30 mm outboard of its link, and the
   gearbox and motor sit further outboard, under the floor's edge.
-- **A passive centre post carries the side and fore-aft loads.** A heave sleeve slides on a square column, and a
-  universal joint on the sleeve holds the floor.
+- **A passive heave guide carries the side and fore-aft loads.** A crosshead runs on linear guides between two
+  braced steel columns, and a universal joint on the crosshead holds the floor (main revision 9; see
+  [`floor-structure.md`](floor-structure.md)).
   - The universal joint is the roll and pitch pivot, 430 mm up.
   - It sits at x = −300, under the loaded floor's centre of mass. With two 95th-percentile occupants that centre of
     mass is 20 mm from the pivot.
@@ -163,9 +164,10 @@ Every combination of those targets was checked. Forces are shared as four equal 
 - **Structural fixes** from the first STEVE studies ([`floor-structure.md`](floor-structure.md)):
   - Done in main revision 8: a cross tube under the seat rails' rear bolts, clevis boxes, and twin cross tubes
     under the column plate.
-  - Bracing on the post: with twin tubes alone the floor's fore-aft mode is still only about 12 Hz.
+  - Done in main revision 9: the centre post and sleeve are replaced by a braced twin-column heave guide on HIWIN
+    blocks. FE gives 13–40 kN/mm fore-aft at the joint (floor mode about 29–51 Hz), with the guide blocks' rigidity
+    still to confirm with HIWIN.
   - Thrust faces on the universal-joint pins.
-  - Preloaded bearings in the heave sleeve.
   - A stiffer front overhang.
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
   and the combined-axis envelope.
@@ -228,8 +230,10 @@ AiM .xrk has no third-party writer.
      thrust faces, and the heave sleeve has 2 mm of play.
    - **Next:**
      - Fixes A–C are in the design (main revision 8).
-     - Design D–G: post bracing, pin thrust faces, sleeve bearings, front overhang.
-     - Run a modal study of floor, post and carriage together.
+     - Fixes D and F are in the design (main revision 9): a braced twin-column heave guide. Confirm the guide
+       blocks' rigidity with HIWIN.
+     - Design E and G: pin thrust faces, front overhang.
+     - Run a modal study of floor, guide and carriage together.
      - Re-run the clearance and fit checks.
      - Confirm the provisional bought parts with their makers (Apex T2B, seat internal width).
 2. **Vehicle-dynamics engine.** Researched, with a recommendation ([`vehicle-dynamics.md`](vehicle-dynamics.md)).

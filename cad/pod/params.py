@@ -25,7 +25,7 @@ shell_half_w = 880  # mm side posts from the centreline
 screen_x = 800  # mm windscreen display plane
 screen_z = 1380  # mm windscreen display centre
 
-# Motion platform: four crank actuators lift the floor's corners; a passive centre post with a
+# Motion platform: four crank actuators lift the floor's corners; a passive heave guide with a
 # universal joint under the floor's centre of mass takes the side loads and sets the pivot.
 pivot_x = -300  # mm universal joint under the loaded floor's centre of mass
 pivot_z = 430  # mm universal joint centre: roll and pitch turn about it

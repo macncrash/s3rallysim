@@ -1,11 +1,12 @@
 from steve import Component
-from params import pivot_x, pivot_z
-from motion import BASE_H, RAIL_H, RAIL_Y, CAR_H, SLED_Z0, SLED_H, SLED_TOP, ACTUATORS, CRANK_DY, crank_axis
+from params import pivot_x
+from motion import (BASE_H, RAIL_H, RAIL_Y, CAR_H, SLED_Z0, SLED_H, SLED_TOP, ACTUATORS, CRANK_DY, crank_axis,
+                    GUIDE_Y, GUIDE_COL, GUIDE_TOP, GUIDE_RAIL_H, STRUT_Z, STRUT_R, STRUT_T)
 import drive_parts
-from bought import SURGE_RAIL, SURGE_BALLSCREW
+from bought import SURGE_RAIL, SURGE_BALLSCREW, HEAVE_GUIDE
 
-# Surge carriage: four HIWIN HGW25CC rail blocks (bought.py), two runners and four cross tubes, the heave
-# column under the universal joint, the gearbox mounts, and the bracket that takes the surge ballscrew's nut.
+# Surge carriage: four HIWIN HGW25CC rail blocks (bought.py), two runners and four cross tubes, the heave guide
+# columns either side of the universal joint, the gearbox mounts, and the bracket that takes the surge ballscrew's nut.
 sled = Component("sled", name="Surge carriage")
 X0, X1 = -960, 250
 zc = SLED_Z0 + SLED_H / 2
@@ -44,10 +45,37 @@ for name, x, y in ACTUATORS:
     sled.cylinder("mount_" + name + "_bore", 25, 20, at=(ax[0], plate_y - 10, ax[2]), direction=(0, 1, 0), op="cut",
                   body="mount_" + name)
 
-# Heave column: a square post the universal-joint sleeve slides on.
-sled.box("column_plate", 200, 200, 12, at=(pivot_x, 0, SLED_TOP + 6), op="new")
-top = pivot_z - 70  # 40 mm of sleeve engagement left at full heave
-sled.box("column", 120, 120, top - SLED_TOP - 12, at=(pivot_x, 0, (SLED_TOP + 12 + top) / 2), op="new")
+# Heave guide: a steel column each side of the universal joint on a foot plate across the twin mid tubes, with two
+# guide blocks on its inner face for the crosshead's rail (heave_car.py). Two struts brace each column straight down
+# to the surge rail blocks, so the joint's side and fore-aft loads reach the rails without bending the runners.
+block_len = HEAVE_GUIDE["block_length_mm"]
+block_h = HEAVE_GUIDE["total_height_mm"] - GUIDE_RAIL_H
+guide_z0 = GUIDE_TOP - 2 * block_len
+foot_t = 15
+col_h = GUIDE_TOP - SLED_TOP - foot_t
+steel = []
+for side, s in (("l", 1), ("r", -1)):
+    y = s * GUIDE_Y
+    sled.box("foot_" + side, 200, 120, foot_t, at=(pivot_x, y, SLED_TOP + foot_t / 2), op="new")
+    sled.box("column_" + side, GUIDE_COL, GUIDE_COL, col_h, at=(pivot_x, y, SLED_TOP + foot_t + col_h / 2), op="new")
+    sled.box("column_" + side + "_void", GUIDE_COL - 16, GUIDE_COL - 16, col_h,
+             at=(pivot_x, y, SLED_TOP + foot_t + col_h / 2 + 8), op="cut", body="column_" + side)
+    steel += ["foot_" + side, "column_" + side]
+    for k in (0, 1):
+        sled.box(f"guide_block_{side}{k}", HEAVE_GUIDE["block_width_mm"], block_h, block_len,
+                 at=(pivot_x, s * (GUIDE_Y - GUIDE_COL / 2 - block_h / 2), guide_z0 + block_len * (k + 0.5)), op="new")
+        steel.append(f"guide_block_{side}{k}")
+    for end, bx in (("f", X1 - 90), ("b", X0 + 90)):
+        a = (pivot_x, y, STRUT_Z)
+        d = (bx - pivot_x, s * RAIL_Y - y, SLED_TOP + STRUT_R - STRUT_Z)
+        length = sum(v * v for v in d) ** 0.5
+        u = tuple(v / length for v in d)
+        sid = "strut_" + side + end
+        sled.cylinder(sid, STRUT_R, length, at=a, direction=u, op="new")
+        sled.cylinder(sid + "_bore", STRUT_R - STRUT_T, length - 60, at=tuple(a[i] + 30 * u[i] for i in range(3)),
+                      direction=u, op="cut", body=sid)
+        sled.box("strut_" + side + end + "_foot", 120, 60, 10, at=(bx, s * RAIL_Y, SLED_TOP + 5), op="new")
+        steel += [sid, "strut_" + side + end + "_foot"]
 
 # Surge nut rod into the ballscrew housing on the base, and its bracket under the rear mid cross tube's
 # front edge (any further aft and it meets the surge body at full rear surge).
@@ -56,4 +84,5 @@ sled.cylinder("nut_rod", SURGE_BALLSCREW["nominal_diameter_mm"] / 2 - 0.5, 360, 
 sled.box("nut_bracket", 30, 80, SLED_Z0 + 10 - 20, at=(pivot_x - 45, 0, (SLED_Z0 + 10 + 20) / 2), op="new")
 
 sled.material("aluminum-6061-t6", color="#3d4450")
-sled.material("steel-1c45", bodies=["nut_rod", "column"], color="#9aa1ab")
+sled.material("steel-1c45", bodies=["nut_rod"], color="#9aa1ab")
+sled.material("steel-s235jr", bodies=steel, color="#4a515b")

@@ -49,3 +49,9 @@ requirement = "crank-gearbox.toml"
 part = "apex-abr142-050"
 status = "provisional"
 why = "Passes with T2B derived from Apex's printed rule (60% of 3 x T2N); half the mass of the Wittenstein SPK+ 180. Confirm T2B with Apex"
+
+[heave_guide]
+requirement = "heave-guide.toml"
+part = "hiwin-hgw25cc-e2"
+status = "provisional"
+why = "Same block as the surge rails; rigidity not on the card: confirm at least 100 N/um with HIWIN at ZA preload"

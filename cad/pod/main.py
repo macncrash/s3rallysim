@@ -12,7 +12,7 @@ The occupants are 5th or 95th percentile mannequins in race gear (driver_pct, co
 ergo.py places the seats, column and pedals for them. Their mass is a lumped mass at the torso.
 
 The motion platform (motion.py): four rotary crank actuators lift the floor's corners through
-upright links; a passive heave column with a universal joint under the floor's centre of mass takes
+upright links; a passive heave guide with a universal joint under the floor's centre of mass takes
 the side loads and is the roll and pitch pivot; the lot rides a surge carriage. STEVE doesn't solve
 closed loops, so each crank and link is geared to the floor's axes (small-angle ratios); the build
 checks every pose of the motion cue against the exact crank geometry and refuses one out of reach.
@@ -278,8 +278,8 @@ design.fit_check(
 )
 
 # Platform fit: the mechanism against itself, the floor's under-frame and the shell, through the
-# motion cue (reachable poses) and each axis. Pins in their eyes, blocks on rails, the sleeve on its
-# column and the drives on the carriage are the designed contacts.
+# motion cue (reachable poses) and each axis. Pins in their eyes, blocks on rails (surge and heave
+# guides) and the drives on the carriage are the designed contacts.
 mech = ["base", "sled", "heave_car", "ujoint", "deck"] + [
     p + "_" + n for n, _x, _y in motion.ACTUATORS for p in ("drive", "crank", "link")]
 design.contact("sled", "base", kind="seated", max_overlap_mm3=1_000)

@@ -9,7 +9,8 @@ heave, pitch and roll, keeps the poses every crank can reach within +-65 deg, an
 - the smallest gap between each link (rod and eyes) and the floor's under-frame tubes, in the
   floor's own frame;
 - the lowest crank tip above the ground, the largest link lean, and the gap between the floor's
-  under-frame and the gearbox drives below it.
+  under-frame and the gearbox drives below it;
+- the smallest gap between the heave guide's struts and column tops and the floor (plate and under-frame).
 """
 
 import itertools
@@ -67,8 +68,23 @@ def main():
         xa, xb = sorted((x + 30, params.act_xf - 90) if x == params.act_xf else (x - 30, params.act_xr + 50))
         ya, yb = sorted((y - (1 if y > 0 else -1) * 26, (1 if y > 0 else -1) * 350))
         tubes["web_" + name] = ((xa, ya, top - 6), (xb, yb, top))
+    # The whole floor for the heave guide check: cross tubes, runners, edge tubes and the plate.
+    floor = dict(tubes)
+    for s_ in (1, -1):
+        floor["runner" + str(s_)] = ((x0 + 40, min(s_ * 310, s_ * 350), bot), (x1 - 40, max(s_ * 310, s_ * 350), top))
+        floor["edge" + str(s_)] = ((x0, min(s_ * (w - 40), s_ * w), bot), (x1, max(s_ * (w - 40), s_ * w), top))
+    floor["plate"] = ((x0, -w, top), (x1, w, top + params.deck_t))
+    # Heave guide struts (axis segments) and column top corners, in the carriage frame (components/sled.py).
+    struts, col_corners = [], []
+    for s_ in (1, -1):
+        y = s_ * motion.GUIDE_Y
+        for bx in (160, -870):
+            struts.append(((params.pivot_x, y, motion.STRUT_Z), (bx, s_ * motion.RAIL_Y, motion.SLED_TOP + motion.STRUT_R)))
+        h = motion.GUIDE_COL / 2
+        col_corners += [(params.pivot_x + dx, y + dy, motion.GUIDE_TOP) for dx in (-h, h) for dy in (-h, h)]
     reach = []
-    worst = {"tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None), "drive_gap": (1e9, None)}
+    worst = {"tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None), "drive_gap": (1e9, None),
+             "strut_gap": (1e9, None), "column_gap": (1e9, None)}
     # Drive tops (gearbox body and its mounting plate) under the floor's under-frame, per actuator.
     frame_bottom = motion.DECK_BOT - motion.FRAME_H
     drives = []
@@ -100,6 +116,18 @@ def main():
         if not ok:
             continue
         reach.append((h, p, ro))
+        for i, (a, b) in enumerate(struts):
+            a_f, b_f = to_floor(a, h, p, ro, pivot), to_floor(b, h, p, ro, pivot)
+            for fname, (lo, hi) in floor.items():
+                gap = segment_box(a_f, b_f, lo, hi) - motion.STRUT_R
+                if gap < worst["strut_gap"][0]:
+                    worst["strut_gap"] = (gap, (i, fname, h, p, ro))
+        for c in col_corners:
+            c_f = to_floor(c, h, p, ro, pivot)
+            for fname, (lo, hi) in floor.items():
+                gap = box_distance(c_f, lo, hi)
+                if gap < worst["column_gap"][0]:
+                    worst["column_gap"] = (gap, (fname, h, p, ro))
         for name, corners, top in drives:
             low = min(motion.floor_point(c, h, p, ro)[2] for c in corners)
             if low - top < worst["drive_gap"][0]:
@@ -141,6 +169,8 @@ def main():
     print("lowest crank tip (eye bottom) above ground mm: %.1f at %s" % worst["tip_low"])
     print("largest link lean deg: %.1f at %s" % worst["lean"])
     print("smallest floor-frame-to-drive gap mm: %.1f at %s" % worst["drive_gap"])
+    print("smallest heave-guide-strut-to-floor gap mm: %.1f at %s" % worst["strut_gap"])
+    print("smallest heave-guide-column-top-to-floor gap mm: %.1f at %s" % worst["column_gap"])
 
 
 if __name__ == "__main__":

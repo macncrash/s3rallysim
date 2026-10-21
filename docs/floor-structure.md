@@ -1,10 +1,10 @@
-# S3 Rally Pod: floor, centre post and carriage structural check
+# S3 Rally Pod: floor, heave guide and carriage structural check
 
 Status, 2026-10-21. This covers open item 1 in [`two-seat-pod.md`](two-seat-pod.md) §7: the first STEVE structural
-studies of the platform's load path, from the cockpit's bolts down to the surge rails. The geometry is main
-revision 6.
+studies of the platform's load path, from the cockpit's bolts down to the surge rails. The studies in §2 are of
+main revision 6. Fixes A–C went into main revision 8, and D and F (a new heave guide, §2.4) into revision 9.
 
-**Verdict: the design as it stands is not ready.**
+**Verdict on revision 6: not ready.** Revision 9 fixes the floor and the joint's support. E and G are still open.
 
 - **Floor:** the seat rails bolt to unsupported 4 mm sheet. A cross tube fixes that, and FE shows it works.
 - **Centre post:** strong enough, but it stands on a carriage cross tube that twists. That makes the floor's
@@ -94,7 +94,7 @@ agree on the picture: the sheet is acting as the structure. That is too soft for
 - **Fixed floor, landing and combined:** the dash's centre foot, in the same bay, leaves about 1.7 mm.
 - **Next fix to model:** a cross tube under the dash feet (x ≈ 272) and a deeper (80–100 mm) front frame or gussets.
 
-### Centre post
+### Centre post (revision 6; replaced by the heave guide in revision 9)
 
 **Load.** 3.40 kN fore-aft and 1.10 kN sideways at the joint, at the +40 mm heave stop. This is
 `platform_loads.py`'s worst case: surge plus pitch and roll kicks.
@@ -115,7 +115,7 @@ agree on the picture: the sheet is acting as the structure. That is too soft for
    the joint, right where every horizontal cue passes. It needs preloaded linear bearings, or adjustable bearing
    pads, on the column.
 
-### Surge carriage (what the post stands on)
+### Surge carriage (what the post stands on, revision 6)
 
 **Load.** The post's foot carries 1.03 kN·m about the lateral axis and 0.33 kN·m about the fore-aft axis, into a
 200 × 200 × 12 aluminium plate on a single 60 × 60 × 5 cross tube.
@@ -147,6 +147,60 @@ These are estimates, not a modal study of the assembly.
 
   Then confirm with a modal study of floor, post and carriage together.
 
+### Heave guide: fixes D and F together (main revision 9)
+
+**Why the post could not just be braced.**
+- **Sleeve in the way:** the heave sleeve slides on the outside of the post and reaches down to z = 240 at the
+  −40 mm stop. A brace can only grab the post within 40–80 mm of its foot. That is far too short a lever against a
+  joint 300 mm up.
+- **Runners too soft:** the aluminium runners alone would rotate the post's foot by about 0.0012 rad under its
+  1 kN·m. The whole budget for 10 kN/mm at the joint is about 0.0008 rad.
+- **Too little engagement:** at the top stop the sleeve overlapped the post by only 40 mm. Even with preloaded
+  bearings (fix F), that short a guide would have used most of the deflection budget.
+
+**The new guide.**
+- **Columns:** two fixed steel columns (100 × 100 × 8, S235) stand either side of the joint at y = ±215. Each sits
+  on a foot plate across the twin mid tubes (fix C).
+- **Struts:** each column is braced by two struts (CHS 60.3 × 5), from z = 360 on the column straight down to the
+  surge rail blocks at x = 160 and −870. The joint's load reaches the rails as tension and compression, without
+  bending the runners.
+- **Crosshead:** the new `heave_car` carries the joint's lower yoke on a 30 mm bridge between two ears.
+- **Guides:** each ear carries a guide rail running in two HIWIN HGW25CC blocks, fixed on the column's inner face
+  between z = 207 and 415. It is the surge rails' block (`requirements/heave-guide.toml`, `bought.HEAVE_GUIDE`).
+  The ears pass down between the twin mid tubes at the −40 mm stop.
+- **Joint height:** the joint sits 79–159 mm above the block pair's centre across the heave stroke.
+- **The sleeve and its 2 mm of play are gone.** This covers fix F.
+
+**FE (STEVE part *S3 Rally Pod heave tower (FEA)*, `cad/fea/heave_tower.py`).**
+- **Model:** the carriage, columns, struts and crosshead as one welded solid, at the +40 mm stop, held at the four
+  surge blocks. The load is on the yoke lug bores.
+- **One material:** a one-solid study takes one material. Steel overstates the aluminium carriage, and aluminium
+  understates the steel tower. Displacement scales exactly with 1/E, so the two bound the real mix.
+- **Guide blocks rigid:** the model treats the guide blocks as rigid; they are checked separately below.
+
+| Load at the joint | All steel | All 6061 (lower bound) | Floor mode (est., 392 kg) |
+|---|---|---|---|
+| 3.4 kN fore-aft | 0.085 mm: 40 kN/mm | 0.259 mm: 13 kN/mm | 29–51 Hz |
+| 1.1 kN sideways | 0.020 mm: 54 kN/mm | 0.062 mm (scaled): 18 kN/mm | 34–59 Hz |
+
+- **Where the give is:** the largest movement is at the lug tops, from the crosshead's lugs and bridge bending.
+  The braced columns barely move.
+- **Stress:** 27 MPa peak in steel at the fore-aft load.
+- **Guide blocks.** Fore-aft, the joint's load reaches the four blocks as lateral force plus a moment. The moment
+  arm is up to 159 mm above a 104 mm block pair. That gives about 0.39 × k at the joint, where k is one block's
+  rigidity (block moment rigidity ignored, which is conservative).
+  - Against the all-aluminium lower bound, a 25 Hz floor needs k ≥ 100 N/µm per block.
+  - That value is not on the HIWIN card. It is a CHECK in `requirements/heave-guide.toml` and a question for
+    HIWIN at ZA preload.
+- **Load on each block:** about 3.4 kN at most, against C0 = 52.8 kN.
+
+**Fit.**
+- **Exact clearance:** `analysis/platform_clearance.py` now checks the struts and column tops against the floor's
+  plate and under-frame over the whole reachable workspace.
+  - The struts clear by 29.7 mm at least, nearest the seat cross tube at −40 mm heave and full roll.
+  - The column tops clear the plate by 16.5 mm.
+- **STEVE fit checks:** see §3.
+
 ## 3. What changes in the design
 
 | # | Change | Status |
@@ -154,9 +208,9 @@ These are estimates, not a modal study of the assembly.
 | A | Cross tube under the seat rails' rear bolts | FE-tested on the floor model; **in the design** (`deck.py`, main revision 8) |
 | B | Clevis boxes tying each clevis to the actuator-line tube and the runner | Recommended (fatigue detail); not separately shown to be needed; **in the design** (`deck.py`, revision 8) |
 | C | Twin cross tubes under the column plate | FE-tested on the carriage model; a step, not enough on its own; **in the design** (`sled.py`, revision 8) |
-| D | Post bracing to reach 10 kN/mm at the joint | **To design**, then a modal study of the assembly |
+| D | Bracing to reach 10 kN/mm at the joint | **In the design** (main revision 9): braced twin-column heave guide, 13–40 kN/mm fore-aft by FE |
 | E | Thrust faces on both universal-joint pins | **To design** |
-| F | Preloaded linear bearings, or adjustable pads, for the heave sleeve | **To design** (a bought part: add a card and a requirement) |
+| F | Preloaded linear bearings for the heave guide | **In the design** (revision 9): HGW25CC blocks, two per column; block rigidity to confirm with HIWIN |
 | G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **To design**, then re-run the brake case |
 
 **A–C in the design (main revision 8).**
@@ -168,7 +222,8 @@ These are estimates, not a modal study of the assembly.
   well. Every number it reports is unchanged. The seat tube clears the links by at least 210 mm and the webs by
   44 mm across the whole workspace.
 
-**After D–G:** re-run `analysis/platform_clearance.py` and the fit check.
+**After E and G:** re-run `analysis/platform_clearance.py` and the fit check, then run a modal study of floor,
+guide and carriage together.
 
 **Not covered here:**
 - **Weld and bolt detail:** sizes, fatigue classes, preload.
