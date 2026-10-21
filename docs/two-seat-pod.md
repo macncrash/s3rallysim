@@ -160,7 +160,14 @@ Every combination of those targets was checked. Forces are shared as four equal 
 
 **Still to do on the platform:**
 
-- **Structural check:** stress and stiffness on the floor frame and centre post (STEVE simulation).
+- **Structural fixes** from the first STEVE studies ([`floor-structure.md`](floor-structure.md)):
+  - A cross tube under the seat rails' rear bolts (tested).
+  - Clevis boxes.
+  - Twin cross tubes under the column plate, plus bracing on the post (to design): the floor's fore-aft mode is
+    about 7 Hz as drawn.
+  - Thrust faces on the universal-joint pins.
+  - Preloaded bearings in the heave sleeve.
+  - A stiffer front overhang.
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
   and the combined-axis envelope.
 - **Cueing:** virtual-pivot cueing near the occupants' heads. The universal joint is still about 1 m below them.
@@ -183,6 +190,7 @@ The aim is to behave like a real rally car while recording everything:
 
 - **Formula variant:** well served by rFpro (Simulink/Dymola plug-in, FTire in real time), IPG CarMaker (MF-Tyre/MF-Swift), VI-grade or Cruden.
   - Sources: [MathWorks](https://www.mathworks.com/products/connections/product_detail/rfpro.html), [rFpro FTire](https://rfpro.com/ftire-partnership-brings-step-change-in-vehicle-simulation/), [Cruden](https://www.cruden.com/article/four-wheels-good-vehicle-model-integration-for-dynamics-and-more).
+- **Choice and acceptance test:** see [`vehicle-dynamics.md`](vehicle-dynamics.md).
 - **Rally variant:** no professional DiL vendor publicly documents validated gravel, snow or jump physics.
   - Hyundai Motorsport used VI-CarRealTime for its WRC car ([PMW](https://pmw-magazine.com/uncategorized/hyundai-motorsport-choses-vi-grade-for-simulation-work.html)).
   - M-Sport's public simulator work was on tarmac ([Motorsport.com](https://www.motorsport.com/wrc/news/ford-simulator-boosting-m-sport-wrc-puma-performances/10602699/)).
@@ -215,9 +223,24 @@ AiM .xrk has no third-party writer.
 
 ## 7. Open items
 
-1. **Platform structure:** check the floor frame and centre post for stress and stiffness (see 4). Confirm the
-   provisional bought parts with their makers (Apex T2B, seat internal width).
-2. **Vehicle-dynamics engine:** choose one per variant and write the loose-surface acceptance test.
+1. **Platform structure.** The first STEVE studies are done ([`floor-structure.md`](floor-structure.md)).
+   - **Results:** the seat-rail mounting fails as drawn (fixed with one cross tube). The post's carriage mounting
+     is far too soft for cueing (fore-aft mode about 7 Hz against a 25–30 Hz target). The universal joint lacks
+     thrust faces, and the heave sleeve has 2 mm of play.
+   - **Next:**
+     - Put fixes A–C into the design.
+     - Design D–G: post bracing, pin thrust faces, sleeve bearings, front overhang.
+     - Run a modal study of floor, post and carriage together.
+     - Re-run the clearance and fit checks.
+     - Confirm the provisional bought parts with their makers (Apex T2B, seat internal width).
+2. **Vehicle-dynamics engine.** Researched, with a recommendation ([`vehicle-dynamics.md`](vehicle-dynamics.md)).
+   - **Recommendation:** for rally, shortlist AVL VSM and VI-CarRealTime with FTire, and prototype our own gravel
+     layer in parallel. For formula, rFpro.
+   - **Acceptance test:** the loose-surface test is `requirements/vd-loose-surface.toml`, run by `tools/vdat/`.
+   - **Next:**
+     - Send the vendor questions (§3 of that document).
+     - Agree the test's bands before signing.
+     - Instrument a car and log the gravel pad.
 3. **Intercom:** get the technical sheets and design the audio harness and recorder.
 4. **Seat buck trial** with real drivers to confirm the ergonomic targets.
 5. **Remaining cockpit hardware:** model the Heusinkveld pedals at their real size and mass (the CAD pedal box is

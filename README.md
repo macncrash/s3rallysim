@@ -26,10 +26,16 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `parts/` | Bought-part cards (seats, wheelbases, pedals, servos, gearboxes, rod ends, rails, ballscrews), every value sourced from the vendor's documents |
 | `requirements/` | What each bought part must meet, from the loads and ergonomics; `selection.toml` names the chosen part for each |
 | `tools/partsel/` | Part selector: checks cards against requirements, and writes the selection into `cad/pod/bought.py` |
+| `cad/fea/` | The floor, centre post and carriage, each rebuilt as one welded solid for STEVE structural studies |
+| `analysis/floor_fea_loads.py`, `floor_fea_study.py` | Cockpit bolt loads and centre-post loads for those studies, and the study definitions |
+| `requirements/vd-loose-surface.toml` | The rally vehicle model's loose-surface acceptance test: manoeuvres, metrics, pass bands |
+| `tools/vdat/` | Runs that test: logged real-car runs against pod runs |
 | `render/` | Blender walkaround driven by the CAD's own `rally_stage` animation |
 | `tools/mesh_to_sim.py` | Samples the CAD meshes into the Gravity motion-cue sim |
 | `sims/rally-pod-motion.js` | The Gravity sim (paste into Gravity → ✎ new sim) |
 | `docs/two-seat-pod.md` | Design notes: ergonomics, fit check, platform loads, intercom, telemetry and physics stack, open items |
+| `docs/floor-structure.md` | Structural check of the floor, centre post and carriage, with the fixes |
+| `docs/vehicle-dynamics.md` | Vehicle-dynamics engine recommendation and the loose-surface acceptance test |
 | `renders/`, `gravity-renders/` | The current videos |
 
 ## The design in brief
@@ -80,6 +86,21 @@ You need Python 3, Blender 4.5 and ffmpeg.
    python3 analysis/platform_loads.py render/build/mesh cad/pod > analysis/platform_loads.json
    python3 analysis/platform_clearance.py cad/pod
    ```
+
+6. Recompute the structural-study loads and write a floor study for STEVE's `run_study`. The studies run on the
+   *S3 Rally Pod/FEA* parts; see `docs/floor-structure.md`.
+
+   ```sh
+   python3 analysis/floor_fea_loads.py render/build/mesh cad/pod > analysis/floor_fea_loads.json
+   python3 analysis/floor_fea_study.py analysis/floor_fea_loads.json combined > study.json
+   ```
+
+## Vehicle-model acceptance
+
+```sh
+python3 tools/vdat/selftest.py                                         # the tool against known answers
+python3 tools/vdat/vdat.py requirements/vd-loose-surface.toml <runs_dir>
+```
 
 ## Choosing parts
 

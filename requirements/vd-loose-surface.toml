@@ -1,0 +1,136 @@
+# Loose-surface acceptance test for the rally pod's vehicle-dynamics model (docs/vehicle-dynamics.md).
+# The same car, driver and gravel pad are logged for real and then driven in the pod; the vehicle model passes
+# when every check below passes. No standard publishes pass bands for loose surfaces (ISO 19364/22140/19365
+# cover paved roads, and their tolerances are in the paid texts), so every band here is our proposal: tighten
+# or loosen them with the vendor before the contract is signed, never after a run.
+#
+# Run: python3 tools/vdat/vdat.py requirements/vd-loose-surface.toml <runs_dir>
+#   <runs_dir>/<test id>/<condition>/{real,sim}/*.csv, one file per run (tools/vdat/README.md).
+title = "Rally vehicle model: loose-surface acceptance"
+min_real_runs = 3      # per test and condition: the real car's repeatability is measured, not assumed
+min_sim_runs = 3
+
+# Canonical channels, SI, with the sign conventions of ISO 8855 (x forward, y left, z up). The CSV header uses
+# these names; a [channel_map] in a run folder's map.toml renames a logger's own names to them.
+[channels]
+time_s = "s"
+dist_m = "m"                # distance along the reference line (GPS, or stage map): runs are aligned on it
+speed_mps = "m/s"
+ax_mps2 = "m/s^2"           # body-fixed accelerations, specific force (az is about +9.81 at rest)
+ay_mps2 = "m/s^2"
+az_mps2 = "m/s^2"
+yaw_rate_dps = "deg/s"
+pitch_deg = "deg"
+sideslip_deg = "deg"        # optical sensor on the real car
+steer_deg = "deg"           # handwheel angle
+steer_torque_nm = "N m"     # handwheel torque (real: column sensor; sim: the force-feedback torque command)
+brake_bar = "bar"           # front circuit
+slip = "-"                  # driven-axle longitudinal slip ratio
+
+[[test]]
+id = "circle"
+what = "Constant 40 m radius, speed raised slowly to the limit (ISO 4138 method, on gravel)"
+conditions = ["packed"]
+checks = [
+  { metric = "understeer_gradient_deg_per_g", rel = 0.20, why = "Balance through the speed range" },
+  { metric = "max_ay_g", rel = 0.10, why = "Lateral grip of the surface and tyre" },
+  { metric = "curve_rms:sideslip_deg:ay_mps2", abs = 1.5, why = "Sideslip build-up against lateral acceleration" },
+]
+
+[[test]]
+id = "brake"
+what = "Straight-line braking to a stop from 80 and 100 km/h (Rally2: no ABS)"
+conditions = ["packed", "loose"]
+checks = [
+  { metric = "stop_distance_m", rel = 0.07, why = "Longitudinal grip" },
+  { metric = "mean_decel_g", abs = 0.05, why = "Longitudinal grip" },
+]
+
+[[test]]
+id = "traction"
+what = "Full-throttle launch from standstill and from 30 km/h"
+conditions = ["packed", "loose"]
+checks = [
+  { metric = "time_to_60kph_s", rel = 0.05, why = "Traction on the surface" },
+  { metric = "trace_rms:slip:time", abs = 0.03, why = "Wheelspin build-up" },
+]
+
+[[test]]
+id = "step_steer"
+what = "Step steer at 60 km/h (ISO 7401 method, on gravel)"
+conditions = ["packed"]
+checks = [
+  { metric = "yaw_gain_dps_per_deg", rel = 0.15, why = "Steady-state yaw response" },
+  { metric = "ay_gain_g_per_deg", rel = 0.15, why = "Steady-state lateral response" },
+  { metric = "yaw_response_time_s", abs = 0.05, why = "Transient: 50 % steer to 90 % yaw rate" },
+]
+
+[[test]]
+id = "sweep"
+what = "Random or swept steer, 0.2-3 Hz, at 60 km/h"
+conditions = ["packed"]
+checks = [
+  { metric = "frf_gain_db:yaw_rate_dps:steer_deg", abs = 2.0, f_max_hz = 2.0, why = "Yaw response up to 2 Hz" },
+  { metric = "frf_phase_deg:yaw_rate_dps:steer_deg", abs = 15.0, f_max_hz = 2.0, why = "Yaw response lag" },
+  { metric = "frf_gain_db:ay_mps2:steer_deg", abs = 2.0, f_max_hz = 2.0, why = "Lateral response up to 2 Hz" },
+]
+
+[[test]]
+id = "flick"
+what = "Double lane change (ISO 3888-2 layout) and a pendulum (Scandinavian) flick"
+conditions = ["packed", "loose"]
+checks = [
+  { metric = "trace_rms_peak:yaw_rate_dps:dist", rel = 0.15, why = "Yaw through the manoeuvre" },
+  { metric = "peak_abs:sideslip_deg", abs = 3.0, why = "Peak drift angle" },
+]
+
+[[test]]
+id = "torque"
+what = "Steering torque, from the circle, step-steer and flick runs"
+conditions = ["packed"]
+sources = ["circle", "step_steer", "flick"]
+checks = [
+  { metric = "r2:steer_torque_nm:dist", min = 0.80, why = "Force feedback follows the real column torque" },
+  { metric = "trace_rms_peak:steer_torque_nm:dist", rel = 0.15, why = "Force-feedback level" },
+]
+
+[[test]]
+id = "jump"
+what = "Surveyed crest taken at three known speeds"
+conditions = ["packed"]
+checks = [
+  { metric = "airtime_s", rel = 0.10, why = "Take-off and flight" },
+  { metric = "landing_pitch_deg", abs = 2.0, why = "Nose attitude at landing" },
+  { metric = "landing_peak_az_g", rel = 0.20, why = "Landing severity (also sizes the heave cue)" },
+]
+
+[[test]]
+id = "surface"
+what = "The same brake, traction and flick runs on a packed surface and on a loose top layer, and a second pass in the ruts"
+conditions = ["packed", "loose"]
+delta = { from = "packed", to = "loose", sources = ["brake", "traction", "flick"] }
+checks = [
+  { metric = "delta:stop_distance_m", ratio = [0.7, 1.3], why = "The model loses grip on loose gravel as the car does" },
+  { metric = "delta:time_to_60kph_s", ratio = [0.7, 1.3], why = "Traction change with the surface" },
+  { metric = "delta:peak_abs:sideslip_deg", ratio = [0.7, 1.3], why = "Drift change with the surface" },
+]
+
+[[test]]
+id = "stage"
+what = "A 2-5 km stage section, same driver, real car then pod"
+conditions = ["packed"]
+checks = [
+  { metric = "section_time_s", rel = 0.02, why = "Overall pace" },
+  { metric = "trace_rms:ay_mps2:dist", abs = 0.98, why = "Lateral acceleration along the stage (0.1 g)" },
+  { metric = "trace_rms_peak:yaw_rate_dps:dist", rel = 0.15, why = "Yaw along the stage" },
+  { metric = "trace_rms_peak:speed_mps:dist", rel = 0.05, why = "Speed profile along the stage" },
+]
+
+# Measured on the rig, not from logs: <runs_dir>/rig.toml holds the measured values under the same names.
+[rig]
+checks = [
+  { metric = "vehicle_model_hz", min = 1000, why = "Model step rate" },
+  { metric = "ffb_loop_hz", min = 1000, why = "Force-feedback loop rate" },
+  { metric = "steer_to_motion_ms", max = 20, why = "Handwheel step to floor acceleration, end to end" },
+  { metric = "steer_to_image_ms", max = 40, why = "Handwheel step to the windscreen image moving" },
+]
