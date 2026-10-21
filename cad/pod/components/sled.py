@@ -4,7 +4,7 @@ from motion import BASE_H, RAIL_H, RAIL_Y, CAR_H, SLED_Z0, SLED_H, SLED_TOP, ACT
 import drive_parts
 from bought import SURGE_RAIL, SURGE_BALLSCREW
 
-# Surge carriage: four HIWIN HGW25CC rail blocks (bought.py), two runners and three cross tubes, the heave
+# Surge carriage: four HIWIN HGW25CC rail blocks (bought.py), two runners and four cross tubes, the heave
 # column under the universal joint, the gearbox mounts, and the bracket that takes the surge ballscrew's nut.
 sled = Component("sled", name="Surge carriage")
 X0, X1 = -960, 250
@@ -25,7 +25,9 @@ for side, s in (("l", 1), ("r", -1)):
     for name, x in (("rear", X0 + 90), ("front", X1 - 90)):
         sled.box("block_" + name + "_" + side, SURGE_RAIL["block_length_mm"], SURGE_RAIL["block_width_mm"], CAR_H,
                  at=(x, s * RAIL_Y, BASE_H + RAIL_H + CAR_H / 2), op="new")
-for name, x in (("rear", X0 + 30), ("mid", pivot_x), ("front", X1 - 30)):
+# Two mid tubes, under the column plate's front and rear edges: the post's fore-aft moment bends them instead
+# of twisting a single tube under its centre (docs/floor-structure.md, fix C).
+for name, x in (("rear", X0 + 30), ("mid_b", pivot_x - 70), ("mid_f", pivot_x + 70), ("front", X1 - 30)):
     tube("cross_" + name, 60, 2 * RAIL_Y - 60, SLED_H, (x, 0, zc))
 
 # Gearbox mounts: two outrigger beams from each runner, clear of the crank's swing, to a plate the
@@ -47,7 +49,8 @@ sled.box("column_plate", 200, 200, 12, at=(pivot_x, 0, SLED_TOP + 6), op="new")
 top = pivot_z - 70  # 40 mm of sleeve engagement left at full heave
 sled.box("column", 120, 120, top - SLED_TOP - 12, at=(pivot_x, 0, (SLED_TOP + 12 + top) / 2), op="new")
 
-# Surge nut rod into the ballscrew housing on the base, and its bracket under the mid cross tube.
+# Surge nut rod into the ballscrew housing on the base, and its bracket under the rear mid cross tube's
+# front edge (any further aft and it meets the surge body at full rear surge).
 sled.cylinder("nut_rod", SURGE_BALLSCREW["nominal_diameter_mm"] / 2 - 0.5, 360, at=(-700, 0, 45), direction=(1, 0, 0),
               op="new")
 sled.box("nut_bracket", 30, 80, SLED_Z0 + 10 - 20, at=(pivot_x - 45, 0, (SLED_Z0 + 10 + 20) / 2), op="new")

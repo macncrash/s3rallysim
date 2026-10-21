@@ -120,7 +120,7 @@ CAD reads sizes and masses from there.
   - The floor frame clears the gearboxes by ≥ 15.9 mm.
   - Links lean at most 15.6° from upright.
 
-**Fit checks (STEVE).** Both pass on main revision 6:
+**Fit checks (STEVE).** Both pass on main revision 8 (with structural fixes A–C):
 
 | Check | Instance pairs | What it covers |
 |---|---|---|
@@ -161,10 +161,9 @@ Every combination of those targets was checked. Forces are shared as four equal 
 **Still to do on the platform:**
 
 - **Structural fixes** from the first STEVE studies ([`floor-structure.md`](floor-structure.md)):
-  - A cross tube under the seat rails' rear bolts (tested).
-  - Clevis boxes.
-  - Twin cross tubes under the column plate, plus bracing on the post (to design): the floor's fore-aft mode is
-    about 7 Hz as drawn.
+  - Done in main revision 8: a cross tube under the seat rails' rear bolts, clevis boxes, and twin cross tubes
+    under the column plate.
+  - Bracing on the post: with twin tubes alone the floor's fore-aft mode is still only about 12 Hz.
   - Thrust faces on the universal-joint pins.
   - Preloaded bearings in the heave sleeve.
   - A stiffer front overhang.
@@ -228,7 +227,7 @@ AiM .xrk has no third-party writer.
      is far too soft for cueing (fore-aft mode about 7 Hz against a 25–30 Hz target). The universal joint lacks
      thrust faces, and the heave sleeve has 2 mm of play.
    - **Next:**
-     - Put fixes A–C into the design.
+     - Fixes A–C are in the design (main revision 8).
      - Design D–G: post bracing, pin thrust faces, sleeve bearings, front overhang.
      - Run a modal study of floor, post and carriage together.
      - Re-run the clearance and fit checks.

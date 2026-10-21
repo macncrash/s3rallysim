@@ -59,7 +59,14 @@ def main():
         "act_r": ((params.act_xr + 50, -w, bot), (params.act_xr + 90, w, top)),
         "act_f": ((params.act_xf - 130, -w, bot), (params.act_xf - 90, w, top)),
         "front": ((x1 - 40, -w, bot), (x1, w, top)),
+        "seat": ((-532, -w, bot), (-492, w, top)),
     }
+    # The 6 mm webs from each clevis's inner cheek to its runner (the cheeks themselves flank the link).
+    for name, x, y in (("fl", params.act_xf, params.act_y), ("fr", params.act_xf, -params.act_y),
+                       ("rl", params.act_xr, params.act_y), ("rr", params.act_xr, -params.act_y)):
+        xa, xb = sorted((x + 30, params.act_xf - 90) if x == params.act_xf else (x - 30, params.act_xr + 50))
+        ya, yb = sorted((y - (1 if y > 0 else -1) * 26, (1 if y > 0 else -1) * 350))
+        tubes["web_" + name] = ((xa, ya, top - 6), (xb, yb, top))
     reach = []
     worst = {"tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None), "drive_gap": (1e9, None)}
     # Drive tops (gearbox body and its mounting plate) under the floor's under-frame, per actuator.

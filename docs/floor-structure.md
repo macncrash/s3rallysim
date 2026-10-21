@@ -151,18 +151,24 @@ These are estimates, not a modal study of the assembly.
 
 | # | Change | Status |
 |---|---|---|
-| A | Cross tube under the seat rails' rear bolts | FE-tested on the floor model; ready to put in `deck.py` |
-| B | Clevis boxes tying each clevis to the actuator-line tube and the runner | Recommended (fatigue detail); in the FE model; not separately shown to be needed |
-| C | Twin cross tubes under the column plate | FE-tested on the carriage model; a step, not enough on its own |
+| A | Cross tube under the seat rails' rear bolts | FE-tested on the floor model; **in the design** (`deck.py`, main revision 8) |
+| B | Clevis boxes tying each clevis to the actuator-line tube and the runner | Recommended (fatigue detail); not separately shown to be needed; **in the design** (`deck.py`, revision 8) |
+| C | Twin cross tubes under the column plate | FE-tested on the carriage model; a step, not enough on its own; **in the design** (`sled.py`, revision 8) |
 | D | Post bracing to reach 10 kN/mm at the joint | **To design**, then a modal study of the assembly |
 | E | Thrust faces on both universal-joint pins | **To design** |
 | F | Preloaded linear bearings, or adjustable pads, for the heave sleeve | **To design** (a bought part: add a card and a requirement) |
 | G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **To design**, then re-run the brake case |
 
-**After A–G:**
-1. Re-run `analysis/platform_clearance.py`. Fix A adds a tube under the floor at x = -512, and the floor must still
-   clear the drives and links everywhere in the workspace.
-2. Then re-run the fit check.
+**A–C in the design (main revision 8).**
+- **Cheek lengths:** in `deck.py` each cheek stops at its actuator-line tube's face: 120 mm long at the front, 80 mm
+  at the rear. The FE model ran the rear ones 40 mm into the tube, which only adds overlap inside it.
+- **Carriage:** the surge-nut bracket stays where it was, now under the rear mid tube's front edge. Moving it
+  further aft hits the surge actuator body at full rear surge (the fit check caught it).
+- **Clearance:** `analysis/platform_clearance.py` now checks the links against the seat tube and the four webs as
+  well. Every number it reports is unchanged. The seat tube clears the links by at least 210 mm and the webs by
+  44 mm across the whole workspace.
+
+**After D–G:** re-run `analysis/platform_clearance.py` and the fit check.
 
 **Not covered here:**
 - **Weld and bolt detail:** sizes, fatigue classes, preload.
