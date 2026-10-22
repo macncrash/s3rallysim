@@ -2,12 +2,15 @@
 
 Status, 2026-10-21. This covers open item 1 in [`two-seat-pod.md`](two-seat-pod.md) §7: the first STEVE structural
 studies of the platform's load path, from the cockpit's bolts down to the surge rails. The studies in §2 are of
-main revision 6. Fixes A–C went into main revision 8, D and F (a new heave guide, §2.4) into revision 9, and E into
-revision 10.
+main revision 6. Fixes A–C went into main revision 8, D and F (a new heave guide, §2.4) into revision 9, E into
+revision 10, H into revision 11 and G into revision 13.
 
-**Verdict on revision 6: not ready.** Revisions 8–10 fix the floor, the joint's support and its thrust faces (A–F).
-The modal study of revision 10 then found the floor's own yoke mount too soft (H, about 3–6 Hz in yaw). G and H
-are still open.
+**Verdict on revision 6: not ready.** Revisions 8–13 put in every fix, A to H.
+- **Fore-aft and sideways:** now about 22–39 and 25–44 Hz (modal study, 6061 and steel bounds), against a
+  25–30 Hz target.
+- **Floor yaw:** the one mode still low, at about 6–11 Hz. No cue drives it directly, but an off-centre crew couples
+  surge into it (§2.5).
+- **Brake case:** the front overhang now drops 1.4 mm (was 2.4).
 
 - **Floor:** the seat rails bolt to unsupported 4 mm sheet. A cross tube fixes that, and FE shows it works.
 - **Centre post:** strong enough, but it stands on a carriage cross tube that twists. That makes the floor's
@@ -258,6 +261,29 @@ These are estimates, not a modal study of the assembly.
     raise mode 1 somewhat, but it depends on the servo loop.
   - **Joint play:** bushing clearance would lower every mode.
 
+**With fix H (modal part revision 3: yoke cross tubes 140 mm either side of the joint).**
+
+| Mode | All steel | 6061 bound | Moves | Shape |
+|---|---|---|---|---|
+| 1 | 11.2 Hz | 6.4 Hz | almost no fore-aft or side mass | floor yaws about the joint |
+| 2 | 39.0 Hz | 22.3 Hz | 93 % of the mass fore-aft | floor slides fore-aft on the joint |
+| 3 | 44.4 Hz | 25.4 Hz | 83 % of the mass sideways | floor slides sideways |
+| 4–12 | 69–167 Hz | 40–96 Hz | little, or vertical | local modes, floor bending between the links |
+
+- **Fore-aft and sideways:** H lifts them by 55–75 %. The truth lies between the bounds: the floor is 6061, the
+  tower steel.
+- **Yaw:** doubles, but stays at 6–11 Hz.
+  - **Not the pin rods:** making the joint's pin rods nearly rigid (a test run) only lifts it to 13.5 Hz.
+  - **Where the give is:** the rest is split between the heave tower's yaw path (the crosshead pushing one
+    column forward and the other back) and the floor around the yoke.
+- **Does yaw matter?** No cue drives yaw directly. An off-centre crew does couple surge into it: a driver alone
+  puts the centre of mass well to one side. Before adding steel, check that coupling in the Gravity sim or a
+  frequency-response study.
+- **Next if it does:**
+  - **Tower:** tie the two column tops together fore and aft of the crosshead.
+  - **Floor:** a torsion box around the yoke.
+- **Not re-run with G:** G mostly stiffens the front overhang vertically, so modes 1–3 should barely change.
+
 ## 3. What changes in the design
 
 | # | Change | Status |
@@ -268,8 +294,8 @@ These are estimates, not a modal study of the assembly.
 | D | Bracing to reach 10 kN/mm at the joint | **In the design** (main revision 9): braced twin-column heave guide, 13–40 kN/mm fore-aft by FE |
 | E | Thrust faces on both universal-joint pins | **In the design** (main revision 10): SKF PCMF 303416 E flanged bushings in all four lugs, spider bosses to their flanges |
 | F | Preloaded linear bearings for the heave guide | **In the design** (revision 9): HGW25CC blocks at ZA preload, two per column: radial 539 N/µm (HIWIN), lateral to confirm with HIWIN |
-| G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **To design**, then re-run the brake case |
-| H | A stiff mount for the floor's yoke: tie the lugs into the frame instead of the bare sheet (found by the modal study) | **To design**; the crosshead's lugs and ears leave little room under the floor there |
+| G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **In the design** (main revision 13): three front-bay cross tubes and a 100 mm deep overhang; brake-case drop 2.4 → 1.4 mm |
+| H | A stiff mount for the floor's yoke: tie the lugs into the frame instead of the bare sheet (found by the modal study) | **In the design** (main revision 11): yoke bars between two cross tubes 140 mm either side of the joint; fore-aft and sideways modes up 55–75 % |
 
 **A–C in the design (main revision 8).**
 - **Cheek lengths:** in `deck.py` each cheek stops at its actuator-line tube's face: 120 mm long at the front, 80 mm
@@ -299,10 +325,51 @@ These are estimates, not a modal study of the assembly.
 - **Fit (STEVE, main revision 10):** the occupants check is clear on 756 pairs and the platform check on 670.
   The spider and its bosses turn with the floor through full roll and pitch without touching the yokes.
 
-**After G and H:** re-run `analysis/platform_clearance.py`, the fit check and the modal study.
+**H in the design (main revision 11).**
+- **The fix:**
+  - **Cross tubes:** two more 40 × 60 floor cross tubes, runner to runner, 140 mm fore and aft of the joint.
+  - **Yoke bars:** each steel yoke lug now hangs from a 20 × 60 × 240 mm bar along the frame's full depth, bolted
+    between those tubes.
+  - **Load path:** the joint's force enters the frame 17 mm above the pin, not 102 mm below the bare sheet.
+- **Why 140 mm:** the crosshead's lugs reach to 85 mm either side of the joint, and its guide ears and rails come
+  to within a few millimetres of the frame's underside. The heave guide's struts climb toward the floor near the
+  columns.
+  - **Crosshead:** at 140 mm it clears the tubes and bars by at least 19.5 mm through full roll and pitch.
+  - **Struts:** they clear the rear tube by 15.0 mm at −40 mm heave and full roll (11.9 mm at 125 mm).
+- **Mass:** the floor gains 8.3 kg.
+- **Fit (STEVE, main revision 11):** occupants clear on 756 pairs, platform on 670.
+
+**G in the design (main revision 13).**
+- **Bay tubes:** three more cross tubes in the front bay, so the dash feet, the pedal box and the co-driver's
+  footrest all bolt on or beside a tube:
+  - x = 272, under the dash feet;
+  - x = 440, under the rear pedal and footrest pads;
+  - x = 600, under the footrest's front pads.
+- **Deeper overhang:** the overhang ahead of the front links is now 100 mm deep instead of 60.
+  - **Runners:** a solid 20 × 40 mm 6061 bar under each runner's inboard half, from the front actuator tube
+    forward.
+  - **Edge tubes:** a 40 × 40 tube under each edge tube from x = 270, clear of the front gearboxes.
+- **Brake case** (floor study part revision 11, fixes A, B, G and H, 25 mm mesh):
+
+  | Floor | Front-corner drop | Notes |
+  |---|---|---|
+  | A, B, H | 2.39 mm | the whole overhang bends, plus sheet bulges in the bays |
+  | + bay tubes, 40 mm tubes under runners from x 220 | 1.76 mm | bulges gone; the root of the overhang is still 60 mm deep |
+  | + runner bars from the front actuator tube (as built) | **1.40 mm** | smooth bending; pedal box about 0.7–1.1 mm |
+
+- **Stress:** the 61 MPa peak is at a front clevis bore, where the study's support sits. Everywhere else is below
+  about 25 MPa.
+- **What's left:** the overhang bending as a whole. Going further means a deeper frame again, or moving the front
+  links forward.
+- **Clearance:** a 40 mm tube under each runner from the front actuator tube came within 7.4 mm of the front links,
+  so the runners take a bar on their inboard half instead. With the bar, every clearance is unchanged.
+- **Mass:** the floor gains 11.8 kg (73.4 kg in all, with H); the pod is 813.2 kg.
+- **Fit (STEVE, main revision 13):** occupants clear on 756 pairs, platform on 670.
 
 **Not covered here:**
 - **Weld and bolt detail:** sizes, fatigue classes, preload.
 - **The gearbox outriggers** that carry each crank's 3.7 kN and 460 N·m into the carriage.
 - **The base frame.**
-- **A converged modal study** (the 15 mm mesh exceeds STEVE's memory) and one with the links' horizontal stiffness.
+- **A converged modal study** (the 15 mm mesh exceeds STEVE's memory), one with the links' horizontal stiffness, and
+  one with G in the floor.
+- **The floor's yaw mode** (§2.5): check whether an off-centre crew excites it before adding steel.

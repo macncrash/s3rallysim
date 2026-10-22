@@ -62,6 +62,18 @@ def main():
         "front": ((x1 - 40, -w, bot), (x1, w, top)),
         "seat": ((-532, -w, bot), (-492, w, top)),
     }
+    # The yoke mount (fix H): cross tubes either side of the joint, and the bars carrying the yoke lugs.
+    for name, s_ in (("yoke_b", -1), ("yoke_f", 1)):
+        xc = params.pivot_x + s_ * motion.UJ_TUBE_DX
+        tubes[name] = ((xc - 20, -w, bot), (xc + 20, w, top))
+    # The front overhang (fix G): front-bay cross tubes, the bars under the runners and the tubes under the edge tubes.
+    for name, xc in zip(("dash", "pedal", "foot"), motion.FRONT_CROSS_X):
+        tubes[name] = ((xc - 20, -w, bot), (xc + 20, w, top))
+    for s_ in (1, -1):
+        y0, y1 = sorted((s_ * 310, s_ * (310 + motion.FRONT_DEEP_BAR_W)))
+        tubes["runner_deep" + str(s_)] = ((params.act_xf - 90, y0, bot - motion.FRONT_DEEP), (x1 - 40, y1, bot))
+        y0, y1 = sorted((s_ * (w - 40), s_ * w))
+        tubes["edge_deep" + str(s_)] = ((motion.FRONT_DEEP_EDGE_X, y0, bot - motion.FRONT_DEEP), (x1 - 40, y1, bot))
     # The 6 mm webs from each clevis's inner cheek to its runner (the cheeks themselves flank the link).
     for name, x, y in (("fl", params.act_xf, params.act_y), ("fr", params.act_xf, -params.act_y),
                        ("rl", params.act_xr, params.act_y), ("rr", params.act_xr, -params.act_y)):
@@ -74,6 +86,10 @@ def main():
         floor["runner" + str(s_)] = ((x0 + 40, min(s_ * 310, s_ * 350), bot), (x1 - 40, max(s_ * 310, s_ * 350), top))
         floor["edge" + str(s_)] = ((x0, min(s_ * (w - 40), s_ * w), bot), (x1, max(s_ * (w - 40), s_ * w), top))
     floor["plate"] = ((x0, -w, top), (x1, w, top + params.deck_t))
+    for s_ in (1, -1):
+        y0, y1 = sorted((s_ * (motion.UJ_LUG - motion.UJ_LUG_T / 2), s_ * (motion.UJ_LUG + motion.UJ_LUG_T / 2)))
+        floor["yoke_bar" + str(s_)] = ((params.pivot_x - motion.UJ_TUBE_DX + 20, y0, bot),
+                                      (params.pivot_x + motion.UJ_TUBE_DX - 20, y1, top))
     # Heave guide struts (axis segments) and column top corners, in the carriage frame (components/sled.py).
     struts, col_corners = [], []
     for s_ in (1, -1):

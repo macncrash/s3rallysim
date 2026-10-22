@@ -1,6 +1,7 @@
 from steve import Component
 from params import deck_z, deck_t, pivot_x, pivot_z, act_xf, act_xr, act_y
-from motion import DECK_BOT, FRAME_H, TOP_PIN_DROP, UJ_LUG, UJ_LUG_T
+from motion import (DECK_BOT, FRAME_H, TOP_PIN_DROP, UJ_LUG, UJ_LUG_T, UJ_TUBE_DX, FRONT_CROSS_X, FRONT_DEEP,
+                    FRONT_DEEP_BAR_W, FRONT_DEEP_EDGE_X)
 from bought import UJOINT_BUSHING as BUSH
 
 # Moving floor: plate on a welded under-frame, the upper yoke of the universal joint, and a clevis
@@ -27,14 +28,34 @@ for name, x in (("rear", X0 + 20), ("act_r", act_xr + 70), ("act_f", act_xf - 11
 # Under the seat rails' rear bolts (the rails run x -528..92 for every occupant): without it they land on bare
 # sheet in a 620 mm bay (docs/floor-structure.md, fix A).
 tube("cross_seat", 40, 2 * W - 80, (-512, 0, zc))
+# The front overhang (fix G): cross tubes under the dash feet, the rear pedal and footrest pads and the footrest's
+# front pads, and extra depth to the front so the overhang ahead of the front links is 100 mm deep: a solid bar under
+# each runner's inboard half (clear of the links), a tube under each edge tube (clear of the front gearboxes).
+for name, x in zip(("dash", "pedal", "foot"), FRONT_CROSS_X):
+    tube("cross_" + name, 40, 2 * W - 80, (x, 0, zc))
+zd, xb = DECK_BOT - FRAME_H - FRONT_DEEP / 2, X1 - 40
+for side, s in (("l", 1), ("r", -1)):
+    xa = act_xf - 90
+    deck.box("runner_deep_" + side, xb - xa, FRONT_DEEP_BAR_W, FRONT_DEEP,
+             at=((xa + xb) / 2, s * (310 + FRONT_DEEP_BAR_W / 2), zd), op="new")
+    xa = FRONT_DEEP_EDGE_X
+    deck.box("edge_deep_" + side, xb - xa, 40, FRONT_DEEP, at=((xa + xb) / 2, s * (W - 20), zd), op="new")
+    deck.box("edge_deep_" + side + "_void", xb - xa + 4, 32, FRONT_DEEP - 8, at=((xa + xb) / 2, s * (W - 20), zd),
+             op="cut", body="edge_deep_" + side)
 
 # Universal joint upper yoke: two lugs across Y that carry the pitch pin, each with a flanged bushing pressed in
-# from the inner face; the flange is the pitch pin's thrust face.
+# from the inner face; the flange is the pitch pin's thrust face. Each lug hangs from a bar along the frame's full
+# depth, bolted between two cross tubes either side of the joint, so the joint's loads reach the frame instead of
+# bending the bare sheet (docs/floor-structure.md, fix H).
+for name, s in (("yoke_b", -1), ("yoke_f", 1)):
+    tube("cross_" + name, 40, 2 * W - 80, (pivot_x + s * UJ_TUBE_DX, 0, zc))
 low = pivot_z - 25
+bar = 2 * UJ_TUBE_DX - 40
 bushes = []
 for name, s in (("l", 1), ("r", -1)):
     y = s * UJ_LUG
     deck.box("yoke_" + name, 60, UJ_LUG_T, DECK_BOT - low, at=(pivot_x, y, (DECK_BOT + low) / 2), op="new")
+    deck.box("yoke_" + name + "_bar", bar, UJ_LUG_T, FRAME_H, at=(pivot_x, y, zc), op="join", body="yoke_" + name)
     deck.cylinder("yoke_" + name + "_bore", BUSH["outside_diameter_mm"] / 2, UJ_LUG_T + 10,
                   at=(pivot_x, y - UJ_LUG_T / 2 - 5, pivot_z), direction=(0, 1, 0), op="cut", body="yoke_" + name)
     inner = y - s * UJ_LUG_T / 2

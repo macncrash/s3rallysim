@@ -18,14 +18,15 @@ Idealisations:
   pads, sized so that everything the links carry weighs `floor_mass` (platform_loads.json, crew 95 + 95). They are
   rigid; seat and body compliance is not modelled.
 - The guide blocks are welded in, so rigid: their own give is allowed for by hand (docs/floor-structure.md).
+- Fix H (the yoke mount) is in by default; `yoke_tube_dx = 0` gives main revision 10's bare-sheet mount.
 - Heave at `heave` (default the +40 mm top stop, where the joint is highest above the guide blocks).
 """
 
 from steve import Model
 
 heave = 40  # mm platform heave
-floor_mass = 391.5  # kg everything the links carry
-payload_kg = 84  # kg each payload block: floor_mass less the floor, crosshead and spider as modelled in steel
+floor_mass = 400.5  # kg everything the links carry: 391.5 (platform_loads.json) plus fix H in steel and 6061
+payload_kg = 79.4  # kg each payload block: floor_mass less the floor, crosshead and spider as modelled in steel
 payload_z = 850  # mm payload blocks' centre at rest
 pin_r = 8  # mm joint pin rods
 pin_len = 8  # mm free length of each pin rod
@@ -62,6 +63,7 @@ rail_w = 23
 rail_h = 23
 lug = 75  # joint lug centres from the pivot
 lug_t = 20
+yoke_tube_dx = 140  # fix H: yoke cross tubes' centres fore and aft of the pivot (0 = none, the bare-sheet mount)
 
 model = Model()
 pz = pivot_z + heave
@@ -88,12 +90,19 @@ for side, s in (("l", 1), ("r", -1)):
 for name, x in (("rear", FX0 + 20), ("act_r", act_xr + 70), ("act_f", act_xf - 110), ("front", FX1 - 20),
                 ("seat", -512)):
     tube("fcross_" + name, 40, 2 * W - 80, frame_h, (x, 0, fzc), wall)
+if yoke_tube_dx:
+    for name, s in (("yoke_b", -1), ("yoke_f", 1)):
+        tube("fcross_" + name, 40, 2 * W - 80, frame_h, (pivot_x + s * yoke_tube_dx, 0, fzc), wall)
 
-# Upper yoke: lugs across Y, solid where the pitch pin rods enter.
+# Upper yoke: lugs across Y, solid where the pitch pin rods enter; with fix H each hangs from a bar along the
+# frame's depth between the yoke cross tubes.
 for name, s in (("l", 1), ("r", -1)):
     low = pz - 25
     model.box("yoke_" + name, 60, lug_t, bot - low, at=(pivot_x, s * lug, (bot + low) / 2), op="new")
     parts.append("yoke_" + name)
+    if yoke_tube_dx:
+        model.box("yoke_" + name + "_bar", 2 * yoke_tube_dx - 40, lug_t, frame_h, at=(pivot_x, s * lug, fzc), op="new")
+        parts.append("yoke_" + name + "_bar")
 
 # Link clevises (fix B): cheeks back to the actuator-line tube, web to the runner. Their bores are the Z supports.
 pin_zc = bot - pin_drop

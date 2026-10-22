@@ -121,7 +121,7 @@ CAD reads sizes and masses from there.
   - The floor frame clears the gearboxes by ≥ 15.9 mm.
   - Links lean at most 15.6° from upright.
 
-**Fit checks (STEVE).** Both pass on main revision 10 (with structural fixes A–F):
+**Fit checks (STEVE).** Both pass on main revision 13 (with structural fixes A–H):
 
 | Check | Instance pairs | What it covers |
 |---|---|---|
@@ -168,9 +168,11 @@ Every combination of those targets was checked. Forces are shared as four equal 
     blocks. FE gives 13–40 kN/mm fore-aft at the joint. With the blocks' own give (HIWIN: 539 N/µm radial at ZA
     preload) the floor mode is about 28–47 Hz; the blocks' lateral stiffness is not printed, confirm with HIWIN.
   - Done in main revision 10: flanged bushings in the universal-joint lugs, with spider bosses as thrust faces.
-  - A stiff mount for the floor's yoke (H): the modal study puts the floor's yaw mode at about 3–6 Hz and
-    fore-aft and sideways at 15–25 Hz, because the yoke hangs from bare sheet.
-  - A stiffer front overhang.
+  - Done in main revision 11 (H): the floor's yoke lugs hang from bars between two new cross tubes, not the bare
+    sheet. The modal study then gives fore-aft about 22–39 Hz and sideways 25–44 Hz. Floor yaw is still about
+    6–11 Hz: check whether an off-centre crew excites it before adding steel.
+  - Done in main revision 13 (G): three front-bay cross tubes and a 100 mm deep front overhang. The brake case's
+    front-corner drop falls from 2.4 to 1.4 mm.
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
   and the combined-axis envelope.
 - **Cueing:** virtual-pivot cueing near the occupants' heads. The universal joint is still about 1 m below them.
@@ -234,10 +236,10 @@ AiM .xrk has no third-party writer.
      - Fixes A–C are in the design (main revision 8).
      - Fixes D and F are in the design (main revision 9): a braced twin-column heave guide. Confirm the guide
        blocks' lateral stiffness with HIWIN (radial is printed: 539 N/µm at ZA).
-     - Fix E is in the design (main revision 10).
-     - Design G and H: front overhang, and a stiff mount for the floor's yoke (the modal study's finding).
-     - Re-run the modal study after H.
-     - Re-run the clearance and fit checks.
+     - Fix E is in the design (main revision 10), H in revision 11 and G in revision 13. Clearance and fit checks
+       pass on revision 13.
+     - Floor yaw mode (about 6–11 Hz): check whether a driver-only crew's off-centre mass excites it.
+     - A converged modal study, and one with G and the links' stiffness.
      - Confirm the provisional bought parts with their makers (Apex T2B, seat internal width).
 2. **Vehicle-dynamics engine.** Researched, with a recommendation ([`vehicle-dynamics.md`](vehicle-dynamics.md)).
    - **Recommendation:** for rally, shortlist AVL VSM and VI-CarRealTime with FTire, and prototype our own gravel

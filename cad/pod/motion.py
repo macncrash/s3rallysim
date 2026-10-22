@@ -44,6 +44,17 @@ STRUT_T = 5
 UJ_LUG = 75  # lug centres from the pivot, along the pin
 UJ_LUG_T = 20  # lug thickness
 UJ_THRUST_GAP = 0.5  # spider boss to flange, each side, as drawn; shimmed to 0.05-0.1 mm in all on assembly
+# The floor's yoke mount (fix H): a cross tube each side of the joint, clear of the crosshead's lugs through full roll
+# and pitch, with each yoke lug carried on a bar along the frame's full depth between them.
+UJ_TUBE_DX = 140  # yoke cross tubes' centres fore and aft of the pivot
+# The floor's front overhang (fix G): cross tubes under the dash feet, the rear pedal and footrest pads and the
+# footrest's front pads, and extra depth under each runner and edge tube to the front. Under the runners it is a solid
+# bar on their inboard half, from the front actuator tube, clear of the front links; under the edge tubes a tube from
+# x 270, clear of the front gearboxes.
+FRONT_CROSS_X = (272, 440, 600)
+FRONT_DEEP = 40  # extra frame depth ahead of the front actuators
+FRONT_DEEP_BAR_W = 20  # solid bar under each runner's inboard half
+FRONT_DEEP_EDGE_X = 270  # where the edge tubes' extra depth starts
 
 # Actuators: name, x, y. Front pair, rear pair.
 ACTUATORS = (
