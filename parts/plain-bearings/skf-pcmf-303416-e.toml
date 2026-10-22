@@ -1,0 +1,24 @@
+# SKF PTFE composite flanged bushing, 30 mm bore, steel backing with sintered tin/bronze and a PTFE/MoS2 running layer
+id = "skf-pcmf-303416-e"
+category = "plain-bearings"
+maker = "SKF"
+country = "SE"
+model = "PCMF 303416 E"
+notes = "Flanged bushing d 30 x D 34 x B 16 mm (B is the overall width, flange included), flange D1 42 x B1 2 mm; chamfers c1 min 0,1, c2 min 0,8, housing fillet r max 2 (PDF p. 42). Load ratings as printed in kN, converted to N: radial C 30,5 / C0 95, axial (flange) Ca 29 / C0a 91,5. SKF: for flanged bushings check the bushing and the flange separately, using Ca for the flange (PDF p. 11-12). Material E: permissible specific load 250 N/mm2 static, 80 N/mm2 dynamic, sliding speed max 2 m/s, -200 to +250 C, friction 0,03-0,25, no lubrication required, 'good' with alternating loads; housing H7, shaft f7 for d <= 75 mm, mating surface Rz <= 3 / Ra <= 0,4 um (PDF p. 7). With an f7 shaft and H7 housing the mounted bore is 29,990-30,085 mm and the operating clearance 10-126 um (PDF p. 16). Flange tolerances when mounted: D1 +-0,5 mm, B1 +0,05/-0,20 mm (PDF p. 27). Mass 35 g. Catalogue PUB BU/P2 11004 EN, October 2012; page numbers are PDF page indices."
+
+[sources]
+skf = { title = "SKF composite plain bearings, PUB BU/P2 11004 EN, October 2012", url = "https://cdn.skfmediahub.skf.com/api/public/0901d19680229dfc/pdf_preview_medium/0901d19680229dfc_pdf_preview_medium.pdf" }
+
+[values]
+bore_mm = { v = 30, src = "skf", page = 42 }
+outside_diameter_mm = { v = 34, src = "skf", page = 42 }
+width_mm = { v = 16, src = "skf", page = 42 }
+flange_diameter_mm = { v = 42, src = "skf", page = 42 }
+flange_thickness_mm = { v = 2, src = "skf", page = 42 }
+dynamic_radial_load_n = { v = 30500, src = "skf", page = 42 }
+static_radial_load_n = { v = 95000, src = "skf", page = 42 }
+dynamic_axial_load_n = { v = 29000, src = "skf", page = 42 }
+static_axial_load_n = { v = 91500, src = "skf", page = 42 }
+mass_kg = { v = 0.035, src = "skf", page = 42 }
+maintenance_free = { v = true, src = "skf", page = 7 }
+max_operating_clearance_um = { v = 126, src = "skf", page = 16 }

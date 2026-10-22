@@ -55,3 +55,9 @@ requirement = "heave-guide.toml"
 part = "hiwin-hgw25cc-e2"
 status = "provisional"
 why = "Same block as the surge rails, at ZA preload: radial stiffness 539 N/um against 55 needed; lateral (the fore-aft case, 100 N/um needed) is not printed for HG, confirm with HIWIN"
+
+[ujoint_bushing]
+requirement = "ujoint-bushing.toml"
+part = "skf-pcmf-303416-e"
+status = "provisional"
+why = "Passes every check from SKF's catalogue; the only card so far, so compare a second maker before ordering"

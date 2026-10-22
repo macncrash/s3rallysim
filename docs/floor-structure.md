@@ -2,9 +2,12 @@
 
 Status, 2026-10-21. This covers open item 1 in [`two-seat-pod.md`](two-seat-pod.md) §7: the first STEVE structural
 studies of the platform's load path, from the cockpit's bolts down to the surge rails. The studies in §2 are of
-main revision 6. Fixes A–C went into main revision 8, and D and F (a new heave guide, §2.4) into revision 9.
+main revision 6. Fixes A–C went into main revision 8, D and F (a new heave guide, §2.4) into revision 9, and E into
+revision 10.
 
-**Verdict on revision 6: not ready.** Revision 9 fixes the floor and the joint's support. E and G are still open.
+**Verdict on revision 6: not ready.** Revisions 8–10 fix the floor, the joint's support and its thrust faces (A–F).
+The modal study of revision 10 then found the floor's own yoke mount too soft (H, about 3–6 Hz in yaw). G and H
+are still open.
 
 - **Floor:** the seat rails bolt to unsupported 4 mm sheet. A cross tube fixes that, and FE shows it works.
 - **Centre post:** strong enough, but it stands on a carriage cross tube that twists. That makes the floor's
@@ -214,6 +217,47 @@ These are estimates, not a modal study of the assembly.
   - The column tops clear the plate by 16.5 mm.
 - **STEVE fit checks:** see §3.
 
+### Modal study: floor, joint, heave guide and carriage together (main revision 10)
+
+**Model (STEVE part *S3 Rally Pod platform (modal)*, `cad/fea/platform_modal.py`).**
+- **One solid:** the floor (with fixes A and B), the universal joint, the crosshead, the braced columns and the
+  carriage, at the +40 mm heave stop.
+- **Joint:** each pin is a short 16 mm rod, which passes force like the bushings but lets the floor roll and pitch.
+  The spider holds yaw, as the real joint does.
+- **Mass:** the cockpit and crew are two steel blocks on posts at the seat-rail pads. Everything the links carry
+  weighs 391.5 kg (crew 95 + 95, `platform_loads.json`).
+- **Supports:**
+  - **Links:** the clevis bores are held vertically only, so roll, pitch and heave are taken by the links.
+  - **Carriage:** the rail blocks are held sideways and vertically, and the ballscrew nut fore-aft.
+- **Material:** one material at steel's density. Every frequency scales exactly with √E, so the 6061 bound is
+  0.57 × the steel figure. The real floor is 6061 and the tower steel.
+- **Mesh:** 30 mm. A 15 mm mesh needs more than STEVE's 8 GB, so these frequencies are not converged. A coarse mesh
+  reads high, so the real figures are lower.
+
+| Mode | All steel | 6061 bound | Moves | Shape |
+|---|---|---|---|---|
+| 1 | 5.5 Hz | 3.1 Hz | almost no fore-aft or side mass | the floor **yaws** about the joint; the tower barely moves |
+| 2 | 25.3 Hz | 14.5 Hz | 73 % of the mass sideways | floor slides sideways on the joint |
+| 3 | 25.4 Hz | 14.5 Hz | 80 % of the mass fore-aft | floor slides fore-aft on the joint |
+| 4–9 | 61–115 Hz | 35–66 Hz | little | local: payload posts, floor panels |
+| 10–12 | 115–143 Hz | 66–82 Hz | vertical | floor bending between the links |
+
+**What it shows.**
+- **The heave tower is no longer the weak link.** In modes 1–3 the columns, struts and carriage barely move.
+- **The floor's joint mount is.** The upper yoke's two lugs hang from the bare 4 mm floor sheet, in a bay
+  with the nearest frame tubes 210 mm fore and aft (seat and front actuator tubes) and 330 mm to each side
+  (runners).
+  - **Fore-aft and sideways:** the joint's force acts 102 mm below the sheet, so the lugs bend the sheet locally
+    and the floor slides on the joint.
+  - **Yaw:** only that sheet resists it, at about 3–6 Hz.
+- **Below target in every direction:** fore-aft and sideways come in at about 15–25 Hz, against the 25–30 Hz target.
+  The real floor is aluminium, so the truth is nearer the 6061 bound, and lower again once the mesh converges.
+- **Why the static estimates missed it:** the 29–51 Hz figures (§2.4) held the floor rigid.
+- **What is left out:**
+  - **Link stiffness:** the links get some horizontal stiffness from their lean and the crank drives. That would
+    raise mode 1 somewhat, but it depends on the servo loop.
+  - **Joint play:** bushing clearance would lower every mode.
+
 ## 3. What changes in the design
 
 | # | Change | Status |
@@ -222,9 +266,10 @@ These are estimates, not a modal study of the assembly.
 | B | Clevis boxes tying each clevis to the actuator-line tube and the runner | Recommended (fatigue detail); not separately shown to be needed; **in the design** (`deck.py`, revision 8) |
 | C | Twin cross tubes under the column plate | FE-tested on the carriage model; a step, not enough on its own; **in the design** (`sled.py`, revision 8) |
 | D | Bracing to reach 10 kN/mm at the joint | **In the design** (main revision 9): braced twin-column heave guide, 13–40 kN/mm fore-aft by FE |
-| E | Thrust faces on both universal-joint pins | **To design** |
+| E | Thrust faces on both universal-joint pins | **In the design** (main revision 10): SKF PCMF 303416 E flanged bushings in all four lugs, spider bosses to their flanges |
 | F | Preloaded linear bearings for the heave guide | **In the design** (revision 9): HGW25CC blocks at ZA preload, two per column: radial 539 N/µm (HIWIN), lateral to confirm with HIWIN |
 | G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **To design**, then re-run the brake case |
+| H | A stiff mount for the floor's yoke: tie the lugs into the frame instead of the bare sheet (found by the modal study) | **To design**; the crosshead's lugs and ears leave little room under the floor there |
 
 **A–C in the design (main revision 8).**
 - **Cheek lengths:** in `deck.py` each cheek stops at its actuator-line tube's face: 120 mm long at the front, 80 mm
@@ -235,11 +280,29 @@ These are estimates, not a modal study of the assembly.
   well. Every number it reports is unchanged. The seat tube clears the links by at least 210 mm and the webs by
   44 mm across the whole workspace.
 
-**After E and G:** re-run `analysis/platform_clearance.py` and the fit check, then run a modal study of floor,
-guide and carriage together.
+**E in the design (main revision 10).**
+- **What was missing:** the spider block is 50 mm wide and the lugs' inner faces are 130 mm apart, so each pin's
+  thrust (3.4 kN fore-aft on the roll pin, 1.1 kN sideways on the pitch pin) had 40 mm of air to cross. The pins
+  also sat in plain bores with 0.5 mm radial clearance as drawn.
+- **The fix:**
+  - **Bushings:** an SKF PCMF 303416 E flanged bushing (30 × 34 × 16 mm, flange 42 × 2 mm; steel-backed PTFE
+    composite, no lubrication) is pressed into each of the four lugs from its inner face
+    (`requirements/ujoint-bushing.toml`, `parts/plain-bearings/`).
+  - **Pins:** 36 mm down to 30 mm.
+  - **Spider bosses:** each arm of the spider has a 42 mm boss out to the flange, so each flange is a thrust face.
+    The gap is 0.5 mm a side as drawn, shimmed to 0.05–0.1 mm in all on assembly.
+- **Load:** the flange is rated Ca = 29 kN dynamic and C0a = 91.5 kN static, against 3.4 kN. The radial load is at
+  most 1.7 kN per lug, against C = 30.5 kN.
+- **Play:** with an f7 pin in an H7 lug bore, SKF gives 10–126 µm operating clearance. That is at most about
+  0.06 mm each way at the joint, a fifth of the 0.35 mm elastic deflection the 25 Hz budget allows at 3.4 kN.
+- **Lug ligament:** the lug bore drops from 37 to 34 mm, so the steel above and below it grows from 6.5 to 8 mm.
+- **Fit (STEVE, main revision 10):** the occupants check is clear on 756 pairs and the platform check on 670.
+  The spider and its bosses turn with the floor through full roll and pitch without touching the yokes.
+
+**After G and H:** re-run `analysis/platform_clearance.py`, the fit check and the modal study.
 
 **Not covered here:**
 - **Weld and bolt detail:** sizes, fatigue classes, preload.
 - **The gearbox outriggers** that carry each crank's 3.7 kN and 460 N·m into the carriage.
 - **The base frame.**
-- **A modal study of the assembly.**
+- **A converged modal study** (the 15 mm mesh exceeds STEVE's memory) and one with the links' horizontal stiffness.

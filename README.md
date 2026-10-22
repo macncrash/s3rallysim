@@ -26,7 +26,7 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `parts/` | Bought-part cards (seats, wheelbases, pedals, servos, gearboxes, rod ends, rails, ballscrews), every value sourced from the vendor's documents |
 | `requirements/` | What each bought part must meet, from the loads and ergonomics; `selection.toml` names the chosen part for each |
 | `tools/partsel/` | Part selector: checks cards against requirements, and writes the selection into `cad/pod/bought.py` |
-| `cad/fea/` | The floor, the old centre post, the carriage and the new heave-guide tower, each rebuilt as one welded solid for STEVE structural studies |
+| `cad/fea/` | The floor, the old centre post, the carriage and the new heave-guide tower, each rebuilt as one welded solid for STEVE structural studies, and all of them joined for a modal study (`platform_modal.py`) |
 | `analysis/floor_fea_loads.py`, `floor_fea_study.py` | Cockpit bolt loads and centre-post loads for those studies, and the study definitions |
 | `requirements/vd-loose-surface.toml` | The rally vehicle model's loose-surface acceptance test: manoeuvres, metrics, pass bands |
 | `tools/vdat/` | Runs that test: logged real-car runs against pod runs |

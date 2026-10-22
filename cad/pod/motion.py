@@ -39,6 +39,12 @@ STRUT_Z = 360  # where the struts meet the column axis
 STRUT_R = 30.15  # struts: CHS 60.3 x 5
 STRUT_T = 5
 
+# Universal joint: both yokes' lugs, each with a flanged bushing (bought.UJOINT_BUSHING) whose flange faces the spider
+# and takes the pin's thrust (docs/floor-structure.md, fix E).
+UJ_LUG = 75  # lug centres from the pivot, along the pin
+UJ_LUG_T = 20  # lug thickness
+UJ_THRUST_GAP = 0.5  # spider boss to flange, each side, as drawn; shimmed to 0.05-0.1 mm in all on assembly
+
 # Actuators: name, x, y. Front pair, rear pair.
 ACTUATORS = (
     ("fl", act_xf, act_y), ("fr", act_xf, -act_y),

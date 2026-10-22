@@ -1,0 +1,43 @@
+# Flanged plain bushings in the universal joint's four yoke lugs (cad/pod/components/heave_car.py, deck.py), one size
+# for both pins. The flange is the pin's thrust face: the spider's bosses run against it (docs/floor-structure.md, fix E).
+# Loads at the +40 mm heave stop (platform_loads.py): 3.4 kN fore-aft, 1.1 kN sideways. Fore-aft runs along the roll
+# pin into one crosshead lug's flange and across the pitch pin (1.7 kN per floor lug); sideways the other way round.
+# The joint carries no vertical load: the four cranks lift the floor.
+title = "Motion platform: universal-joint bushing"
+category = "plain-bearings"
+
+[[check]]
+field = "dynamic_axial_load_n"
+min = 10200
+why = "Three times the 3.4 kN fore-aft thrust on one flange, reversing with every surge cue"
+
+[[check]]
+field = "static_axial_load_n"
+min = 20000
+why = "Landing and kerb shocks, several times the cueing load"
+
+[[check]]
+field = "dynamic_radial_load_n"
+min = 5100
+why = "Three times the 1.7 kN radial load on one floor lug"
+
+[[check]]
+field = "flange_diameter_mm"
+max = 50
+why = "The flange sits on the 60 mm wide lugs' inner faces"
+
+[[check]]
+field = "width_mm"
+max = 20
+why = "Within the 20 mm lugs"
+
+[[check]]
+field = "max_operating_clearance_um"
+max = 130
+why = "Play at the joint: 0.13 mm diametral is under a fifth of the 0.35 mm elastic deflection the 25 Hz budget allows at 3.4 kN"
+
+[[check]]
+field = "maintenance_free"
+equals = true
+prefer = true
+why = "Arcade: no greasing schedule"

@@ -185,3 +185,25 @@ HEAVE_GUIDE = {
     'maintenance_interval_km': 10000,
     'radial_rigidity_n_per_um': 539,
 }
+
+# ujoint_bushing: SKF PCMF 303416 E (provisional, selector PASS)
+UJOINT_BUSHING = {
+    'id': 'skf-pcmf-303416-e',
+    'maker': 'SKF',
+    'model': 'PCMF 303416 E',
+    'status': 'provisional',
+    'verdict': 'PASS',
+    'card': 'parts/plain-bearings/skf-pcmf-303416-e.toml',
+    'bore_mm': 30,
+    'outside_diameter_mm': 34,
+    'width_mm': 16,
+    'flange_diameter_mm': 42,
+    'flange_thickness_mm': 2,
+    'dynamic_radial_load_n': 30500,
+    'static_radial_load_n': 95000,
+    'dynamic_axial_load_n': 29000,
+    'static_axial_load_n': 91500,
+    'mass_kg': 0.035,
+    'maintenance_free': True,
+    'max_operating_clearance_um': 126,
+}

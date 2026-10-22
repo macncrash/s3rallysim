@@ -1,6 +1,7 @@
 from steve import Component
 from params import deck_z, deck_t, pivot_x, pivot_z, act_xf, act_xr, act_y
-from motion import DECK_BOT, FRAME_H, TOP_PIN_DROP
+from motion import DECK_BOT, FRAME_H, TOP_PIN_DROP, UJ_LUG, UJ_LUG_T
+from bought import UJOINT_BUSHING as BUSH
 
 # Moving floor: plate on a welded under-frame, the upper yoke of the universal joint, and a clevis
 # at each actuator link's top pin.
@@ -27,12 +28,25 @@ for name, x in (("rear", X0 + 20), ("act_r", act_xr + 70), ("act_f", act_xf - 11
 # sheet in a 620 mm bay (docs/floor-structure.md, fix A).
 tube("cross_seat", 40, 2 * W - 80, (-512, 0, zc))
 
-# Universal joint upper yoke: two lugs across Y that carry the pitch pin.
+# Universal joint upper yoke: two lugs across Y that carry the pitch pin, each with a flanged bushing pressed in
+# from the inner face; the flange is the pitch pin's thrust face.
 low = pivot_z - 25
+bushes = []
 for name, s in (("l", 1), ("r", -1)):
-    deck.box("yoke_" + name, 60, 20, DECK_BOT - low, at=(pivot_x, s * 75, (DECK_BOT + low) / 2), op="new")
-    deck.cylinder("yoke_" + name + "_bore", 18.5, 30, at=(pivot_x, s * 75 - 15, pivot_z), direction=(0, 1, 0),
-                  op="cut", body="yoke_" + name)
+    y = s * UJ_LUG
+    deck.box("yoke_" + name, 60, UJ_LUG_T, DECK_BOT - low, at=(pivot_x, y, (DECK_BOT + low) / 2), op="new")
+    deck.cylinder("yoke_" + name + "_bore", BUSH["outside_diameter_mm"] / 2, UJ_LUG_T + 10,
+                  at=(pivot_x, y - UJ_LUG_T / 2 - 5, pivot_z), direction=(0, 1, 0), op="cut", body="yoke_" + name)
+    inner = y - s * UJ_LUG_T / 2
+    bid = "bush_" + name
+    deck.cylinder(bid, BUSH["outside_diameter_mm"] / 2, BUSH["width_mm"] - BUSH["flange_thickness_mm"],
+                  at=(pivot_x, inner, pivot_z), direction=(0, s, 0), op="new")
+    deck.cylinder(bid + "_flange", BUSH["flange_diameter_mm"] / 2, BUSH["flange_thickness_mm"],
+                  at=(pivot_x, inner, pivot_z), direction=(0, -s, 0), op="join", body=bid)
+    deck.cylinder(bid + "_bore", BUSH["bore_mm"] / 2, BUSH["width_mm"] + 2,
+                  at=(pivot_x, inner - s * (BUSH["flange_thickness_mm"] + 1), pivot_z), direction=(0, s, 0),
+                  op="cut", body=bid)
+    bushes.append(bid)
 
 # Link top clevises: two cheeks either side of the link's top eye, which is a spherical rod end:
 # the floor rolls and pitches up to 7 deg about it, so the cheeks stand 8 mm off its faces. Each cheek runs
@@ -54,3 +68,4 @@ for name, x, y in (("fl", act_xf, act_y), ("fr", act_xf, -act_y), ("rl", act_xr,
 
 deck.material("aluminum-6061-t6", color="#4e565f")
 deck.material("steel-s235jr", bodies=["yoke_l", "yoke_r"], color="#4a515b")
+deck.material("steel-dc01", bodies=bushes, color="#b08d57")  # steel-backed PTFE composite

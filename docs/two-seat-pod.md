@@ -121,7 +121,7 @@ CAD reads sizes and masses from there.
   - The floor frame clears the gearboxes by ≥ 15.9 mm.
   - Links lean at most 15.6° from upright.
 
-**Fit checks (STEVE).** Both pass on main revision 9 (with structural fixes A–D and F):
+**Fit checks (STEVE).** Both pass on main revision 10 (with structural fixes A–F):
 
 | Check | Instance pairs | What it covers |
 |---|---|---|
@@ -167,7 +167,9 @@ Every combination of those targets was checked. Forces are shared as four equal 
   - Done in main revision 9: the centre post and sleeve are replaced by a braced twin-column heave guide on HIWIN
     blocks. FE gives 13–40 kN/mm fore-aft at the joint. With the blocks' own give (HIWIN: 539 N/µm radial at ZA
     preload) the floor mode is about 28–47 Hz; the blocks' lateral stiffness is not printed, confirm with HIWIN.
-  - Thrust faces on the universal-joint pins.
+  - Done in main revision 10: flanged bushings in the universal-joint lugs, with spider bosses as thrust faces.
+  - A stiff mount for the floor's yoke (H): the modal study puts the floor's yaw mode at about 3–6 Hz and
+    fore-aft and sideways at 15–25 Hz, because the yoke hangs from bare sheet.
   - A stiffer front overhang.
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
   and the combined-axis envelope.
@@ -232,8 +234,9 @@ AiM .xrk has no third-party writer.
      - Fixes A–C are in the design (main revision 8).
      - Fixes D and F are in the design (main revision 9): a braced twin-column heave guide. Confirm the guide
        blocks' lateral stiffness with HIWIN (radial is printed: 539 N/µm at ZA).
-     - Design E and G: pin thrust faces, front overhang.
-     - Run a modal study of floor, guide and carriage together.
+     - Fix E is in the design (main revision 10).
+     - Design G and H: front overhang, and a stiff mount for the floor's yoke (the modal study's finding).
+     - Re-run the modal study after H.
      - Re-run the clearance and fit checks.
      - Confirm the provisional bought parts with their makers (Apex T2B, seat internal width).
 2. **Vehicle-dynamics engine.** Researched, with a recommendation ([`vehicle-dynamics.md`](vehicle-dynamics.md)).
