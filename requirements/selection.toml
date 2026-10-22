@@ -54,4 +54,4 @@ why = "Passes with T2B derived from Apex's printed rule (60% of 3 x T2N); half t
 requirement = "heave-guide.toml"
 part = "hiwin-hgw25cc-e2"
 status = "provisional"
-why = "Same block as the surge rails; rigidity not on the card: confirm at least 100 N/um with HIWIN at ZA preload"
+why = "Same block as the surge rails, at ZA preload: radial stiffness 539 N/um against 55 needed; lateral (the fore-aft case, 100 N/um needed) is not printed for HG, confirm with HIWIN"

@@ -121,7 +121,7 @@ CAD reads sizes and masses from there.
   - The floor frame clears the gearboxes by ≥ 15.9 mm.
   - Links lean at most 15.6° from upright.
 
-**Fit checks (STEVE).** Both pass on main revision 8 (with structural fixes A–C):
+**Fit checks (STEVE).** Both pass on main revision 9 (with structural fixes A–D and F):
 
 | Check | Instance pairs | What it covers |
 |---|---|---|
@@ -165,8 +165,8 @@ Every combination of those targets was checked. Forces are shared as four equal 
   - Done in main revision 8: a cross tube under the seat rails' rear bolts, clevis boxes, and twin cross tubes
     under the column plate.
   - Done in main revision 9: the centre post and sleeve are replaced by a braced twin-column heave guide on HIWIN
-    blocks. FE gives 13–40 kN/mm fore-aft at the joint (floor mode about 29–51 Hz), with the guide blocks' rigidity
-    still to confirm with HIWIN.
+    blocks. FE gives 13–40 kN/mm fore-aft at the joint. With the blocks' own give (HIWIN: 539 N/µm radial at ZA
+    preload) the floor mode is about 28–47 Hz; the blocks' lateral stiffness is not printed, confirm with HIWIN.
   - Thrust faces on the universal-joint pins.
   - A stiffer front overhang.
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
@@ -231,7 +231,7 @@ AiM .xrk has no third-party writer.
    - **Next:**
      - Fixes A–C are in the design (main revision 8).
      - Fixes D and F are in the design (main revision 9): a braced twin-column heave guide. Confirm the guide
-       blocks' rigidity with HIWIN.
+       blocks' lateral stiffness with HIWIN (radial is printed: 539 N/µm at ZA).
      - Design E and G: pin thrust faces, front overhang.
      - Run a modal study of floor, guide and carriage together.
      - Re-run the clearance and fit checks.

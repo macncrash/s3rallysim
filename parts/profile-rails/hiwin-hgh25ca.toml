@@ -4,7 +4,7 @@ category = "profile-rails"
 maker = "HIWIN"
 country = "TW"
 model = "HGH25CA"
-notes = "Square narrow block, 4 x M6x8 tapped holes from top on a 35 x 35 mm pattern (B x C), runs on HGR25 rail (rail bolts M6x20, pitch 60 mm). Catalogue prints C = 34.9 kN and C0 = 52.82 kN; converted to N here. HIWIN states C for ball guideways is based on 50 km nominal life (PDF page 6). Block mass 0.51 kg and rail 3.21 kg/m as printed. Page numbers are PDF page indices; printed catalogue page = PDF page - 3 (e.g. PDF p. 40 = printed p. 37, catalogue G99TE22-2011). Block length L = 84 mm is the standard block with standard seals; options (ZZ/DD/KK seals, E2 self-lube) lengthen it. No self-lubricating interval stated for this part as specified; the E2 option (see hiwin-hgw25cc-e2) is available for HG25C. Preload and accuracy class (e.g. ZA/H) must be added to the order code."
+notes = "Square narrow block, 4 x M6x8 tapped holes from top on a 35 x 35 mm pattern (B x C), runs on HGR25 rail (rail bolts M6x20, pitch 60 mm). Catalogue prints C = 34.9 kN and C0 = 52.82 kN; converted to N here. HIWIN states C for ball guideways is based on 50 km nominal life (PDF page 6). Block mass 0.51 kg and rail 3.21 kg/m as printed. Page numbers are PDF page indices; printed catalogue page = PDF page - 3 (e.g. PDF p. 40 = printed p. 37, catalogue G99TE22-2011). Block length L = 84 mm is the standard block with standard seals; options (ZZ/DD/KK seals, E2 self-lube) lengthen it. No self-lubricating interval stated for this part as specified; the E2 option (see hiwin-hgw25cc-e2) is available for HG25C. Preload and accuracy class (e.g. ZA/H) must be added to the order code. Stiffness: Table 2-1-13 'Radial stiffness for HG Series' (PDF p. 30) gives HG25C (heavy load, C length) 292 N/um at Z0, 539 at ZA, 705 at ZB; the card records ZA, so order ZA preload (0.05C-0.07C, interchangeable). Only radial stiffness is tabulated; reverse-radial and lateral are not printed, though the catalogue says the four-row design gives 'equal load ratings in the radial, reverse radial and lateral directions' and 'high rigidity in all four directions' (PDF p. 24), so lateral_rigidity_n_per_um is left out."
 
 [sources]
 hiwin_lg = { title = "HIWIN Linear Guideway Technical Information, G99TE22-2011", url = "https://hiwin.com/wp-content/uploads/Linear_Guideway-E.pdf" }
@@ -20,3 +20,4 @@ total_height_mm = { v = 40, src = "hiwin_lg", page = 40 }
 rail_width_mm = { v = 23, src = "hiwin_lg", page = 40 }
 block_mass_kg = { v = 0.51, src = "hiwin_lg", page = 40 }
 rail_mass_kg_per_m = { v = 3.21, src = "hiwin_lg", page = 40 }
+radial_rigidity_n_per_um = { v = 539, src = "hiwin_lg", page = 30 }

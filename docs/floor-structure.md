@@ -186,12 +186,25 @@ These are estimates, not a modal study of the assembly.
 - **Where the give is:** the largest movement is at the lug tops, from the crosshead's lugs and bridge bending.
   The braced columns barely move.
 - **Stress:** 27 MPa peak in steel at the fore-aft load.
-- **Guide blocks.** Fore-aft, the joint's load reaches the four blocks as lateral force plus a moment. The moment
-  arm is up to 159 mm above a 104 mm block pair. That gives about 0.39 × k at the joint, where k is one block's
-  rigidity (block moment rigidity ignored, which is conservative).
-  - Against the all-aluminium lower bound, a 25 Hz floor needs k ≥ 100 N/µm per block.
-  - That value is not on the HIWIN card. It is a CHECK in `requirements/heave-guide.toml` and a question for
-    HIWIN at ZA preload.
+- **Guide blocks.** The model above holds them rigid; here is their own give.
+  - **Directions:** the blocks' mounting faces face the crosshead. Fore-aft, the joint's load reaches them
+    across the rail: lateral force, plus a moment with the joint up to 159 mm above a 104 mm block pair. Sideways,
+    it reaches them radially (one column radial, the other reverse radial).
+  - **At the joint:** about 0.39 × k, where k is one block's stiffness in that direction (block moment rigidity
+    ignored, which is conservative).
+  - **Needed for 25 Hz** against the all-aluminium bounds: lateral k ≥ 100 N/µm (fore-aft, governing), radial
+    k ≥ 55 N/µm (sideways).
+  - **HIWIN's figure:** the catalogue (G99TE22-2011, Table 2-1-13, PDF p. 30) gives HG25C radial stiffness
+    292 N/µm at Z0, 539 at ZA and 705 at ZB. The design orders ZA, which passes radial nearly ten times over.
+  - **Lateral is not printed.** The catalogue only says the four-row, 45° design has equal load ratings and
+    "high rigidity in all four directions". Lateral would have to be below 19 % of the radial figure to miss 25 Hz.
+    It is a CHECK in `requirements/heave-guide.toml`, to confirm with HIWIN when ordering.
+
+| Floor mode with the blocks' give (est., 392 kg) | Rigid blocks | ZA, lateral = radial (539 N/µm) | Lateral at Z0's 292 N/µm |
+|---|---|---|---|
+| Fore-aft (13–40 kN/mm tower) | 29–51 Hz | 28–47 Hz (12–34 kN/mm) | 27–44 Hz |
+| Sideways (18–54 kN/mm tower) | 34–59 Hz | 33–53 Hz (17–43 kN/mm) | 32–49 Hz |
+
 - **Load on each block:** about 3.4 kN at most, against C0 = 52.8 kN.
 
 **Fit.**
@@ -210,7 +223,7 @@ These are estimates, not a modal study of the assembly.
 | C | Twin cross tubes under the column plate | FE-tested on the carriage model; a step, not enough on its own; **in the design** (`sled.py`, revision 8) |
 | D | Bracing to reach 10 kN/mm at the joint | **In the design** (main revision 9): braced twin-column heave guide, 13–40 kN/mm fore-aft by FE |
 | E | Thrust faces on both universal-joint pins | **To design** |
-| F | Preloaded linear bearings for the heave guide | **In the design** (revision 9): HGW25CC blocks, two per column; block rigidity to confirm with HIWIN |
+| F | Preloaded linear bearings for the heave guide | **In the design** (revision 9): HGW25CC blocks at ZA preload, two per column: radial 539 N/µm (HIWIN), lateral to confirm with HIWIN |
 | G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **To design**, then re-run the brake case |
 
 **A–C in the design (main revision 8).**

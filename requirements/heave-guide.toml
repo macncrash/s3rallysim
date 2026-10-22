@@ -23,8 +23,13 @@ why = "The column, ear and crosshead were drawn round size 25 (36 mm total heigh
 
 [[check]]
 field = "radial_rigidity_n_per_um"
+min = 55
+why = "Side load: the blocks' mounting faces face the crosshead, so the joint's side load and its moment reach them radially (one column radial, the other reverse radial). The FE of the tower (docs/floor-structure.md) leaves the guides 21 kN/mm of the 9.7 kN/mm budget for a 25 Hz floor mode against the all-aluminium bound of 18 kN/mm; at about 0.39 x k at the joint that needs 55 N/um per block"
+
+[[check]]
+field = "lateral_rigidity_n_per_um"
 min = 100
-why = "Stiffness at the joint: the FE of the tower (docs/floor-structure.md) leaves the guides 38 kN/mm of the 9.7 kN/mm budget for a 25 Hz floor mode; with the joint 159 mm above a 104 mm block pair that needs about 100 N/um per block, lateral and radial. Not printed on the cards: confirm with the maker at the chosen preload"
+why = "Fore-aft load, the governing case: it reaches the blocks across the rail, as lateral force plus a moment with the joint up to 159 mm above a 104 mm block pair. The guides get 38 kN/mm of the 9.7 kN/mm budget against the all-aluminium bound of 13 kN/mm, so about 100 N/um per block. HIWIN prints only radial stiffness for HG: confirm lateral with the maker at the chosen preload"
 
 [[check]]
 field = "maintenance_interval_km"

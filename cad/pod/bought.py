@@ -94,6 +94,7 @@ SURGE_RAIL = {
     'rail_width_mm': 23,
     'rail_mass_kg_per_m': 3.21,
     'maintenance_interval_km': 10000,
+    'radial_rigidity_n_per_um': 539,
 }
 
 # surge_ballscrew: HIWIN 25-10K5 FSC/FSI (DIN 69051 part 5 form B), rolled (provisional, selector PASS)
@@ -182,4 +183,5 @@ HEAVE_GUIDE = {
     'rail_width_mm': 23,
     'rail_mass_kg_per_m': 3.21,
     'maintenance_interval_km': 10000,
+    'radial_rigidity_n_per_um': 539,
 }
