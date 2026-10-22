@@ -8,8 +8,8 @@ revision 10, H into revision 11 and G into revision 13.
 **Verdict on revision 6: not ready.** Revisions 8–13 put in every fix, A to H.
 - **Fore-aft and sideways:** now about 22–39 and 25–44 Hz (modal study, 6061 and steel bounds), against a
   25–30 Hz target.
-- **Floor yaw:** the one mode still low, at about 6–11 Hz. No cue drives it directly, but an off-centre crew couples
-  surge into it (§2.5).
+- **Floor yaw:** the one mode still low, at about 6–11 Hz. A driver alone does excite it: a sharp surge onset
+  leaves a sideways shimmy at the seat 10–60 times the threshold of perception (§2.5). Still open.
 - **Brake case:** the front overhang now drops 1.4 mm (was 2.4).
 
 - **Floor:** the seat rails bolt to unsupported 4 mm sheet. A cross tube fixes that, and FE shows it works.
@@ -284,6 +284,54 @@ These are estimates, not a modal study of the assembly.
   - **Floor:** a torsion box around the yoke.
 - **Not re-run with G:** G mostly stiffens the front overhang vertically, so modes 1–3 should barely change.
 
+**Yaw check: does an off-centre crew excite it?** (`analysis/yaw_check.py`)
+- **Model:** the floor as a rigid body on one yaw spring.
+  - **Stiffness:** a STEVE static study of the modal part (a 1,320 N·m couple on the floor's sides) gives
+    k = 5.5 × 10⁵ N·m/rad in steel. The front corner moves 3.04 mm, which matches the modal frequency.
+  - **The joint model:** the 16 mm pin rods take a fair share of that give (245 MPa peak in one rod). The real
+    30 mm pins in bushings sit between the rods and the rigid-pin test (8.1 × 10⁵ N·m/rad). Both are used, and
+    6061 scales each by 69/210.
+  - **Damping:** 2 %.
+  - **Inertia:** each crew's yaw inertia comes from the CAD mesh and the occupant model, plus fixes G and H.
+- **Excitation:** the crew's centre of mass is off the joint, so the cue limits in `platform_loads.py` (0.6 g
+  surge, 400°/s² roll and pitch) twist the floor.
+- **Measures:** the false sideways acceleration at the seats, against about 0.015 m/s² (perception, ISO 2631-1
+  Annex C).
+  - **Onset:** the ringing after a jerk-limited 0.6 g surge onset.
+  - **Resonance:** the response per 0.1 g of surge content at the yaw frequency.
+
+| Crew | CoM off the joint, sideways | Yaw frequency | Ringing after a 0.6 g surge onset, 50 ms / 100 ms rise | At resonance, per 0.1 g of surge |
+|---|---|---|---|---|
+| 95 + 95 | 12 mm | 6.5–13.7 Hz | 0.04–0.09 / 0.01–0.05 m/s² | 0.44 m/s² |
+| 95 + 5 | 71 mm | 6.9–14.5 Hz | 0.19–0.47 / 0.09–0.22 m/s² | 2.4 m/s² |
+| 95 alone | 146 mm | 7.2–15.1 Hz | 0.32–0.87 / 0.16–0.37 m/s² | 4.5 m/s² |
+| 5 alone | 100 mm | 7.7–16.2 Hz | 0.13–0.46 / 0.05–0.16 m/s² | 2.5 m/s² |
+
+- **Verdict: yes, a driver alone excites it.**
+  - **Brake or launch onset:** after a sharp onset the seat shimmies sideways at 7–15 Hz, 10–60 times the
+    threshold of perception. The shimmy dies away over about half a second to a second.
+  - **Road texture:** any surge, pitch or roll content near the yaw frequency is amplified about 25-fold.
+  - **Full crew:** a balanced 95 + 95 crew is near the threshold.
+- **Why it is worse alone:** the crew's centre of mass sits 146 mm to the driver's side.
+- **Left out:**
+  - **Link stiffness:** the links' horizontal stiffness (they stand near vertical at rest) would raise the
+    frequency a little.
+  - **Joint play:** bushing play would add a knock on top.
+  - **Product-of-inertia terms:** the crew's distributed products of inertia are not modelled.
+- **Ways out, cheapest first:**
+  1. **Cue shaping:** limit surge, pitch and roll onsets to a rise time of 1/f or more, and notch the
+     command around the yaw frequency.
+     - **Cost:** cheap, but the yaw frequency moves from 7 to 16 Hz with the crew and the material bounds.
+     - **Limit:** it does nothing for road texture in that band.
+  2. **Stiffen the structure:** a column-top tie and a torsion box round the yoke. Reaching 25 Hz needs about
+     2.7 × 10⁶ N·m/rad, 3–5 times today's steel bound, so these alone probably will not get there.
+  3. **A yaw restraint at the floor's front:** a guide on the carriage that holds one floor point sideways
+     while letting it heave and pitch.
+     - **Placement:** the point must sit on the roll axis (y = 0, joint height), so roll does not fight it.
+     - **Payoff:** a modest link a metre from the joint is far stiffer in yaw than the whole tower.
+     - **Mechanism:** this needs a guide, not a plain Panhard rod. A rod's arc would itself yaw the floor by up
+       to about 20 mrad over the stroke.
+
 ## 3. What changes in the design
 
 | # | Change | Status |
@@ -372,4 +420,5 @@ These are estimates, not a modal study of the assembly.
 - **The base frame.**
 - **A converged modal study** (the 15 mm mesh exceeds STEVE's memory), one with the links' horizontal stiffness, and
   one with G in the floor.
-- **The floor's yaw mode** (§2.5): check whether an off-centre crew excites it before adding steel.
+- **The floor's yaw mode** (§2.5): an off-centre crew does excite it. Choose between cue shaping, stiffening and a
+  yaw restraint.

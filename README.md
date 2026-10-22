@@ -23,6 +23,7 @@ Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in
 | `cad/pod/motion.py` | Motion-platform geometry: actuator points, crank reach, exact crank and link solution |
 | `analysis/platform_loads.py` | Actuator, crank and centre-post loads from the CAD masses plus the occupants, for full, mixed and driver-only crews |
 | `analysis/platform_clearance.py` | Exact reachable workspace and link and crank clearances |
+| `analysis/yaw_check.py` | Whether each crew's off-centre mass excites the floor's yaw mode |
 | `parts/` | Bought-part cards (seats, wheelbases, pedals, servos, gearboxes, rod ends, rails, ballscrews), every value sourced from the vendor's documents |
 | `requirements/` | What each bought part must meet, from the loads and ergonomics; `selection.toml` names the chosen part for each |
 | `tools/partsel/` | Part selector: checks cards against requirements, and writes the selection into `cad/pod/bought.py` |

@@ -170,7 +170,8 @@ Every combination of those targets was checked. Forces are shared as four equal 
   - Done in main revision 10: flanged bushings in the universal-joint lugs, with spider bosses as thrust faces.
   - Done in main revision 11 (H): the floor's yoke lugs hang from bars between two new cross tubes, not the bare
     sheet. The modal study then gives fore-aft about 22–39 Hz and sideways 25–44 Hz. Floor yaw is still about
-    6–11 Hz: check whether an off-centre crew excites it before adding steel.
+    6–11 Hz, and a driver alone does excite it: a sharp surge onset leaves a sideways shimmy at the seat well
+    above the threshold of perception (`analysis/yaw_check.py`). Still open.
   - Done in main revision 13 (G): three front-bay cross tubes and a 100 mm deep front overhang. The brake case's
     front-corner drop falls from 2.4 to 1.4 mm.
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
@@ -238,7 +239,8 @@ AiM .xrk has no third-party writer.
        blocks' lateral stiffness with HIWIN (radial is printed: 539 N/µm at ZA).
      - Fix E is in the design (main revision 10), H in revision 11 and G in revision 13. Clearance and fit checks
        pass on revision 13.
-     - Floor yaw mode (about 6–11 Hz): check whether a driver-only crew's off-centre mass excites it.
+     - Floor yaw mode (about 6–11 Hz): a driver-only crew excites it. Choose cue shaping, stiffening or a
+       yaw restraint at the floor's front.
      - A converged modal study, and one with G and the links' stiffness.
      - Confirm the provisional bought parts with their makers (Apex T2B, seat internal width).
 2. **Vehicle-dynamics engine.** Researched, with a recommendation ([`vehicle-dynamics.md`](vehicle-dynamics.md)).
