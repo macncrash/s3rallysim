@@ -34,12 +34,24 @@ def to_floor(pt, heave, pitch, roll, pivot):
     """Inverse of motion.floor_point: a carriage-frame point into the floor's rest frame."""
     p, r = math.radians(pitch), math.radians(roll)
     x, y, z = pt[0] - pivot[0], pt[1], pt[2] - pivot[2] - heave
-    # Undo roll (about X), then pitch (about Y).
-    y1 = y * math.cos(r) + z * math.sin(r)
-    z1 = -y * math.sin(r) + z * math.cos(r)
-    x2 = x * math.cos(p) - z1 * math.sin(p)
-    z2 = x * math.sin(p) + z1 * math.cos(p)
-    return (x2 + pivot[0], y1, z2 + pivot[2])
+    # Undo pitch (about Y, the crosshead's pin), then roll (about X, the floor's pin).
+    x1 = x * math.cos(p) - z * math.sin(p)
+    z1 = x * math.sin(p) + z * math.cos(p)
+    y2 = y * math.cos(r) + z1 * math.sin(r)
+    z2 = -y * math.sin(r) + z1 * math.cos(r)
+    return (x1 + pivot[0], y2, z2 + pivot[2])
+
+
+def box_points(lo, hi, n=6):
+    """Points on a box's surface: its corners, edges and faces on an n x n grid."""
+    pts = []
+    for i in range(n + 1):
+        for j in range(n + 1):
+            for k in range(n + 1):
+                if 0 < i < n and 0 < j < n and 0 < k < n:
+                    continue
+                pts.append(tuple(lo[a] + (hi[a] - lo[a]) * (i, j, k)[a] / n for a in range(3)))
+    return pts
 
 
 def main():
@@ -86,10 +98,14 @@ def main():
         floor["runner" + str(s_)] = ((x0 + 40, min(s_ * 310, s_ * 350), bot), (x1 - 40, max(s_ * 310, s_ * 350), top))
         floor["edge" + str(s_)] = ((x0, min(s_ * (w - 40), s_ * w), bot), (x1, max(s_ * (w - 40), s_ * w), top))
     floor["plate"] = ((x0, -w, top), (x1, w, top + params.deck_t))
+    # The floor's yoke lugs and their reach to the yoke tubes (fix H), and the yaw restraint's tail and clevis (fix I).
     for s_ in (1, -1):
-        y0, y1 = sorted((s_ * (motion.UJ_LUG - motion.UJ_LUG_T / 2), s_ * (motion.UJ_LUG + motion.UJ_LUG_T / 2)))
-        floor["yoke_bar" + str(s_)] = ((params.pivot_x - motion.UJ_TUBE_DX + 20, y0, bot),
-                                      (params.pivot_x + motion.UJ_TUBE_DX - 20, y1, top))
+        x0_, x1_ = sorted((params.pivot_x + s_ * (motion.UJ_LUG - motion.UJ_LUG_T / 2),
+                           params.pivot_x + s_ * (motion.UJ_TUBE_DX - 20)))
+        floor["yoke_reach" + str(s_)] = ((x0_, -30, bot), (x1_, 30, top))
+    tail_z0 = params.pivot_z + 35
+    floor["yaw_tail"] = ((motion.YAW_PIN_X - 30.5, -30, tail_z0), (x0, 30, tail_z0 + 40))
+    floor["yaw_clevis"] = ((motion.YAW_PIN_X - 30.5, -30, params.pivot_z - 30), (motion.YAW_PIN_X + 24.5, 30, tail_z0))
     # Heave guide struts (axis segments) and column top corners, in the carriage frame (components/sled.py).
     struts, col_corners = [], []
     for s_ in (1, -1):
@@ -98,8 +114,17 @@ def main():
             struts.append(((params.pivot_x, y, motion.STRUT_Z), (bx, s_ * motion.RAIL_Y, motion.SLED_TOP + motion.STRUT_R)))
         h = motion.GUIDE_COL / 2
         col_corners += [(params.pivot_x + dx, y + dy, motion.GUIDE_TOP) for dx in (-h, h) for dy in (-h, h)]
+    # The yaw restraint's post and strut on the carriage (components/sled.py).
+    h_ = motion.YAW_POST / 2
+    post = ((motion.YAW_POST_X - h_, motion.YAW_POST_Y - h_ - motion.GUIDE_RAIL_H, motion.SLED_TOP),
+            (motion.YAW_POST_X + h_, motion.YAW_POST_Y + h_, motion.YAW_POST_TOP))
+    post_pts = box_points(*post)
+    yaw_strut = ((motion.YAW_POST_X, motion.YAW_POST_Y + h_, motion.YAW_POST_TOP - 50),
+                 (motion.YAW_POST_X, motion.RAIL_Y, motion.SLED_TOP + 21.2))
+    floor_pts = {name: box_points(lo, hi, 4) for name, (lo, hi) in floor.items()}
     reach = []
-    worst = {"tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None), "drive_gap": (1e9, None),
+    worst = {"yaw_post_gap": (1e9, None), "yaw_strut_gap": (1e9, None),
+             "tube_gap": (1e9, None), "tip_low": (1e9, None), "lean": (0, None), "drive_gap": (1e9, None),
              "strut_gap": (1e9, None), "column_gap": (1e9, None)}
     # Drive tops (gearbox body and its mounting plate) under the floor's under-frame, per actuator.
     frame_bottom = motion.DECK_BOT - motion.FRAME_H
@@ -144,6 +169,17 @@ def main():
                 gap = box_distance(c_f, lo, hi)
                 if gap < worst["column_gap"][0]:
                     worst["column_gap"] = (gap, (fname, h, p, ro))
+        if h % 10 == 0 and p % 1 == 0 and ro % 1 == 0:
+            for fname, (lo, hi) in floor.items():
+                # The post (and its rail) against the floor, both ways round, and the strut against the floor.
+                gap = min(min(box_distance(to_floor(q, h, p, ro, pivot), lo, hi) for q in post_pts),
+                          min(box_distance(motion.floor_point(q, h, p, ro), *post) for q in floor_pts[fname]))
+                if gap < worst["yaw_post_gap"][0]:
+                    worst["yaw_post_gap"] = (gap, (fname, h, p, ro))
+                a_f, b_f = (to_floor(q, h, p, ro, pivot) for q in yaw_strut)
+                gap = segment_box(a_f, b_f, lo, hi) - 21.2
+                if gap < worst["yaw_strut_gap"][0]:
+                    worst["yaw_strut_gap"] = (gap, (fname, h, p, ro))
         for name, corners, top in drives:
             low = min(motion.floor_point(c, h, p, ro)[2] for c in corners)
             if low - top < worst["drive_gap"][0]:
@@ -187,6 +223,8 @@ def main():
     print("smallest floor-frame-to-drive gap mm: %.1f at %s" % worst["drive_gap"])
     print("smallest heave-guide-strut-to-floor gap mm: %.1f at %s" % worst["strut_gap"])
     print("smallest heave-guide-column-top-to-floor gap mm: %.1f at %s" % worst["column_gap"])
+    print("smallest yaw-restraint-post-to-floor gap mm (10 mm / 1 deg grid): %.1f at %s" % worst["yaw_post_gap"])
+    print("smallest yaw-restraint-strut-to-floor gap mm (10 mm / 1 deg grid): %.1f at %s" % worst["yaw_strut_gap"])
 
 
 if __name__ == "__main__":

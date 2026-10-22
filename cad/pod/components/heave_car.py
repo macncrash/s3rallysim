@@ -3,7 +3,7 @@ from params import pivot_x, pivot_z, heave_mm
 from motion import GUIDE_Y, GUIDE_COL, GUIDE_TOP, GUIDE_RAIL_H, UJ_LUG, UJ_LUG_T
 from bought import HEAVE_GUIDE, UJOINT_BUSHING as BUSH
 
-# Heave crosshead with the lower yoke of the universal joint: two lugs across X that carry the roll pin, on a
+# Heave crosshead with the lower yoke of the universal joint: two lugs across Y that carry the pitch pin, on a
 # bridge between two ears. Each ear carries a guide rail running in two blocks fixed on a column of the carriage
 # (sled.py), so the joint's side and fore-aft loads go straight into the braced columns.
 heave_car = Component("heave_car", name="Heave crosshead and lower yoke")
@@ -21,21 +21,22 @@ for name, s in (("l", 1), ("r", -1)):
 heave_car.box("bridge", 180, 2 * (ear_in + 10), 30, at=(pivot_x, 0, pivot_z - 70), op="new")
 top = pivot_z + 25
 bushes = []
-for name, s in (("f", 1), ("b", -1)):
-    x = pivot_x + s * UJ_LUG
-    heave_car.box("lug_" + name, UJ_LUG_T, 60, top - (pivot_z - 55), at=(x, 0, (pivot_z - 55 + top) / 2), op="new")
+for name, s in (("l", 1), ("r", -1)):
+    y = s * UJ_LUG
+    heave_car.box("lug_" + name, 60, UJ_LUG_T, top - (pivot_z - 55), at=(pivot_x, y, (pivot_z - 55 + top) / 2),
+                  op="new")
     heave_car.cylinder("lug_" + name + "_bore", BUSH["outside_diameter_mm"] / 2, UJ_LUG_T + 10,
-                       at=(x - UJ_LUG_T / 2 - 5, 0, pivot_z), direction=(1, 0, 0), op="cut", body="lug_" + name)
-    # Flanged bushing pressed in from the inner face; its flange is the roll pin's thrust face.
-    inner = x - s * UJ_LUG_T / 2
+                       at=(pivot_x, y - UJ_LUG_T / 2 - 5, pivot_z), direction=(0, 1, 0), op="cut", body="lug_" + name)
+    # Flanged bushing pressed in from the inner face; its flange is the pitch pin's thrust face.
+    inner = y - s * UJ_LUG_T / 2
     bid = "bush_" + name
     heave_car.cylinder(bid, BUSH["outside_diameter_mm"] / 2, BUSH["width_mm"] - BUSH["flange_thickness_mm"],
-                       at=(inner, 0, pivot_z), direction=(s, 0, 0), op="new")
+                       at=(pivot_x, inner, pivot_z), direction=(0, s, 0), op="new")
     heave_car.cylinder(bid + "_flange", BUSH["flange_diameter_mm"] / 2, BUSH["flange_thickness_mm"],
-                       at=(inner, 0, pivot_z), direction=(-s, 0, 0), op="join", body=bid)
+                       at=(pivot_x, inner, pivot_z), direction=(0, -s, 0), op="join", body=bid)
     heave_car.cylinder(bid + "_bore", BUSH["bore_mm"] / 2, BUSH["width_mm"] + 2,
-                       at=(inner - s * (BUSH["flange_thickness_mm"] + 1), 0, pivot_z), direction=(s, 0, 0), op="cut",
-                       body=bid)
+                       at=(pivot_x, inner - s * (BUSH["flange_thickness_mm"] + 1), pivot_z), direction=(0, s, 0),
+                       op="cut", body=bid)
     bushes.append(bid)
 heave_car.material("steel-s235jr", color="#4a515b")
 heave_car.material("steel-1c45", bodies=["rail_l", "rail_r"], color="#8d939c")

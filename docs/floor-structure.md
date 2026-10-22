@@ -3,13 +3,13 @@
 Status, 2026-10-21. This covers open item 1 in [`two-seat-pod.md`](two-seat-pod.md) §7: the first STEVE structural
 studies of the platform's load path, from the cockpit's bolts down to the surge rails. The studies in §2 are of
 main revision 6. Fixes A–C went into main revision 8, D and F (a new heave guide, §2.4) into revision 9, E into
-revision 10, H into revision 11 and G into revision 13.
+revision 10, H into revision 11, G into revision 13 and I (a yaw restraint) into revisions 16–18.
 
-**Verdict on revision 6: not ready.** Revisions 8–13 put in every fix, A to H.
+**Verdict on revision 6: not ready.** Revisions 8–18 put in every fix, A to I.
 - **Fore-aft and sideways:** now about 22–39 and 25–44 Hz (modal study, 6061 and steel bounds), against a
   25–30 Hz target.
-- **Floor yaw:** the one mode still low, at about 6–11 Hz. A driver alone does excite it: a sharp surge onset
-  leaves a sideways shimmy at the seat 10–60 times the threshold of perception (§2.5). Still open.
+- **Floor yaw:** was 6–11 Hz, and a driver alone excited it. Fix I, a yaw restraint behind the floor, lifts it to
+  about 35–42 Hz, and the sideways ringing at the seat drops to about the threshold of perception (§2.5, §3).
 - **Brake case:** the front overhang now drops 1.4 mm (was 2.4).
 
 - **Floor:** the seat rails bolt to unsupported 4 mm sheet. A cross tube fixes that, and FE shows it works.
@@ -343,7 +343,8 @@ These are estimates, not a modal study of the assembly.
 | E | Thrust faces on both universal-joint pins | **In the design** (main revision 10): SKF PCMF 303416 E flanged bushings in all four lugs, spider bosses to their flanges |
 | F | Preloaded linear bearings for the heave guide | **In the design** (revision 9): HGW25CC blocks at ZA preload, two per column: radial 539 N/µm (HIWIN), lateral to confirm with HIWIN |
 | G | Front-overhang stiffening: cross tube under the dash feet, deeper front frame | **In the design** (main revision 13): three front-bay cross tubes and a 100 mm deep overhang; brake-case drop 2.4 → 1.4 mm |
-| H | A stiff mount for the floor's yoke: tie the lugs into the frame instead of the bare sheet (found by the modal study) | **In the design** (main revision 11): yoke bars between two cross tubes 140 mm either side of the joint; fore-aft and sideways modes up 55–75 % |
+| H | A stiff mount for the floor's yoke: tie the lugs into the frame instead of the bare sheet (found by the modal study) | **In the design** (main revision 11): the yoke lugs reach two cross tubes 140 mm either side of the joint; fore-aft and sideways modes up 55–75 % |
+| I | A yaw restraint: hold the floor's tail sideways on the roll axis (found by the yaw check) | **In the design** (main revisions 16–18): guide block on a braced post at the carriage's tail, rod end on a floor pin; the joint's pins swapped so the two don't fight; yaw 7–15 → 35–42 Hz |
 
 **A–C in the design (main revision 8).**
 - **Cheek lengths:** in `deck.py` each cheek stops at its actuator-line tube's face: 120 mm long at the front, 80 mm
@@ -414,11 +415,66 @@ These are estimates, not a modal study of the assembly.
 - **Mass:** the floor gains 11.8 kg (73.4 kg in all, with H); the pod is 813.2 kg.
 - **Fit (STEVE, main revision 13):** occupants clear on 756 pairs, platform on 670.
 
+**I in the design (main revisions 16–18).**
+- **The problem:** the floor's yaw mode (§2.5) sat at 7–15 Hz. A driver alone, 146 mm off the centreline, turned
+  every sharp surge cue into a sideways shimmy at the seat.
+- **Why not just a rod sideways from the carriage to the floor:** with the joint as it was (roll pin in the
+  crosshead, pitch pin in the floor), any floor point off the joint moves sideways at combined roll and pitch. At
+  700 mm behind the joint it moves 10.4 mm at full roll and pitch, so a restraint there would fight the joint.
+- **The way round, in two parts:**
+  - **Swap the joint's pins:** the pitch pin now sits in the crosshead's lugs (along Y) and the roll pin in the
+    floor's (along X). Then every point on the floor's roll axis (the centreline at joint height) stays on the
+    centreline at every pose: exactly 0 mm sideways. The swap changes the kinematics only at second order.
+    - **Code:** `motion.floor_point`, the clearance script, the render script and the Gravity sim follow the new
+      order.
+    - **H:** the floor's lugs now reach the yoke tubes directly.
+  - **Hold one roll-axis point:** a pin on the floor's tail, 700 mm behind the joint and behind the floor's rear
+    edge, sits on the roll axis. It passes through an SKF SIKB 20 F rod end (the links' part). The ball turns with
+    roll, tilts up to 7° with pitch, and lets the pin slide up to 5 mm along its bore as pitch draws the tail in.
+    - **Guide:** the rod end hangs on an arm from a HIWIN HGW25CC block (the guides' part). The block runs on a
+      vertical rail on an 80 × 80 × 6 steel post, braced sideways by a 42.4 × 4 strut.
+    - **Carriage tail:** the post sits on a new steel tail cross tube, with the runners extended back to x = −1060.
+    - **Travel:** the block follows the pin through ±125 mm of heave and pitch. In STEVE it is its own component
+      (`yaw_block.py`), on a slider geared to heave and pitch.
+- **Stiffness** (STEVE part *S3 Rally Pod yaw post (FEA)*, `cad/fea/yaw_post.py`):
+  - **The restraint:** a 1 kN sideways pull at the block, at the top of its travel, moves it 0.104 mm: 9.6 kN/mm
+    in steel. The post leans on its foot and the tail cross tube bows, which is why that tube is steel. The truth
+    is close to the steel figure (3.2 kN/mm if everything were 6061).
+  - **Lever:** at 700 mm that adds 4.7 × 10⁶ N·m/rad in yaw, about eight times the joint path's 5.5–8.1 × 10⁵.
+- **Yaw check with I** (`python3 analysis/yaw_check.py render/build/mesh cad/pod 5.53e5 9.6e6`):
+
+  | Crew | Yaw frequency, steel (all-6061 bound) | Ringing after a 0.6 g surge onset, 50 / 100 ms rise |
+  |---|---|---|
+  | 95 + 95 | 35–36 Hz (20 Hz) | 0.01 / 0.01 m/s² |
+  | 95 + 5 | 37–38 Hz (21–22 Hz) | 0.03–0.04 / 0.03–0.04 m/s² |
+  | 95 alone | 38–39 Hz (22–23 Hz) | 0.02–0.04 / 0.02–0.04 m/s² (was 0.16–0.87) |
+  | 5 alone | 41–42 Hz (24 Hz) | 0.02–0.03 / 0.02–0.03 m/s² |
+
+  - **Ringing:** at or near the 0.015 m/s² threshold of perception.
+  - **Resonance:** about 35–40 Hz, above the cue band.
+  - **The 6061 column is very pessimistic:** the restraint is steel.
+- **Loads:** about 0.6 kN sideways on the block and rod end at the cue limits, against 34.9 kN and 31 kN dynamic
+  ratings (`requirements/yaw-guide.toml`, `yaw-rod-end.toml`).
+- **Clearance** (`analysis/platform_clearance.py`, now with the new pin order and the restraint):
+  - **The restraint:** the post clears the floor's tail by 18.1 mm and the strut clears the floor by 36.0 mm,
+    over the workspace on a 10 mm / 1° grid.
+  - **The rest of the platform:** the new order shifts the rest slightly. 13,099 reachable poses (13,117 before),
+    link lean up to 16.6° (15.6°), links clear the tubes by 22.8 mm (23.4).
+- **Fit (STEVE, main revision 18; I went in at 16, 17 and 18 fix the slider's range and a comment):** the occupants
+  check is clear on 780 pairs. The platform check, with the restraint and its slider, is clear on 714.
+- **Mass:** the carriage gains 14.3 kg (post, strut, tail tube, runner extensions, rail) and the slider is 2.1 kg.
+  The pod is 830.6 kg.
+- **History:** revision 14 rolled the design back to revision 6 (03:56 UTC on 22 October). It was restored to
+  revision 13 as revision 15 before I went in. Revision 14 also added `design.explode("explode_1", auto=True)`; the
+  restore dropped it.
+- **Not covered:**
+  - **Floor models:** the floor and platform FE parts still model the old joint order. The yaw result comes from
+    the restraint and joint springs in parallel.
+  - **Bushing play:** play in the pin's fit in the ball, and in the joint's bushings, is not modelled.
+
 **Not covered here:**
 - **Weld and bolt detail:** sizes, fatigue classes, preload.
 - **The gearbox outriggers** that carry each crank's 3.7 kN and 460 N·m into the carriage.
 - **The base frame.**
 - **A converged modal study** (the 15 mm mesh exceeds STEVE's memory), one with the links' horizontal stiffness, and
   one with G in the floor.
-- **The floor's yaw mode** (§2.5): an off-centre crew does excite it. Choose between cue shaping, stiffening and a
-  yaw restraint.

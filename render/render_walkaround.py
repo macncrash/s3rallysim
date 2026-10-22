@@ -101,14 +101,14 @@ def stage_values(t, keys, poses):
 
 
 def floor_point(p, pivot, heave, pitch_deg, roll_deg):
-    """A floor point (mm) relative to the surge carriage for a floor pose: pitch inside roll, then heave."""
+    """A floor point (mm) relative to the surge carriage for a floor pose: roll inside pitch, then heave."""
     a, r = math.radians(pitch_deg), math.radians(roll_deg)
     dx, dy, dz = p[0] - pivot[0], p[1], p[2] - pivot[2]
-    x1 = dx * math.cos(a) + dz * math.sin(a)
-    z1 = -dx * math.sin(a) + dz * math.cos(a)
-    y2 = dy * math.cos(r) - z1 * math.sin(r)
-    z2 = dy * math.sin(r) + z1 * math.cos(r)
-    return (x1 + pivot[0], y2, z2 + pivot[2] + heave)
+    y1 = dy * math.cos(r) - dz * math.sin(r)
+    z1 = dy * math.sin(r) + dz * math.cos(r)
+    x2 = dx * math.cos(a) + z1 * math.sin(a)
+    z2 = -dx * math.sin(a) + z1 * math.cos(a)
+    return (x2 + pivot[0], y1, z2 + pivot[2] + heave)
 
 
 def solve_actuator(act, pivot, r, length, v):

@@ -22,7 +22,7 @@ export const meta = {
   bloom: 0.3,
   doc: {
     about: 'Motion cue for the enclosed two-seat rally pod, drawn from the CAD meshes. The shell and screens stay put; the floor carries both occupants, the seats, wheel, pedals and dash on surge, roll, pitch and heave.',
-    howItWorks: 'A 9.6 s stage keyed like the CAD animation: bump, jump, flight, landing, then a long corner. Each point belongs to a motion stage: the floor turns about the universal joint (pitch inside roll), heaves and surges; the four cranks and links are solved exactly each step to follow it.',
+    howItWorks: 'A 9.6 s stage keyed like the CAD animation: bump, jump, flight, landing, then a long corner. Each point belongs to a motion stage: the floor turns about the universal joint (roll inside pitch), heaves and surges; the four cranks and links are solved exactly each step to follow it.',
     equations: [
       { label: 'chain', latex: 'p_w = S_x\\,R_x(\\phi)\\,R_y(\\theta)\\,H_z\\,p' },
     ],
@@ -129,14 +129,15 @@ export function create(ctx) {
   const crankAng = new Float64Array(4), tipX = new Float64Array(4), tipZ = new Float64Array(4);
   const linkTilt = new Float64Array(4);
 
-  // Pitch (about Y) inside roll (about X), both about the universal joint, then heave. In mm.
+  // Roll (about X, the floor's pin) inside pitch (about Y, the crosshead's pin), both about the universal joint,
+  // then heave. In mm.
   function floorPoint(x, y, z, sp, cp, sr, cr, heave, out) {
     const dx = x - PV[0], dz = z - PV[2];
-    const x1 = dx * cp + dz * sp;
-    const z1 = -dx * sp + dz * cp;
-    out[0] = x1 + PV[0];
-    out[1] = y * cr - z1 * sr;
-    out[2] = y * sr + z1 * cr + PV[2] + heave;
+    const y1 = y * cr - dz * sr;
+    const z1 = y * sr + dz * cr;
+    out[0] = dx * cp + z1 * sp + PV[0];
+    out[1] = y1;
+    out[2] = -dx * sp + z1 * cp + PV[2] + heave;
   }
 
   const tmp = [0, 0, 0];
@@ -178,16 +179,18 @@ export function create(ctx) {
         z = tipZ[k] - dx * Math.sin(t) + dz * Math.cos(t);
       } else if (st >= 2) {
         if (st >= 4) {
-          const dx = x - PV[0], dz = z - PV[2];
-          const x1 = dx * cp + dz * sp;
-          z = -dx * sp + dz * cp + PV[2];
-          x = x1 + PV[0];
-        }
-        if (st >= 3) {
+          // The floor rolls on the spider's roll pin...
           const dz = z - PV[2];
           const y1 = y * cr - dz * sr;
           z = y * sr + dz * cr + PV[2];
           y = y1;
+        }
+        if (st >= 3) {
+          // ...and the spider, with the floor, pitches on the crosshead's pitch pin.
+          const dx = x - PV[0], dz = z - PV[2];
+          const x1 = dx * cp + dz * sp;
+          z = -dx * sp + dz * cp + PV[2];
+          x = x1 + PV[0];
         }
         z += heave;
       }

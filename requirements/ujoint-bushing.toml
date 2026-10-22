@@ -1,7 +1,7 @@
 # Flanged plain bushings in the universal joint's four yoke lugs (cad/pod/components/heave_car.py, deck.py), one size
 # for both pins. The flange is the pin's thrust face: the spider's bosses run against it (docs/floor-structure.md, fix E).
 # Loads at the +40 mm heave stop (platform_loads.py): 3.4 kN fore-aft, 1.1 kN sideways. Fore-aft runs along the roll
-# pin into one crosshead lug's flange and across the pitch pin (1.7 kN per floor lug); sideways the other way round.
+# pin into one floor lug's flange and across the pitch pin (1.7 kN per crosshead lug); sideways the other way round.
 # The joint carries no vertical load: the four cranks lift the floor.
 title = "Motion platform: universal-joint bushing"
 category = "plain-bearings"

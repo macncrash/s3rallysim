@@ -21,3 +21,4 @@ eye_width_mm = { v = 18, src = "skf", page = 204 }
 mass_kg = { v = 0.38, src = "skf", page = 204 }
 alternating_load_factor = { v = 0.5, src = "skf", page = 46 }
 eye_diameter_mm = { v = 51, src = "skf", page = 204 }
+center_to_shank_end_mm = { v = 77, src = "skf", page = 204 }

@@ -11,7 +11,7 @@ so a crank turns through about asin(dz / crank_r) for a floor point that moves d
 
 import math
 
-from params import pivot_x, pivot_z, act_xf, act_xr, act_y, crank_r, link_len, deck_z, deck_t
+from params import pivot_x, pivot_z, act_xf, act_xr, act_y, crank_r, link_len, deck_z, deck_t, heave_mm, pitch_deg
 
 DECK_BOT = deck_z - deck_t / 2  # floor plate underside
 FRAME_H = 60  # floor under-frame depth
@@ -40,12 +40,13 @@ STRUT_R = 30.15  # struts: CHS 60.3 x 5
 STRUT_T = 5
 
 # Universal joint: both yokes' lugs, each with a flanged bushing (bought.UJOINT_BUSHING) whose flange faces the spider
-# and takes the pin's thrust (docs/floor-structure.md, fix E).
+# and takes the pin's thrust (docs/floor-structure.md, fix E). The pitch pin (along Y) is in the crosshead's lugs and
+# the roll pin (along X) in the floor's, so the floor's roll axis stays on the centreline at every pose.
 UJ_LUG = 75  # lug centres from the pivot, along the pin
 UJ_LUG_T = 20  # lug thickness
 UJ_THRUST_GAP = 0.5  # spider boss to flange, each side, as drawn; shimmed to 0.05-0.1 mm in all on assembly
 # The floor's yoke mount (fix H): a cross tube each side of the joint, clear of the crosshead's lugs through full roll
-# and pitch, with each yoke lug carried on a bar along the frame's full depth between them.
+# and pitch; each of the floor's yoke lugs reaches the nearer tube along the frame's full depth.
 UJ_TUBE_DX = 140  # yoke cross tubes' centres fore and aft of the pivot
 # The floor's front overhang (fix G): cross tubes under the dash feet, the rear pedal and footrest pads and the
 # footrest's front pads, and extra depth under each runner and edge tube to the front. Under the runners it is a solid
@@ -55,6 +56,19 @@ FRONT_CROSS_X = (272, 440, 600)
 FRONT_DEEP = 40  # extra frame depth ahead of the front actuators
 FRONT_DEEP_BAR_W = 20  # solid bar under each runner's inboard half
 FRONT_DEEP_EDGE_X = 270  # where the edge tubes' extra depth starts
+
+# Yaw restraint (docs/floor-structure.md, fix I): behind the floor, a guide block on a vertical rail on a braced post
+# at the carriage's tail holds a pin on the floor's roll axis sideways through a rod end, so it heaves and pitches
+# freely but cannot yaw. The pin sits on the roll axis (centreline, joint height), where the floor never moves
+# sideways, so the restraint works alongside the universal joint instead of fighting it.
+YAW_PIN_X = -1000  # restraint pin, behind the floor's rear edge
+YAW_POST = 80  # post square, 6 mm wall
+YAW_POST_X = -1005  # post centre
+YAW_POST_Y = 120  # post centre: beside the pin, clear of the floor's tail
+YAW_POST_TOP = 530
+YAW_TAIL_X0 = -1060  # carriage runners extended back to here
+YAW_ARM_T = 20  # guide block's arm, under the rod end's shank
+YAW_STROKE = heave_mm + (pivot_x - YAW_PIN_X) * math.sin(math.radians(pitch_deg))  # pin's travel each way, 125 mm
 
 # Actuators: name, x, y. Front pair, rear pair.
 ACTUATORS = (
@@ -93,13 +107,14 @@ def crank_ratios(x, y):
 def floor_point(point, heave, pitch_deg, roll_deg):
     """Where a point on the floor goes (relative to the surge carriage) for a floor pose."""
     p, r = math.radians(pitch_deg), math.radians(roll_deg)
-    # Pitch (about Y) inside roll (about X), both about the universal joint, then heave.
+    # Roll (about X, the floor's pin) inside pitch (about Y, the crosshead's pin), both about the universal joint,
+    # then heave. Points on the floor's roll axis never move sideways, which the yaw restraint relies on.
     dx, dy, dz = point[0] - pivot_x, point[1], point[2] - pivot_z
-    x1 = dx * math.cos(p) + dz * math.sin(p)
-    z1 = -dx * math.sin(p) + dz * math.cos(p)
-    y2 = dy * math.cos(r) - z1 * math.sin(r)
-    z2 = dy * math.sin(r) + z1 * math.cos(r)
-    return (x1 + pivot_x, y2, z2 + pivot_z + heave)
+    y1 = dy * math.cos(r) - dz * math.sin(r)
+    z1 = dy * math.sin(r) + dz * math.cos(r)
+    x2 = dx * math.cos(p) + z1 * math.sin(p)
+    z2 = -dx * math.sin(p) + z1 * math.cos(p)
+    return (x2 + pivot_x, y1, z2 + pivot_z + heave)
 
 
 def crank_angle(x, y, heave, pitch_deg, roll_deg):

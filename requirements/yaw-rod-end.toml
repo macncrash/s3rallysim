@@ -1,0 +1,26 @@
+# Rod end linking the yaw restraint's guide block to the floor's tail pin (cad/pod/components/yaw_block.py). Its
+# ball turns with the floor's roll about the pin and tilts with its pitch; the pin slides up to about 5 mm in the
+# ball's bore as pitch draws the tail toward the joint. Load: about 0.6 kN sideways at the cue limits (yaw-guide.toml).
+title = "Motion platform: yaw restraint rod end"
+category = "rod-ends"
+
+[[check]]
+field = "static_radial_load_n"
+min = 12000
+why = "Twenty times the 0.6 kN static yaw load, as for the guide block, with the rod end's own housing rating"
+
+[[check]]
+field = "dynamic_radial_load_n"
+min = 6000
+why = "Ten times the static yaw load, reversing every cue"
+
+[[check]]
+field = "tilt_angle_deg"
+min = 10
+why = "The floor pitches the pin up to 7 deg in the ball, plus margin"
+
+[[check]]
+field = "maintenance_free"
+equals = true
+prefer = true
+why = "Arcade: no greasing schedule"

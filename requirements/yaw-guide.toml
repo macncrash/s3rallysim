@@ -1,0 +1,27 @@
+# Profile rail block of the yaw restraint (cad/pod/components/sled.py rail, yaw_block.py block): one block on a
+# vertical rail on the carriage's tail post, holding the floor's tail pin sideways. Loads (analysis/yaw_check.py):
+# a 95th-percentile driver alone puts about 400 N m of yaw torque on the floor at the cue limits; at 700 mm from the
+# joint that is about 0.6 kN sideways on the block, before any dynamic overshoot.
+title = "Motion platform: yaw restraint guide block"
+category = "profile-rails"
+
+[[check]]
+field = "dynamic_load_n"
+min = 6000
+why = "Ten times the 0.6 kN static yaw load: onset ringing and resonance multiply it, and it reverses every cue"
+
+[[check]]
+field = "static_load_n"
+min = 12000
+why = "Shocks, several times the cueing load"
+
+[[check]]
+field = "radial_rigidity_n_per_um"
+min = 20
+why = "The block faces the pin sideways, so the yaw load is radial; 20 N/um keeps the block's give to a few percent of the restraint's 5.5 kN/mm target"
+
+[[check]]
+field = "maintenance_interval_km"
+min = 1000
+prefer = true
+why = "Self-lubricating blocks for an arcade"

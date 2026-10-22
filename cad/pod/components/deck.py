@@ -1,8 +1,8 @@
 from steve import Component
 from params import deck_z, deck_t, pivot_x, pivot_z, act_xf, act_xr, act_y
 from motion import (DECK_BOT, FRAME_H, TOP_PIN_DROP, UJ_LUG, UJ_LUG_T, UJ_TUBE_DX, FRONT_CROSS_X, FRONT_DEEP,
-                    FRONT_DEEP_BAR_W, FRONT_DEEP_EDGE_X)
-from bought import UJOINT_BUSHING as BUSH
+                    FRONT_DEEP_BAR_W, FRONT_DEEP_EDGE_X, YAW_PIN_X)
+from bought import UJOINT_BUSHING as BUSH, YAW_ROD_END
 
 # Moving floor: plate on a welded under-frame, the upper yoke of the universal joint, and a clevis
 # at each actuator link's top pin.
@@ -43,31 +43,46 @@ for side, s in (("l", 1), ("r", -1)):
     deck.box("edge_deep_" + side + "_void", xb - xa + 4, 32, FRONT_DEEP - 8, at=((xa + xb) / 2, s * (W - 20), zd),
              op="cut", body="edge_deep_" + side)
 
-# Universal joint upper yoke: two lugs across Y that carry the pitch pin, each with a flanged bushing pressed in
-# from the inner face; the flange is the pitch pin's thrust face. Each lug hangs from a bar along the frame's full
-# depth, bolted between two cross tubes either side of the joint, so the joint's loads reach the frame instead of
-# bending the bare sheet (docs/floor-structure.md, fix H).
+# Universal joint upper yoke: two lugs across X that carry the roll pin, each with a flanged bushing pressed in
+# from the inner face; the flange is the roll pin's thrust face. Each lug reaches along the frame's full depth to a
+# cross tube either side of the joint, so the joint's loads go into the frame instead of bending the bare sheet
+# (docs/floor-structure.md, fix H).
 for name, s in (("yoke_b", -1), ("yoke_f", 1)):
     tube("cross_" + name, 40, 2 * W - 80, (pivot_x + s * UJ_TUBE_DX, 0, zc))
 low = pivot_z - 25
-bar = 2 * UJ_TUBE_DX - 40
+reach = UJ_TUBE_DX - 20 - (UJ_LUG - UJ_LUG_T / 2)  # lug inner face to the tube
 bushes = []
-for name, s in (("l", 1), ("r", -1)):
-    y = s * UJ_LUG
-    deck.box("yoke_" + name, 60, UJ_LUG_T, DECK_BOT - low, at=(pivot_x, y, (DECK_BOT + low) / 2), op="new")
-    deck.box("yoke_" + name + "_bar", bar, UJ_LUG_T, FRAME_H, at=(pivot_x, y, zc), op="join", body="yoke_" + name)
+for name, s in (("f", 1), ("b", -1)):
+    x = pivot_x + s * UJ_LUG
+    deck.box("yoke_" + name, UJ_LUG_T, 60, DECK_BOT - low, at=(x, 0, (DECK_BOT + low) / 2), op="new")
+    deck.box("yoke_" + name + "_reach", reach, 60, FRAME_H, at=(x - s * UJ_LUG_T / 2 + s * reach / 2, 0, zc),
+             op="join", body="yoke_" + name)
     deck.cylinder("yoke_" + name + "_bore", BUSH["outside_diameter_mm"] / 2, UJ_LUG_T + 10,
-                  at=(pivot_x, y - UJ_LUG_T / 2 - 5, pivot_z), direction=(0, 1, 0), op="cut", body="yoke_" + name)
-    inner = y - s * UJ_LUG_T / 2
+                  at=(x - UJ_LUG_T / 2 - 5, 0, pivot_z), direction=(1, 0, 0), op="cut", body="yoke_" + name)
+    inner = x - s * UJ_LUG_T / 2
     bid = "bush_" + name
     deck.cylinder(bid, BUSH["outside_diameter_mm"] / 2, BUSH["width_mm"] - BUSH["flange_thickness_mm"],
-                  at=(pivot_x, inner, pivot_z), direction=(0, s, 0), op="new")
+                  at=(inner, 0, pivot_z), direction=(s, 0, 0), op="new")
     deck.cylinder(bid + "_flange", BUSH["flange_diameter_mm"] / 2, BUSH["flange_thickness_mm"],
-                  at=(pivot_x, inner, pivot_z), direction=(0, -s, 0), op="join", body=bid)
+                  at=(inner, 0, pivot_z), direction=(-s, 0, 0), op="join", body=bid)
     deck.cylinder(bid + "_bore", BUSH["bore_mm"] / 2, BUSH["width_mm"] + 2,
-                  at=(pivot_x, inner - s * (BUSH["flange_thickness_mm"] + 1), pivot_z), direction=(0, s, 0),
-                  op="cut", body=bid)
+                  at=(inner - s * (BUSH["flange_thickness_mm"] + 1), 0, pivot_z), direction=(s, 0, 0), op="cut",
+                  body=bid)
     bushes.append(bid)
+
+# Yaw restraint tail (fix I): a beam from the rear cross tube back to a clevis whose pin lies on the roll axis, for
+# the restraint's rod end (yaw_block.py). The ball sits 2 mm off the front cheek: pitch draws the tail up to about
+# 5 mm toward the joint, sliding the pin through the ball.
+ball = YAW_ROD_END["ball_width_mm"]
+cheek_f, cheek_b = YAW_PIN_X + ball / 2 + 2, YAW_PIN_X - ball / 2 - 8  # cheeks' inner faces
+tail_z0 = pivot_z + 35  # clear of the rod end's eye (radius 25.5) as the floor pitches about it
+deck.box("yaw_tail", X0 - (cheek_b - 10), 60, 40, at=((X0 + cheek_b - 10) / 2, 0, tail_z0 + 20), op="new")
+for name, xf, s in (("f", cheek_f, 1), ("b", cheek_b, -1)):
+    deck.box("yaw_cheek_" + name, 10, 60, tail_z0 - (pivot_z - 30), at=(xf + s * 5, 0, (tail_z0 + pivot_z - 30) / 2),
+             op="new")
+deck.cylinder("yaw_pin", YAW_ROD_END["bore_mm"] / 2, cheek_f - cheek_b + 20, at=(cheek_b - 10, 0, pivot_z),
+              direction=(1, 0, 0), op="new")
+yaw = ["yaw_tail", "yaw_cheek_f", "yaw_cheek_b", "yaw_pin"]
 
 # Link top clevises: two cheeks either side of the link's top eye, which is a spherical rod end:
 # the floor rolls and pitches up to 7 deg about it, so the cheeks stand 8 mm off its faces. Each cheek runs
@@ -88,5 +103,6 @@ for name, x, y in (("fl", act_xf, act_y), ("fr", act_xf, -act_y), ("rl", act_xr,
     deck.box("web_" + name, cl, abs(inner - s * 350), 6, at=(cx, (inner + s * 350) / 2, DECK_BOT - 3), op="new")
 
 deck.material("aluminum-6061-t6", color="#4e565f")
-deck.material("steel-s235jr", bodies=["yoke_l", "yoke_r"], color="#4a515b")
+deck.material("steel-s235jr", bodies=["yoke_f", "yoke_b"] + yaw[:3], color="#4a515b")
+deck.material("steel-1c45", bodies=["yaw_pin"], color="#9aa1ab")
 deck.material("steel-dc01", bodies=bushes, color="#b08d57")  # steel-backed PTFE composite

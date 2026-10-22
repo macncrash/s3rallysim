@@ -1,12 +1,15 @@
+import math
 from steve import Component
-from params import pivot_x
+from params import pivot_x, pivot_z
 from motion import (BASE_H, RAIL_H, RAIL_Y, CAR_H, SLED_Z0, SLED_H, SLED_TOP, ACTUATORS, CRANK_DY, crank_axis,
-                    GUIDE_Y, GUIDE_COL, GUIDE_TOP, GUIDE_RAIL_H, STRUT_Z, STRUT_R, STRUT_T)
+                    GUIDE_Y, GUIDE_COL, GUIDE_TOP, GUIDE_RAIL_H, STRUT_Z, STRUT_R, STRUT_T, YAW_POST, YAW_POST_X,
+                    YAW_POST_Y, YAW_POST_TOP, YAW_TAIL_X0, YAW_ARM_T, YAW_STROKE)
 import drive_parts
-from bought import SURGE_RAIL, SURGE_BALLSCREW, HEAVE_GUIDE
+from bought import SURGE_RAIL, SURGE_BALLSCREW, HEAVE_GUIDE, YAW_GUIDE, YAW_ROD_END
 
 # Surge carriage: four HIWIN HGW25CC rail blocks (bought.py), two runners and four cross tubes, the heave guide
-# columns either side of the universal joint, the gearbox mounts, and the bracket that takes the surge ballscrew's nut.
+# columns either side of the universal joint, the yaw restraint's post at the tail, the gearbox mounts, and the
+# bracket that takes the surge ballscrew's nut.
 sled = Component("sled", name="Surge carriage")
 X0, X1 = -960, 250
 zc = SLED_Z0 + SLED_H / 2
@@ -22,7 +25,7 @@ def tube(cid, length, width, height, at, wall=5):
 
 
 for side, s in (("l", 1), ("r", -1)):
-    tube("runner_" + side, X1 - X0, 60, SLED_H, ((X0 + X1) / 2, s * RAIL_Y, zc))
+    tube("runner_" + side, X1 - YAW_TAIL_X0, 60, SLED_H, ((YAW_TAIL_X0 + X1) / 2, s * RAIL_Y, zc))
     for name, x in (("rear", X0 + 90), ("front", X1 - 90)):
         sled.box("block_" + name + "_" + side, SURGE_RAIL["block_length_mm"], SURGE_RAIL["block_width_mm"], CAR_H,
                  at=(x, s * RAIL_Y, BASE_H + RAIL_H + CAR_H / 2), op="new")
@@ -77,6 +80,31 @@ for side, s in (("l", 1), ("r", -1)):
         sled.box("strut_" + side + end + "_foot", 120, 60, 10, at=(bx, s * RAIL_Y, SLED_TOP + 5), op="new")
         steel += [sid, "strut_" + side + end + "_foot"]
 
+# Yaw restraint post (fix I): on a steel cross tube between the runners' tail extensions, braced sideways by a strut
+# to the left runner, with the guide rail on its inboard face. The guide block, its arm and the rod end to the floor's
+# tail pin ride the rail (yaw_block.py), following the pin through heave and pitch.
+tube("cross_tail", 60, 2 * RAIL_Y - 60, SLED_H, (YAW_POST_X, 0, zc))
+sled.box("yaw_foot", 100, 100, 10, at=(YAW_POST_X, YAW_POST_Y, SLED_TOP + 5), op="new")
+post_h = YAW_POST_TOP - SLED_TOP - 10
+sled.box("yaw_post", YAW_POST, YAW_POST, post_h, at=(YAW_POST_X, YAW_POST_Y, SLED_TOP + 10 + post_h / 2), op="new")
+sled.box("yaw_post_void", YAW_POST - 12, YAW_POST - 12, post_h, at=(YAW_POST_X, YAW_POST_Y, SLED_TOP + 16 + post_h / 2),
+         op="cut", body="yaw_post")
+a = (YAW_POST_X, YAW_POST_Y + YAW_POST / 2, YAW_POST_TOP - 50)
+b = (YAW_POST_X, RAIL_Y, SLED_TOP + 21.2)
+length = math.hypot(b[1] - a[1], b[2] - a[2])
+u = (0, (b[1] - a[1]) / length, (b[2] - a[2]) / length)
+sled.cylinder("yaw_strut", 21.2, length, at=a, direction=u, op="new")  # CHS 42.4 x 4
+sled.cylinder("yaw_strut_bore", 17.2, length - 40, at=tuple(a[i] + 20 * u[i] for i in range(3)), direction=u,
+              op="cut", body="yaw_strut")
+# The rail covers the block over the pin's whole travel; the block hangs YAW_ARM_T plus the rod end below the pin.
+drop = YAW_ROD_END["center_to_shank_end_mm"] + YAW_ARM_T / 2
+half = YAW_GUIDE["block_length_mm"] / 2
+r0 = max(SLED_TOP + 10, pivot_z - YAW_STROKE - drop - half)
+r1 = pivot_z + YAW_STROKE - drop + half
+sled.box("yaw_rail", YAW_GUIDE["rail_width_mm"], GUIDE_RAIL_H, r1 - r0,
+         at=(YAW_POST_X, YAW_POST_Y - YAW_POST / 2 - GUIDE_RAIL_H / 2, (r0 + r1) / 2), op="new")
+steel += ["cross_tail", "yaw_foot", "yaw_post", "yaw_strut"]
+
 # Surge nut rod into the ballscrew housing on the base, and its bracket under the rear mid cross tube's
 # front edge (any further aft and it meets the surge body at full rear surge).
 sled.cylinder("nut_rod", SURGE_BALLSCREW["nominal_diameter_mm"] / 2 - 0.5, 360, at=(-700, 0, 45), direction=(1, 0, 0),
@@ -84,5 +112,5 @@ sled.cylinder("nut_rod", SURGE_BALLSCREW["nominal_diameter_mm"] / 2 - 0.5, 360, 
 sled.box("nut_bracket", 30, 80, SLED_Z0 + 10 - 20, at=(pivot_x - 45, 0, (SLED_Z0 + 10 + 20) / 2), op="new")
 
 sled.material("aluminum-6061-t6", color="#3d4450")
-sled.material("steel-1c45", bodies=["nut_rod"], color="#9aa1ab")
+sled.material("steel-1c45", bodies=["nut_rod", "yaw_rail"], color="#9aa1ab")
 sled.material("steel-s235jr", bodies=steel, color="#4a515b")

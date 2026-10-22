@@ -3,7 +3,7 @@ from params import pivot_x, pivot_z
 from motion import UJ_LUG, UJ_LUG_T, UJ_THRUST_GAP
 from bought import UJOINT_BUSHING as BUSH
 
-# Universal joint spider: the roll pin along X runs in the crosshead's lug bushings, the pitch pin along Y in the
+# Universal joint spider: the pitch pin along Y runs in the crosshead's lug bushings, the roll pin along X in the
 # floor's. Its centre is the motion platform's roll and pitch pivot. A boss on each arm reaches out to the flange of
 # that lug's bushing, so each pin's thrust (fore-aft on the roll pin, sideways on the pitch pin) has a face to bear
 # on (docs/floor-structure.md, fix E).

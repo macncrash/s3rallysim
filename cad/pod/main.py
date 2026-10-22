@@ -18,6 +18,7 @@ closed loops, so each crank and link is geared to the floor's axes (small-angle 
 checks every pose of the motion cue against the exact crank geometry and refuses one out of reach.
 """
 
+import math
 from steve import Design
 from params import (
     layout, surge_mm, roll_deg, pitch_deg, heave_mm, screen_x, screen_z, deck_top, shell_half_w,
@@ -37,6 +38,7 @@ from components.sled import sled
 from components.heave_car import heave_car
 from components.ujoint import ujoint
 from components.deck import deck
+from components.yaw_block import yaw_block
 from components.drive_a import drive_a
 from components.drive_b import drive_b
 from components.crank_l import crank_l
@@ -95,6 +97,7 @@ design.add(sled)
 design.add(heave_car)
 design.add(ujoint)
 design.add(deck)
+design.add(yaw_block)
 DRIVES = {"fl": (drive_a, 0), "rr": (drive_a, 180), "rl": (drive_b, 0), "fr": (drive_b, 180)}
 for name, x, y in motion.ACTUATORS:
     side = 1 if y > 0 else -1
@@ -118,8 +121,15 @@ design.revolute("door_hinge", "shell", "door", axis=door.face("pin.side"), limit
 design.revolute("door_r_hinge", "shell", "door_r", axis=door_r.face("pin.side"), limits=(-105, 0))
 design.slider("surge", "base", "sled", axis="X", limits=(-surge_mm, surge_mm))
 design.slider("heave", "sled", "heave_car", axis="Z", limits=(-heave_mm, heave_mm))
-design.revolute("roll", "heave_car", "ujoint", axis=ujoint.face("pin_x.side"), limits=(-roll_deg, roll_deg))
-design.revolute("pitch", "ujoint", "deck", axis=ujoint.face("pin_y.side"), limits=(-pitch_deg, pitch_deg))
+# The pitch pin is in the crosshead and the roll pin in the floor, so the floor's roll axis stays on the centreline
+# and the yaw restraint behind the floor can hold it sideways (motion.floor_point).
+design.revolute("pitch", "heave_car", "ujoint", axis=ujoint.face("pin_y.side"), limits=(-pitch_deg, pitch_deg))
+design.revolute("roll", "ujoint", "deck", axis=ujoint.face("pin_x.side"), limits=(-roll_deg, roll_deg))
+# The yaw restraint's slider follows its pin: up with heave, and up as pitch raises the floor's tail (small-angle
+# gearing, so its range is a fraction of a millimetre past the pin's exact travel, motion.YAW_STROKE).
+yaw_gear = (motion.pivot_x - motion.YAW_PIN_X) * math.pi / 180  # mm per degree of pitch
+yaw_travel = heave_mm + yaw_gear * pitch_deg
+design.slider("yaw_slide", "sled", "yaw_block", axis="Z", limits=(-yaw_travel, yaw_travel))
 for name, x, y in motion.ACTUATORS:
     crank = crank_l if y > 0 else crank_r
     design.rigid("drive_" + name + "_on", "sled", "drive_" + name)
@@ -135,6 +145,8 @@ design.rigid("pedals_on", "deck", "pedals")
 
 # Each crank (and its link, kept upright) follows the floor's axes with small-angle ratios.
 gears = {"heave_drive": {"heave": 1}, "pitch_drive": {"pitch": 1}, "roll_drive": {"roll": 1}}
+gears["heave_drive"]["yaw_slide"] = 1
+gears["pitch_drive"]["yaw_slide"] = yaw_gear
 for name, x, y in motion.ACTUATORS:
     for (axis, g), ratio in zip(gears.items(), motion.crank_ratios(x, y)):
         g["crank_" + name] = ratio
@@ -279,13 +291,15 @@ design.fit_check(
 
 # Platform fit: the mechanism against itself, the floor's under-frame and the shell, through the
 # motion cue (reachable poses) and each axis. Pins in their eyes, blocks on rails (surge and heave
-# guides) and the drives on the carriage are the designed contacts.
-mech = ["base", "sled", "heave_car", "ujoint", "deck"] + [
+# guides, yaw restraint) and the drives on the carriage are the designed contacts.
+mech = ["base", "sled", "heave_car", "ujoint", "deck", "yaw_block"] + [
     p + "_" + n for n, _x, _y in motion.ACTUATORS for p in ("drive", "crank", "link")]
 design.contact("sled", "base", kind="seated", max_overlap_mm3=1_000)
 design.contact("heave_car", "sled", kind="seated", max_overlap_mm3=1_000)
 design.contact("ujoint", "heave_car", kind="seated", max_overlap_mm3=2_000)
 design.contact("ujoint", "deck", kind="seated", max_overlap_mm3=2_000)
+design.contact("yaw_block", "sled", kind="seated", max_overlap_mm3=1_000)
+design.contact("yaw_block", "deck", kind="seated", max_overlap_mm3=2_000)
 for n, _x, _y in motion.ACTUATORS:
     design.contact("drive_" + n, "sled", kind="seated", max_overlap_mm3=1_000)
     design.contact("crank_" + n, "drive_" + n, kind="seated", max_overlap_mm3=2_000)

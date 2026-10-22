@@ -74,6 +74,7 @@ LINK_ROD_END = {
     'mass_kg': 0.38,
     'alternating_load_factor': 0.5,
     'eye_diameter_mm': 51,
+    'center_to_shank_end_mm': 77,
 }
 
 # surge_rail: HIWIN HGW25CC + ZZ/E2 (provisional, selector PASS)
@@ -206,4 +207,47 @@ UJOINT_BUSHING = {
     'mass_kg': 0.035,
     'maintenance_free': True,
     'max_operating_clearance_um': 126,
+}
+
+# yaw_guide: HIWIN HGW25CC + ZZ/E2 (provisional, selector PASS)
+YAW_GUIDE = {
+    'id': 'hiwin-hgw25cc-e2',
+    'maker': 'HIWIN',
+    'model': 'HGW25CC + ZZ/E2',
+    'status': 'provisional',
+    'verdict': 'PASS',
+    'card': 'parts/profile-rails/hiwin-hgw25cc-e2.toml',
+    'rail_size': 25,
+    'dynamic_load_n': 34900,
+    'dynamic_rating_basis_km': 50,
+    'static_load_n': 52820,
+    'block_length_mm': 104.0,
+    'block_width_mm': 70,
+    'total_height_mm': 36,
+    'rail_width_mm': 23,
+    'rail_mass_kg_per_m': 3.21,
+    'maintenance_interval_km': 10000,
+    'radial_rigidity_n_per_um': 539,
+}
+
+# yaw_rod_end: SKF SIKB 20 F (provisional, selector PASS)
+YAW_ROD_END = {
+    'id': 'skf-sikb-20-f',
+    'maker': 'SKF',
+    'model': 'SIKB 20 F',
+    'status': 'provisional',
+    'verdict': 'PASS',
+    'card': 'parts/rod-ends/skf-sikb-20-f.toml',
+    'bore_mm': 20,
+    'thread': 'M20x1.5 female right-hand',
+    'dynamic_radial_load_n': 31000,
+    'static_radial_load_n': 50000,
+    'tilt_angle_deg': 14,
+    'maintenance_free': True,
+    'ball_width_mm': 25,
+    'eye_width_mm': 18,
+    'mass_kg': 0.38,
+    'alternating_load_factor': 0.5,
+    'eye_diameter_mm': 51,
+    'center_to_shank_end_mm': 77,
 }

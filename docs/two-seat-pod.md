@@ -121,12 +121,12 @@ CAD reads sizes and masses from there.
   - The floor frame clears the gearboxes by ≥ 15.9 mm.
   - Links lean at most 15.6° from upright.
 
-**Fit checks (STEVE).** Both pass on main revision 13 (with structural fixes A–H):
+**Fit checks (STEVE).** Both pass on main revision 18 (with structural fixes A–I):
 
 | Check | Instance pairs | What it covers |
 |---|---|---|
-| `occupants` | 756 | Every pose and envelope corner |
-| `platform` | 670 | Every pose of the cue, plus a sweep of every axis |
+| `occupants` | 780 | Every pose and envelope corner |
+| `platform` | 714 | Every pose of the cue, plus a sweep of every axis |
 
 The only contacts are the designed ones (pins in eyes, blocks on rails, sleeve on column, drives on the carriage).
 STEVE gears the cranks with small-angle ratios and draws each link upright. The Blender walkaround and the Gravity sim
@@ -169,11 +169,13 @@ Every combination of those targets was checked. Forces are shared as four equal 
     preload) the floor mode is about 28–47 Hz; the blocks' lateral stiffness is not printed, confirm with HIWIN.
   - Done in main revision 10: flanged bushings in the universal-joint lugs, with spider bosses as thrust faces.
   - Done in main revision 11 (H): the floor's yoke lugs hang from bars between two new cross tubes, not the bare
-    sheet. The modal study then gives fore-aft about 22–39 Hz and sideways 25–44 Hz. Floor yaw is still about
-    6–11 Hz, and a driver alone does excite it: a sharp surge onset leaves a sideways shimmy at the seat well
-    above the threshold of perception (`analysis/yaw_check.py`). Still open.
+    sheet. The modal study then gives fore-aft about 22–39 Hz and sideways 25–44 Hz.
   - Done in main revision 13 (G): three front-bay cross tubes and a 100 mm deep front overhang. The brake case's
     front-corner drop falls from 2.4 to 1.4 mm.
+  - Done in main revisions 16–18 (I): a yaw restraint behind the floor (a guide block on a braced post at the
+    carriage's tail, holding a pin on the floor's roll axis through a rod end), with the universal joint's pins
+    swapped so the two don't fight. Floor yaw rises from 7–15 Hz to about 35–42 Hz, and the shimmy a driver alone
+    felt after sharp surge onsets drops to about the threshold of perception (`analysis/yaw_check.py`).
 - **Control:** the motion controller's force sharing across four actuators on three axes, plus software end stops
   and the combined-axis envelope.
 - **Cueing:** virtual-pivot cueing near the occupants' heads. The universal joint is still about 1 m below them.
@@ -237,10 +239,8 @@ AiM .xrk has no third-party writer.
      - Fixes A–C are in the design (main revision 8).
      - Fixes D and F are in the design (main revision 9): a braced twin-column heave guide. Confirm the guide
        blocks' lateral stiffness with HIWIN (radial is printed: 539 N/µm at ZA).
-     - Fix E is in the design (main revision 10), H in revision 11 and G in revision 13. Clearance and fit checks
-       pass on revision 13.
-     - Floor yaw mode (about 6–11 Hz): a driver-only crew excites it. Choose cue shaping, stiffening or a
-       yaw restraint at the floor's front.
+     - Fix E is in the design (main revision 10), H in revision 11, G in revision 13 and I (yaw restraint) in
+       revisions 16–18. The clearance and fit checks pass on revision 18.
      - A converged modal study, and one with G and the links' stiffness.
      - Confirm the provisional bought parts with their makers (Apex T2B, seat internal width).
 2. **Vehicle-dynamics engine.** Researched, with a recommendation ([`vehicle-dynamics.md`](vehicle-dynamics.md)).

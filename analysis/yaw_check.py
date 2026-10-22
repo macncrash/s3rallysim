@@ -1,6 +1,6 @@
 """Floor yaw mode check for the S3 Rally Pod: does an off-centre crew excite it?
 
-Usage: python3 yaw_check.py <bodies_mesh_dir> <cad_source_dir> <k_yaw_steel_Nm_per_rad>
+Usage: python3 yaw_check.py <bodies_mesh_dir> <cad_source_dir> <k_yaw_steel_Nm_per_rad> [<k_restraint_steel_N_per_m>]
 
 The modal study (docs/floor-structure.md §2.5) leaves one low mode: the floor yawing about the universal joint,
 with nothing but the joint, crosshead and heave guide to hold it. No cue drives yaw, but the crew's centre of mass is
@@ -9,8 +9,10 @@ off the joint, so surge, pitch and roll cues push on it sideways and twist the f
     T = m [ (a_surge + alpha_pitch dz) |dy| + alpha_roll dz |dx| ]
 
 with (dx, dy, dz) the floor's centre of mass from the joint (the signs combined for the worst case). The floor is
-taken as rigid on one yaw spring k (from a STEVE static study of the platform modal part: a couple on the floor's
-side faces) with structural damping zeta. The steel and 6061 moduli bound k as for the other studies.
+taken as rigid on one yaw spring with structural damping zeta. The spring is the joint path k (from a STEVE static
+study of the platform modal part: a couple on the floor's side faces), plus, with fix I, the yaw restraint's
+sideways stiffness at its pin times the pin's distance from the joint squared (STEVE study of the yaw post part).
+The steel and 6061 moduli bound both, as for the other studies.
 
 For each crew it reports the yaw inertia about the joint, the natural frequency, and the false sideways
 acceleration at the crew's seats (the yaw spring's motion, not commanded by any cue):
@@ -51,6 +53,7 @@ EXTRA = [
 
 
 def yaw_case(rigid, ergo, motion, crew, k):
+    """k: the yaw spring in steel, N m/rad."""
     occ = [pl.occupant(ergo, pct, role) for role, pct in crew.items() if pct]
     pivot = (motion.pivot_x * 1e-3, 0.0, motion.pivot_z * 1e-3)
     floor = [b for b in rigid if b[0] in pl.FLOOR] + occ
@@ -84,12 +87,15 @@ def yaw_case(rigid, ergo, motion, crew, k):
 
 
 def main():
-    mesh_dir, src, k = sys.argv[1], sys.argv[2], float(sys.argv[3])
+    mesh_dir, src, k_joint = sys.argv[1], sys.argv[2], float(sys.argv[3])
+    k_restraint = float(sys.argv[4]) if len(sys.argv) > 4 else 0.0
     sys.path.insert(0, src)
     import ergo  # noqa: E402
     import motion  # noqa: E402
     import params  # noqa: E402
     motion.pivot_x, motion.pivot_z = params.pivot_x, params.pivot_z
+    arm = (params.pivot_x - motion.YAW_PIN_X) * 1e-3 if k_restraint else 0.0
+    k = k_joint + k_restraint * arm ** 2
     with open(os.path.join(mesh_dir, "manifest.json")) as fh:
         rigid = pl.point_masses(json.load(fh))
     crews = {
@@ -98,7 +104,8 @@ def main():
         "95 alone": {"driver": 95, "codriver": None},
         "5 alone": {"driver": 5, "codriver": None},
     }
-    out = {"k_yaw_steel_Nm_per_rad": k, "zeta": ZETA, "perception_m_s2": PERCEIVE,
+    out = {"k_joint_steel_Nm_per_rad": k_joint, "k_restraint_steel_N_per_m": k_restraint, "restraint_arm_m": arm,
+           "k_yaw_steel_Nm_per_rad": round(k), "zeta": ZETA, "perception_m_s2": PERCEIVE,
            "crews": {label: yaw_case(rigid, ergo, motion, crew, k) for label, crew in crews.items()}}
     print(json.dumps(out, indent=1))
 
