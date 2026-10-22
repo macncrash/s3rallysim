@@ -7,8 +7,9 @@ Usage:
 scene.json comes from build_scene.py. Millimetres in, metres in Blender, Z up as in STEVE.
 The occupants' eye views ride the moving floor, so the fixed screens move in them as they would
 for the real crew.
-The floor stack nests like the STEVE joints: surge -> heave -> roll (X) -> pitch (Y), both about
-the universal joint. The four cranks and links are solved exactly every frame from the floor pose
+The floor stack nests like the STEVE joints: surge -> heave -> pitch (Y, the crosshead's pin) -> roll (X, the
+floor's pin), both about the universal joint; the yaw restraint's block rides the carriage, lifted with the floor's
+tail pin. The four cranks and links are solved exactly every frame from the floor pose
 (STEVE's own animation gears them with small-angle ratios). Screens, shell and doors stay put.
 """
 
@@ -162,9 +163,10 @@ def main():
     pivot = data["pivot"]
     surge = empty("surge", None, (0, 0, 0))
     heave = empty("heave", surge, (0, 0, 0))
-    roll = empty("roll", heave, (pivot[0] * MM, 0, pivot[2] * MM))
-    pitch = empty("pitch", roll, (0, 0, 0))
-    stages = {"surge": surge, "heave": heave, "roll": roll, "pitch": pitch}
+    pitch = empty("pitch", heave, (pivot[0] * MM, 0, pivot[2] * MM))
+    roll = empty("roll", pitch, (0, 0, 0))
+    yaw = empty("yaw", surge, (0, 0, 0))
+    stages = {"surge": surge, "heave": heave, "pitch": pitch, "roll": roll, "yaw": yaw}
     acts = data["actuators"]
     for act in acts:
         n = act["name"]
@@ -222,6 +224,11 @@ def main():
         heave.keyframe_insert("location", index=2, frame=frame)
         roll.keyframe_insert("rotation_euler", index=0, frame=frame)
         pitch.keyframe_insert("rotation_euler", index=1, frame=frame)
+        if "yaw_pin" in data:
+            pin = data["yaw_pin"]
+            yaw.location.z = (floor_point(pin, pivot, v["heave_drive"], v["pitch_drive"], v["roll_drive"])[2]
+                              - pin[2]) * MM
+            yaw.keyframe_insert("location", index=2, frame=frame)
         for act in acts:
             crank, tilt = solve_actuator(act, pivot, r, length, v)
             ce, le = stages["crank:" + act["name"]], stages["link:" + act["name"]]
@@ -252,8 +259,8 @@ def main():
             e = Vector(eyes[how[1]]) * MM
             origin = e + Vector((0.11, 0.0, 0.01))
             look(cam, origin, origin + Vector((1.0, -0.12 if how[1] == "driver" else 0.12, -0.12)))
-            cam.parent = pitch
-            cam.matrix_parent_inverse = pitch.matrix_world.inverted()
+            cam.parent = roll
+            cam.matrix_parent_inverse = roll.matrix_world.inverted()
         else:
             for f in range(f0, f1 + 1, 2):
                 u = (f - f0) / max(1, f1 - f0)

@@ -66,11 +66,13 @@ class Design:
 CHAIN = {
     "surge": ["sled", "drive_fl", "drive_fr", "drive_rl", "drive_rr"],
     "heave": ["heave_car"],
-    "roll": ["ujoint"],
-    "pitch": [
+    "pitch": ["ujoint"],
+    "roll": [
         "deck", "seat_d", "seat_c", "mount_driver", "mount_codriver", "driver", "codriver", "wheel", "dash",
         "pedals", "footrest", "tunnel", "dogbox", "dog_cap", "lever", "knob", "handbrake", "hb_lever", "button_box",
     ],
+    # The yaw restraint's block slides up its rail with the floor's tail pin (heave and pitch).
+    "yaw": ["yaw_block"],
 }
 ACTUATOR_STAGES = {p + "_" + n: p + ":" + n for n in ("fl", "fr", "rl", "rr") for p in ("crank", "link")}
 
@@ -123,7 +125,7 @@ def main():
     scene = {"items": items, "poses": design.poses, "animations": design.animations, "eyes": eyes,
              "pedals": ergo.HEEL, "wheel": [ergo.WHEEL_X_HOME, ergo.DRIVER_Y, ergo.WHEEL_Z],
              "pivot": [params.pivot_x, 0, params.pivot_z], "crank_r": params.crank_r,
-             "link_len": params.link_len, "actuators": actuators}
+             "link_len": params.link_len, "actuators": actuators, "yaw_pin": [motion.YAW_PIN_X, 0, params.pivot_z]}
     with open(out, "w") as fh:
         json.dump(scene, fh, indent=1)
     print(len(items), "bodies,", len(design.poses), "poses ->", out)
