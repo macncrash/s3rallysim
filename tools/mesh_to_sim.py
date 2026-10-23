@@ -14,10 +14,11 @@ import random
 import struct
 import sys
 
-# Stage codes: 0 ground, 1 surge carriage, 2 heave sleeve, 3 universal joint, 4 floor,
-# 5-8 cranks and 9-12 links (fl, fr, rl, rr).
+# Stage codes: 0 ground, 1 surge carriage, 2 heave crosshead, 3 universal joint spider (pitches), 4 floor (pitches
+# and rolls), 5-8 cranks and 9-12 links (fl, fr, rl, rr), 13 the yaw restraint's block (lifted with the floor's tail
+# pin).
 ACTS = ("fl", "fr", "rl", "rr")
-STAGES = {"ground": 0, "surge": 1, "heave": 2, "roll": 3, "pitch": 4}
+STAGES = {"ground": 0, "surge": 1, "heave": 2, "pitch": 3, "roll": 4, "yaw": 13}
 STAGES.update({"crank:" + n: 5 + i for i, n in enumerate(ACTS)})
 STAGES.update({"link:" + n: 9 + i for i, n in enumerate(ACTS)})
 # Bodies drawn per square metre, by instance. Big flat panels get few points, people get many.
@@ -118,6 +119,7 @@ def main():
         "pivot": scene["pivot"], "crankR": scene["crank_r"], "linkLen": scene["link_len"],
         "acts": [{"axis": a["axis"], "tip": a["tip"], "pin": a["pin"]}
                  for a in sorted(scene["actuators"], key=lambda a: ACTS.index(a["name"]))],
+        "yawPin": scene["yaw_pin"],
     }
     src = open(template).read().replace("/*POINTS*/null", json.dumps(blob, separators=(",", ":")))
     src = src.replace("/*COUNT*/12000", str(count + 400))

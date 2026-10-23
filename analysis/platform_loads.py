@@ -29,9 +29,10 @@ TARGETS = {
     "pitch_alpha": math.radians(400),  # rad/s^2 peak
 }
 
-# What the corner actuators carry, and what the surge drive moves.
+# What the corner actuators carry, and what the surge drive moves. The yaw restraint's block rides its rail freely
+# up and down, so the floor carries it through the rod end.
 FLOOR = {
-    "deck", "heave_car", "ujoint", "seat_d", "seat_c", "mount_driver", "mount_codriver", "wheel", "dash", "pedals",
+    "deck", "heave_car", "ujoint", "yaw_block", "seat_d", "seat_c", "mount_driver", "mount_codriver", "wheel", "dash", "pedals",
     "footrest", "tunnel", "dogbox", "dog_cap", "lever", "knob", "handbrake", "hb_lever", "button_box",
 }
 SURGE = FLOOR | {"sled", "drive_fl", "drive_fr", "drive_rl", "drive_rr", "crank_fl", "crank_fr", "crank_rl",

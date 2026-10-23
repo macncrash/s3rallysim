@@ -162,10 +162,16 @@ export function create(ctx) {
     const sr = Math.sin(c.r * g * rad), cr = Math.cos(c.r * g * rad);
     const heave = c.h * g, surge = c.s * g;
     solve(sp, cp, sr, cr, heave);
+    // The yaw restraint's block rides its rail on the carriage, lifted with the floor's tail pin.
+    const YP = POINTS.yawPin;
+    floorPoint(YP[0], YP[1], YP[2], sp, cp, sr, cr, heave, tmp);
+    const yawLift = tmp[2] - YP[2];
     for (let i = 0; i < m; i++) {
       let x = xyz[i * 3], y = xyz[i * 3 + 1], z = xyz[i * 3 + 2];
       const st = stage[i];
-      if (st >= 5 && st <= 8) {
+      if (st === 13) {
+        z += yawLift;
+      } else if (st >= 5 && st <= 8) {
         // Crank: turn about its axis (CCW in X-Z by the tip angle).
         const act = ACTS[st - 5], a = crankAng[st - 5];
         const dx = x - act.axis[0], dz = z - act.axis[2];

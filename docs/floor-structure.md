@@ -228,7 +228,8 @@ These are estimates, not a modal study of the assembly.
 - **Joint:** each pin is a short 16 mm rod, which passes force like the bushings but lets the floor roll and pitch.
   The spider holds yaw, as the real joint does.
 - **Mass:** the cockpit and crew are two steel blocks on posts at the seat-rail pads. Everything the links carry
-  weighs 391.5 kg (crew 95 + 95, `platform_loads.json`).
+  weighs 391.5 kg (crew 95 + 95, `platform_loads.json` at main revision 6). At revision 18 it is 421.1 kg, which
+  would lower every frequency here by about 3.5% (√(391.5 / 421.1)).
 - **Supports:**
   - **Links:** the clevis bores are held vertically only, so roll, pitch and heave are taken by the links.
   - **Carriage:** the rail blocks are held sideways and vertically, and the ballscrew nut fore-aft.
@@ -441,16 +442,17 @@ These are estimates, not a modal study of the assembly.
     in steel. The post leans on its foot and the tail cross tube bows, which is why that tube is steel. The truth
     is close to the steel figure (3.2 kN/mm if everything were 6061).
   - **Lever:** at 700 mm that adds 4.7 × 10⁶ N·m/rad in yaw, about eight times the joint path's 5.5–8.1 × 10⁵.
-- **Yaw check with I** (`python3 analysis/yaw_check.py render/build/mesh cad/pod 5.53e5 9.6e6`):
+- **Yaw check with I** (`python3 analysis/yaw_check.py render/build/mesh cad/pod 5.53e5 9.6e6`, and 8.1e5 for the
+  rigid-pin joint path; re-run on the main revision 18 mesh, which has the G, H and I parts in it):
 
   | Crew | Yaw frequency, steel (all-6061 bound) | Ringing after a 0.6 g surge onset, 50 / 100 ms rise |
   |---|---|---|
-  | 95 + 95 | 35–36 Hz (20 Hz) | 0.01 / 0.01 m/s² |
-  | 95 + 5 | 37–38 Hz (21–22 Hz) | 0.03–0.04 / 0.03–0.04 m/s² |
-  | 95 alone | 38–39 Hz (22–23 Hz) | 0.02–0.04 / 0.02–0.04 m/s² (was 0.16–0.87) |
-  | 5 alone | 41–42 Hz (24 Hz) | 0.02–0.03 / 0.02–0.03 m/s² |
+  | 95 + 95 | 34–35 Hz (20 Hz) | 0.01–0.02 / 0.01 m/s² |
+  | 95 + 5 | 37 Hz (21–22 Hz) | 0.04–0.05 / 0.03–0.04 m/s² |
+  | 95 alone | 38–39 Hz (22 Hz) | 0.03–0.06 / 0.03–0.05 m/s² (was 0.16–0.87) |
+  | 5 alone | 41–42 Hz (23–24 Hz) | 0.01–0.02 / 0.01–0.02 m/s² |
 
-  - **Ringing:** at or near the 0.015 m/s² threshold of perception.
+  - **Ringing:** within a few times the 0.015 m/s² threshold of perception, against 10–60 times before.
   - **Resonance:** about 35–40 Hz, above the cue band.
   - **The 6061 column is very pessimistic:** the restraint is steel.
 - **Loads:** about 0.6 kN sideways on the block and rod end at the cue limits, against 34.9 kN and 31 kN dynamic

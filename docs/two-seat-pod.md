@@ -132,7 +132,7 @@ The only contacts are the designed ones (pins in eyes, blocks on rails, sleeve o
 STEVE gears the cranks with small-angle ratios and draws each link upright. The Blender walkaround and the Gravity sim
 solve each crank and link exactly.
 
-**Loads (`analysis/platform_loads.py`, main revision 6 masses).**
+**Loads (`analysis/platform_loads.py`, main revision 18 masses).**
 
 Cueing targets assumed:
 - heave 1 g
@@ -143,19 +143,23 @@ Every combination of those targets was checked. Forces are shared as four equal 
 
 | Crew | Floor mass | Actuator static | Actuator peak | Link tension peak | Crank peak torque | Centre post side load | Surge force |
 |---|---|---|---|---|---|---|---|
-| 95 + 95 | 392 kg | 0.89–1.03 kN | 3.7 kN | 1.6 kN | 462 Nm | 3.6 kN | 3.3 kN |
-| 95 + 5 | 332 kg | 0.58–1.05 kN | 3.4 kN | 1.3 kN | 427 Nm | 3.0 kN | 3.0 kN |
-| 95 alone | 276 kg | 0.33–1.02 kN | 3.1 kN | 1.1 kN | 389 Nm | 2.4 kN | 2.6 kN |
-| 5 alone | 216 kg | 0.19–0.87 kN | 2.5 kN | 0.8 kN | 311 Nm | 1.8 kN | 2.3 kN |
+| 95 + 95 | 421 kg | 0.99–1.08 kN | 3.8 kN | 1.7 kN | 480 Nm | 3.7 kN | 3.7 kN |
+| 95 + 5 | 361 kg | 0.62–1.15 kN | 3.7 kN | 1.4 kN | 458 Nm | 3.1 kN | 3.4 kN |
+| 95 alone | 305 kg | 0.38–1.12 kN | 3.4 kN | 1.1 kN | 420 Nm | 2.6 kN | 3.0 kN |
+| 5 alone | 245 kg | 0.24–0.97 kN | 2.7 kN | 0.8 kN | 342 Nm | 1.9 kN | 2.7 kN |
 
 - **Real-weight parts cut the loads by about 30%.** The floor is now a 4 mm sheet on a frame instead of a solid 12 mm
   plate. The seats are 10 kg composite shells instead of 31 kg solid placeholders, and the dash frame is tube. With
   two 95th-percentile occupants the floor went from 568 to 392 kg.
+- **The structural fixes put about 30 kg back (revision 6 to 18).** The floor gains the heave guide's crosshead, the
+  yoke mount, the front overhang and the yaw restraint's tail and slider: 392 to 421 kg with two 95th-percentile
+  occupants. Loads rise 4–10%, still inside the requirements' envelope; the surge drive moves 629 kg (565
+  before) and pushes 3.7 kN (3.3) against the ballscrew requirement's 4.0 kN.
 - **The requirements keep the old envelope on purpose.** They were sized from the heavier model (641 Nm peak crank
   torque, 5.1 kN actuator peak), which leaves room for the cockpit hardware still to be fitted (electronics, wiring,
   intercom, seat brackets). Each chosen drive gives about 720 Nm peak and 313 Nm continuous at the crank (AKM2G-51K
-  15.7 / 6.81 Nm × 50 × 92%; the gearbox's own limit is higher) against 462 Nm peak and 131 Nm static.
-- **Links work in tension:** at −1 g heave combined with a tilt kick they pull at up to 1.6 kN, so the links and rod
+  15.7 / 6.81 Nm × 50 × 92%; the gearbox's own limit is higher) against 480 Nm peak and 143 Nm static.
+- **Links work in tension:** at −1 g heave combined with a tilt kick they pull at up to 1.7 kN, so the links and rod
   ends must be rated for both directions. The SKF rod ends are checked against an alternating load.
 - **Uneven crews only shift load between corners:** the crank torques stay well inside the drive rating.
 

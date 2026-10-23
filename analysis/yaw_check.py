@@ -23,8 +23,8 @@ acceleration at the crew's seats (the yaw spring's motion, not commanded by any 
 Compared with ISO 2631-1 Annex C: about 0.015 m/s2 peak is the threshold of perception, 0.315 m/s2 rms "not
 uncomfortable".
 
-The mesh is the last bodies_mesh export (render/build/mesh); the floor parts added since (fixes G and H) are added
-here as point masses. The links' horizontal stiffness, which would raise the frequency, is left out.
+The mesh is the last bodies_mesh export (render/build/mesh); floor parts added since go in EXTRA as point masses.
+The links' horizontal stiffness, which would raise the frequency, is left out.
 """
 
 import json
@@ -40,16 +40,9 @@ RISE_S = (0.05, 0.1, 0.2)  # cue onset rise times
 PERCEIVE = 0.015  # m/s2 peak, ISO 2631-1 Annex C
 E_RATIO = 69 / 210  # 6061 / steel modulus
 
-# Floor parts added since the mesh export, as (name, kg, (x, y, z) mm, yaw inertia about their own centre kg m2):
-# fixes H and G. 6061 cross tubes 40 x 60 x 4 at 1.99 kg/m, steel yoke bars 20 x 60 x 240, 6061 runner bars
-# 20 x 40 x 670 and edge tubes 40 x 40 x 4 x 480.
-EXTRA = [
-    ("yoke tubes", 2 * 2.47, (-300, 0, 477), 2 * 2.47 * 1.24 ** 2 / 12 + 2 * 2.47 * 0.14 ** 2),
-    ("yoke bars", 2 * 2.26, (-300, 0, 477), 2 * 2.26 * (0.24 ** 2 / 12 + 0.075 ** 2)),
-    ("front cross tubes", 3 * 2.47, (437, 0, 477), 3 * 2.47 * 1.24 ** 2 / 12),
-    ("runner bars", 2 * 1.45, (465, 0, 427), 2 * 1.45 * (0.67 ** 2 / 12 + 0.32 ** 2)),
-    ("edge tubes", 2 * 0.75, (510, 0, 427), 2 * 0.75 * (0.48 ** 2 / 12 + 0.64 ** 2)),
-]
+# Floor parts added since the mesh export, as (name, kg, (x, y, z) mm, yaw inertia about their own centre kg m2).
+# None now: the main revision 18 export has fixes G, H and I in it.
+EXTRA = []
 
 
 def yaw_case(rigid, ergo, motion, crew, k):

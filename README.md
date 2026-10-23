@@ -11,7 +11,7 @@ The formula / F1 version is a different cockpit module in the same pod: one recl
 formula wheel and electronics, no dog box. The pod does not get smaller. The two-person rally version comes first;
 the F1 module follows once rally is feature-complete.
 
-Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261020-031352.mp4)
+Videos: [60 s walkaround](renders/s3-rally-pod-walkaround.mp4) · [motion cue in Gravity](gravity-renders/rally-pod-two-seat-motion-cue-20261023-001905.mp4)
 
 ## What's here
 
